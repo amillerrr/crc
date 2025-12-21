@@ -1,0 +1,19 @@
+localhost {
+    # Route /api/contact requests to the Go Backend
+    handle /api/* {
+        uri strip_prefix /api
+        reverse_proxy backend:8080
+    }
+
+    # Route all other traffic to the Frontend
+    handle /* {
+        reverse_proxy frontend:3000
+    }
+
+    # Security Headers & Compression
+    encode gzip
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+    }
+}

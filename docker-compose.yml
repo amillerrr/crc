@@ -1,0 +1,38 @@
+services:
+  # 1. The Web Server (Handles SSL & Routing)
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+  # 2. The Frontend (Next.js)
+  frontend:
+    build: ./frontend
+    container_name: carmel_frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    expose:
+      - "3000"
+
+  # 3. The Backend (Golang)
+  backend:
+    build: ./backend
+    container_name: carmel_backend
+    restart: unless-stopped
+    expose:
+      - "8080"
+
+volumes:
+  caddy_data:
+  caddy_config:
