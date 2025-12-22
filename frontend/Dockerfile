@@ -2,6 +2,9 @@
 FROM node:25-alpine AS builder
 WORKDIR /app
 
+# Install dependencies for native modules (sharp)
+RUN apk add --no-cache libc6-compat python3 make g++
+
 # Copy package files first for better caching
 COPY package*.json ./
 RUN npm install
@@ -16,8 +19,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install wget for healthcheck
-RUN apk add --no-cache wget
+# Install wget for healthcheck and libc6-compat for sharp
+RUN apk add --no-cache wget libc6-compat
 
 # Security: Run as non-root user
 RUN addgroup --system --gid 1001 nodejs && \
@@ -32,7 +35,6 @@ USER nextjs
 
 EXPOSE 3000
 
-# These can be overridden by docker-compose environment
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 

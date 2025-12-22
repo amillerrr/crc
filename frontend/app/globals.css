@@ -34,59 +34,43 @@ body {
 }
 
 /* ===== ANIMATIONS ===== */
+/* Using animation-fill-mode: both ensures final state is kept */
 
 @keyframes fade-up {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes fade-in {
-  from {
+  0% {
     opacity: 0;
   }
-  to {
+  100% {
     opacity: 1;
   }
 }
 
 .animate-fade-up {
-  animation: fade-up 0.8s ease-out forwards;
+  animation: fade-up 0.8s ease-out both;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
-}
-
-/* Animation delays */
-.animation-delay-200 {
-  animation-delay: 200ms;
-  opacity: 0;
-}
-
-.animation-delay-500 {
-  animation-delay: 500ms;
-  opacity: 0;
+  animation: fade-in 0.8s ease-out both;
 }
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-fade-in {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-  
-  .animation-delay-200,
-  .animation-delay-500 {
-    animation: none;
-    opacity: 1;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
   
   * {
@@ -136,6 +120,11 @@ body {
 
 img {
   content-visibility: auto;
+}
+
+/* Crisp SVG rendering */
+img[src$=".svg"] {
+  image-rendering: -webkit-optimize-contrast;
 }
 
 html {
