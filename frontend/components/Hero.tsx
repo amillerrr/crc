@@ -9,18 +9,18 @@ export default function Hero() {
         Carmel Rose
       </div>
 
-      <div className="relative z-10 text-center text-carmel-text px-4 w-full max-w-[90vw]">
-        <p className="font-sans text-xs tracking-[0.4em] uppercase mb-6 md:mb-8 text-gray-500">
-          Est. 2024
+      <div className="relative z-10 text-center text-carmel-text px-4">
+        <p className="font-sans text-xs tracking-[0.4em] uppercase mb-8 text-gray-500">
+          Est. 2025
         </p>
 
-        {/* SVG Logo - larger sizes for more impact */}
-        <h1 className="mb-8 md:mb-10">
+        {/* SVG Logo */}
+        <h1 className="mb-12">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/CRC-Logo.svg"
             alt="Carmel Rose Collective"
-            className="w-[340px] h-auto sm:w-[450px] md:w-[550px] lg:w-[700px] xl:w-[800px] mx-auto"
+            className="w-[280px] h-auto sm:w-[360px] md:w-[480px] lg:w-[600px] xl:w-[820px] mx-auto"
           />
         </h1>
 
