@@ -16,6 +16,8 @@ services:
         condition: service_healthy
       backend:
         condition: service_healthy
+    networks:
+      - carmel_network
 
   # 2. The Frontend (Next.js)
   frontend:
@@ -26,14 +28,18 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
     expose:
       - "3000"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(() => process.exit(0)).catch(() => process.exit(1))"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - carmel_network
 
   # 3. The Backend (Golang)
   backend:
@@ -45,11 +51,17 @@ services:
     expose:
       - "8080"
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       start_period: 10s
+    networks:
+      - carmel_network
+
+networks:
+  carmel_network:
+    driver: bridge
 
 volumes:
   caddy_data:

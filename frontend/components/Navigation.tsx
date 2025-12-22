@@ -5,14 +5,12 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scroll for nav background
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false);
@@ -21,7 +19,6 @@ export default function Navigation() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
-  // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -36,7 +33,6 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Skip to main content link for accessibility */}
       <a 
         href="#main-content" 
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-carmel-text focus:text-white focus:px-4 focus:py-2 focus:rounded"
@@ -55,7 +51,6 @@ export default function Navigation() {
           Carmel Rose
         </a>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex gap-8 uppercase tracking-widest text-xs text-carmel-text">
           {navLinks.map((link) => (
             <a 
@@ -68,7 +63,6 @@ export default function Navigation() {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden relative z-50 w-10 h-10 flex flex-col justify-center items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text rounded"
           onClick={() => setIsOpen(!isOpen)}
@@ -93,7 +87,6 @@ export default function Navigation() {
           />
         </button>
 
-        {/* Mobile Menu Overlay */}
         <div
           id="mobile-menu"
           className={`fixed inset-0 bg-carmel-bg z-40 flex flex-col items-center justify-center transition-all duration-500 md:hidden ${

@@ -49,7 +49,6 @@ export default function Contact() {
       message: formData.get('message') as string,
     };
 
-    // Client-side validation
     const validationErrors = validateForm(data);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);

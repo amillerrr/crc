@@ -36,7 +36,6 @@ export default function Portfolio() {
         <p className="font-script text-4xl text-gray-400">moments we&apos;ve crafted</p>
       </div>
       
-      {/* Masonry-style Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[400px]">
         {portfolioItems.map((item, index) => (
           <article 

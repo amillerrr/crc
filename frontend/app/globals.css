@@ -34,7 +34,6 @@ body {
 }
 
 /* ===== ANIMATIONS ===== */
-/* These replace Framer Motion for better performance */
 
 @keyframes fade-up {
   from {
@@ -98,7 +97,6 @@ body {
 }
 
 /* ===== FOCUS STYLES ===== */
-/* Enhanced focus visibility for accessibility */
 
 :focus {
   outline: none;
@@ -136,25 +134,21 @@ body {
 
 /* ===== UTILITY CLASSES ===== */
 
-/* Improved image loading */
 img {
   content-visibility: auto;
 }
 
-/* Better text rendering */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Selection styling */
 ::selection {
   background-color: #1C1C1C;
   color: #F9F8F4;
 }
 
-/* Spinner animation for loading states */
 @keyframes spin {
   to {
     transform: rotate(360deg);

@@ -18,30 +18,13 @@ localhost {
     # Compression
     encode gzip zstd
 
-    # Security Headers
+    # Security Headers (CSP temporarily removed for debugging)
     header {
-        # Prevent MIME type sniffing
         X-Content-Type-Options "nosniff"
-        
-        # Prevent clickjacking
         X-Frame-Options "DENY"
-        
-        # XSS Protection (legacy browsers)
         X-XSS-Protection "1; mode=block"
-        
-        # HTTPS enforcement (1 year)
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        
-        # Referrer Policy
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
         Referrer-Policy "strict-origin-when-cross-origin"
-        
-        # Permissions Policy (restrict browser features)
-        Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
-        
-        # Content Security Policy
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'"
-        
-        # Remove server identification
         -Server
     }
 }

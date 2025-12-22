@@ -8,7 +8,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o main .
 
 # Run Stage - using alpine so healthcheck works
-FROM alpine:3.22
+FROM alpine:3.21
 WORKDIR /app
 
 # Install wget for healthcheck and ca-certificates for HTTPS
