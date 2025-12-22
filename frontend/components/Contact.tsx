@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from 'react';
+import { useInView } from '@/hooks/useInView';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -14,6 +15,7 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const formRef = useRef<HTMLFormElement>(null);
+  const { ref: sectionRef, isInView } = useInView({ threshold: 0.1 });
 
   const validateForm = (data: { name: string; email: string; message: string }): FormErrors => {
     const newErrors: FormErrors = {};
@@ -33,7 +35,7 @@ export default function Contact() {
     if (!data.message.trim()) {
       newErrors.message = 'Message is required';
     } else if (data.message.length > 5000) {
-      newErrors.message = 'Message is too long (max 5000 characters)';
+      newErrors.message = 'Message is too long';
     }
 
     return newErrors;
@@ -69,160 +71,213 @@ export default function Contact() {
 
       if (res.ok) {
         setStatus('success');
-        setMessage('Message sent successfully. We will be in touch shortly.');
+        setMessage('Your inquiry has been received. We look forward to connecting.');
         formRef.current?.reset();
       } else {
         setStatus('error');
-        setMessage(result.message || 'Unable to send. Please try again later.');
+        setMessage(result.message || 'Unable to send. Please try again.');
       }
     } catch {
       setStatus('error');
-      setMessage('Unable to send. Please check your connection and try again.');
+      setMessage('Unable to send. Please check your connection.');
     }
   };
 
   return (
-    <section id="contact" className="py-32 px-6 md:px-20 bg-white">
-      <div className="max-w-xl mx-auto text-center">
-        <h2 className="font-serif text-5xl mb-4">Let&apos;s Create Together</h2>
-        <p className="font-sans text-xs text-gray-400 mb-16 uppercase tracking-[0.2em]">
-          Inquire for availability
-        </p>
+    <section id="contact" className="py-32 md:py-40 bg-white" ref={sectionRef}>
+      <div className="px-6 md:px-20 max-w-7xl mx-auto">
+        {/* Section label */}
+        <div className="flex items-center gap-6 mb-20">
+          <div 
+            className={`flex-grow h-px bg-carmel-text/10 animate-line-draw ${
+              isInView ? 'in-view' : ''
+            }`}
+          />
+          <span 
+            className={`font-sans text-[10px] tracking-[0.4em] uppercase text-carmel-text/40 animate-fade-up ${
+              isInView ? 'in-view' : ''
+            }`}
+            style={{ animationDelay: '150ms' }}
+          >
+            Get in Touch
+          </span>
+          <div 
+            className={`flex-grow h-px bg-carmel-text/10 animate-line-draw ${
+              isInView ? 'in-view' : ''
+            }`}
+            style={{ animationDelay: '100ms', transformOrigin: 'right' }}
+          />
+        </div>
+
+        {/* Header */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <h2 
+            className={`font-serif text-4xl md:text-5xl lg:text-6xl mb-6 animate-blur-reveal ${
+              isInView ? 'in-view' : ''
+            }`}
+            style={{ animationDelay: '200ms' }}
+          >
+            Let&apos;s Create<br />
+            <span className="italic text-carmel-text/40">Something Extraordinary</span>
+          </h2>
+          <p 
+            className={`font-sans text-sm text-carmel-text/50 animate-fade-up ${
+              isInView ? 'in-view' : ''
+            }`}
+            style={{ animationDelay: '350ms' }}
+          >
+            Every great project starts with a conversation
+          </p>
+        </div>
         
+        {/* Form */}
         <form 
           ref={formRef}
           onSubmit={handleSubmit} 
-          className="space-y-8 text-left"
+          className={`max-w-xl mx-auto animate-fade-up ${isInView ? 'in-view' : ''}`}
+          style={{ animationDelay: '450ms' }}
           noValidate
         >
-          <div>
-            <label 
-              htmlFor="contact-name"
-              className="text-[10px] uppercase tracking-widest text-gray-400 block mb-2"
-            >
-              Name
-            </label>
-            <input 
-              id="contact-name"
-              name="name" 
-              type="text" 
-              autoComplete="name"
-              className={`w-full border-b py-2 focus:outline-none transition bg-transparent font-serif text-xl ${
-                errors.name 
-                  ? 'border-red-400 focus:border-red-500' 
-                  : 'border-gray-200 focus:border-black'
-              }`}
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
-              disabled={status === 'loading'}
-              required 
-            />
-            {errors.name && (
-              <p id="name-error" className="text-red-500 text-xs mt-1" role="alert">
-                {errors.name}
-              </p>
-            )}
+          <div className="space-y-10">
+            {/* Name */}
+            <div className="group">
+              <label 
+                htmlFor="contact-name"
+                className="flex items-center gap-3 mb-4"
+              >
+                <span className="text-carmel-text/20 text-[10px] font-mono">01</span>
+                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
+                  Your Name
+                </span>
+              </label>
+              <input 
+                id="contact-name"
+                name="name" 
+                type="text" 
+                autoComplete="name"
+                placeholder="Jane Smith"
+                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 ${
+                  errors.name 
+                    ? 'border-red-400' 
+                    : 'border-carmel-text/10 focus:border-carmel-text/40'
+                }`}
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
+                disabled={status === 'loading'}
+                required 
+              />
+              {errors.name && (
+                <p id="name-error" className="text-red-500 text-xs mt-2" role="alert">
+                  {errors.name}
+                </p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="group">
+              <label 
+                htmlFor="contact-email"
+                className="flex items-center gap-3 mb-4"
+              >
+                <span className="text-carmel-text/20 text-[10px] font-mono">02</span>
+                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
+                  Email Address
+                </span>
+              </label>
+              <input 
+                id="contact-email"
+                name="email" 
+                type="email" 
+                autoComplete="email"
+                placeholder="jane@company.com"
+                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 ${
+                  errors.email 
+                    ? 'border-red-400' 
+                    : 'border-carmel-text/10 focus:border-carmel-text/40'
+                }`}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                disabled={status === 'loading'}
+                required 
+              />
+              {errors.email && (
+                <p id="email-error" className="text-red-500 text-xs mt-2" role="alert">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Message */}
+            <div className="group">
+              <label 
+                htmlFor="contact-message"
+                className="flex items-center gap-3 mb-4"
+              >
+                <span className="text-carmel-text/20 text-[10px] font-mono">03</span>
+                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
+                  Tell Us About Your Project
+                </span>
+              </label>
+              <textarea 
+                id="contact-message"
+                name="message" 
+                rows={4}
+                placeholder="Describe your vision..."
+                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 resize-none ${
+                  errors.message 
+                    ? 'border-red-400' 
+                    : 'border-carmel-text/10 focus:border-carmel-text/40'
+                }`}
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? 'message-error' : undefined}
+                disabled={status === 'loading'}
+                required
+              />
+              {errors.message && (
+                <p id="message-error" className="text-red-500 text-xs mt-2" role="alert">
+                  {errors.message}
+                </p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <label 
-              htmlFor="contact-email"
-              className="text-[10px] uppercase tracking-widest text-gray-400 block mb-2"
-            >
-              Email
-            </label>
-            <input 
-              id="contact-email"
-              name="email" 
-              type="email" 
-              autoComplete="email"
-              className={`w-full border-b py-2 focus:outline-none transition bg-transparent font-serif text-xl ${
-                errors.email 
-                  ? 'border-red-400 focus:border-red-500' 
-                  : 'border-gray-200 focus:border-black'
-              }`}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
+          {/* Submit */}
+          <div className="mt-14">
+            <button 
+              type="submit" 
               disabled={status === 'loading'}
-              required 
-            />
-            {errors.email && (
-              <p id="email-error" className="text-red-500 text-xs mt-1" role="alert">
-                {errors.email}
-              </p>
-            )}
+              className="group relative w-full py-6 text-[11px] tracking-[0.3em] uppercase overflow-hidden border border-carmel-text/20 transition-all duration-500 hover:border-carmel-text/40 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text focus-visible:ring-offset-4"
+            >
+              <span className="absolute inset-0 bg-carmel-text origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out" />
+              
+              <span className="relative z-10 flex items-center justify-center gap-3 transition-colors duration-500 delay-100 group-hover:text-white">
+                {status === 'loading' ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Sending</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Inquiry</span>
+                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </>
+                )}
+              </span>
+            </button>
           </div>
 
-          <div>
-            <label 
-              htmlFor="contact-message"
-              className="text-[10px] uppercase tracking-widest text-gray-400 block mb-2"
-            >
-              Project Details
-            </label>
-            <textarea 
-              id="contact-message"
-              name="message" 
-              rows={4} 
-              className={`w-full border-b py-2 focus:outline-none transition bg-transparent resize-none font-serif text-xl ${
-                errors.message 
-                  ? 'border-red-400 focus:border-red-500' 
-                  : 'border-gray-200 focus:border-black'
-              }`}
-              aria-invalid={!!errors.message}
-              aria-describedby={errors.message ? 'message-error' : undefined}
-              disabled={status === 'loading'}
-              required
-            />
-            {errors.message && (
-              <p id="message-error" className="text-red-500 text-xs mt-1" role="alert">
-                {errors.message}
-              </p>
-            )}
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={status === 'loading'}
-            className="w-full bg-carmel-text text-white py-5 uppercase tracking-[0.2em] text-[10px] hover:bg-neutral-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text focus-visible:ring-offset-2 flex items-center justify-center gap-2"
-          >
-            {status === 'loading' ? (
-              <>
-                <svg 
-                  className="animate-spin h-4 w-4" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" 
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
-                    strokeWidth="4"
-                  />
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                <span>Sending...</span>
-              </>
-            ) : (
-              'Send Inquiry'
-            )}
-          </button>
-
+          {/* Status message */}
           {message && (
             <p 
-              className={`text-center text-sm mt-6 font-sans ${
+              className={`text-center text-sm mt-8 ${
                 status === 'success' ? 'text-green-600' : 'text-red-500'
               }`}
               role="status"
-              aria-live="polite"
             >
               {message}
             </p>
