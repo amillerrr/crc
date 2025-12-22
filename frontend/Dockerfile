@@ -1,24 +1,35 @@
 # Stage 1: Install Dependencies & Build
-FROM node:25-alpine3.22 AS builder
+FROM node:25-alpine AS builder
 WORKDIR /app
+
+# Copy package files first for better caching
 COPY package*.json ./
-RUN npm install
+RUN npm install --only=production=false
+
+# Copy source and build
 COPY . .
 RUN npm run build
 
 # Stage 2: Production Runner
-FROM node:25-alpine3.22 AS runner
+FROM node:25-alpine AS runner
 WORKDIR /app
+
 ENV NODE_ENV=production
 
 # Security: Run as non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
+# Copy only necessary files
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
+
 EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
 CMD ["node", "server.js"]

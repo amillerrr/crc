@@ -1,5 +1,20 @@
+{
+    # Global options
+    email your-email@example.com
+}
+
 localhost {
-    # Route /api/contact requests to the Go Backend
+    # Rate limiting for contact endpoint (10 requests per minute per IP)
+    @contact_api path /api/contact
+    rate_limit @contact_api {
+        zone contact_zone {
+            key {remote_host}
+            events 10
+            window 1m
+        }
+    }
+
+    # Route /api/* requests to the Go Backend
     handle /api/* {
         uri strip_prefix /api
         reverse_proxy backend:8080
@@ -10,10 +25,33 @@ localhost {
         reverse_proxy frontend:3000
     }
 
-    # Security Headers & Compression
-    encode gzip
+    # Compression
+    encode gzip zstd
+
+    # Security Headers
     header {
+        # Prevent MIME type sniffing
         X-Content-Type-Options "nosniff"
+        
+        # Prevent clickjacking
         X-Frame-Options "DENY"
+        
+        # XSS Protection (legacy browsers)
+        X-XSS-Protection "1; mode=block"
+        
+        # HTTPS enforcement (1 year)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Referrer Policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Permissions Policy (restrict browser features)
+        Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+        
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'"
+        
+        # Remove server identification
+        -Server
     }
 }
