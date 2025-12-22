@@ -14,13 +14,13 @@ import (
 
 // Config constants
 const (
-	maxRequestSize = 1 << 20 // 1MB max request body
-	maxNameLen     = 200
-	maxEmailLen    = 254
-	maxMessageLen  = 5000
-	readTimeout    = 10 * time.Second
-	writeTimeout   = 10 * time.Second
-	idleTimeout    = 60 * time.Second
+	maxRequestSize  = 1 << 20 // 1MB max request body
+	maxNameLen      = 200
+	maxEmailLen     = 254
+	maxMessageLen   = 5000
+	readTimeout     = 10 * time.Second
+	writeTimeout    = 10 * time.Second
+	idleTimeout     = 60 * time.Second
 	shutdownTimeout = 30 * time.Second
 )
 

@@ -33,7 +33,7 @@ export default function Portfolio() {
     <section id="portfolio" className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto text-center mb-20">
         <h2 className="font-serif text-5xl mb-3">Selected Works</h2>
-        <p className="font-script text-4xl text-gray-400">moments we've crafted</p>
+        <p className="font-script text-4xl text-gray-400">moments we&apos;ve crafted</p>
       </div>
       
       {/* Masonry-style Grid */}

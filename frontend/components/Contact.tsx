@@ -85,7 +85,7 @@ export default function Contact() {
   return (
     <section id="contact" className="py-32 px-6 md:px-20 bg-white">
       <div className="max-w-xl mx-auto text-center">
-        <h2 className="font-serif text-5xl mb-4">Let's Create Together</h2>
+        <h2 className="font-serif text-5xl mb-4">Let&apos;s Create Together</h2>
         <p className="font-sans text-xs text-gray-400 mb-16 uppercase tracking-[0.2em]">
           Inquire for availability
         </p>

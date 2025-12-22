@@ -4,16 +4,6 @@
 }
 
 localhost {
-    # Rate limiting for contact endpoint (10 requests per minute per IP)
-    @contact_api path /api/contact
-    rate_limit @contact_api {
-        zone contact_zone {
-            key {remote_host}
-            events 10
-            window 1m
-        }
-    }
-
     # Route /api/* requests to the Go Backend
     handle /api/* {
         uri strip_prefix /api

@@ -14,7 +14,7 @@ export default function About() {
           />
         </div>
         <div className="absolute -bottom-6 -right-6 md:right-10 bg-white p-6 shadow-xl">
-          <p className="font-serif italic text-xl">"Details are not just details."</p>
+          <p className="font-serif italic text-xl">&quot;Details are not just details.&quot;</p>
         </div>
       </div>
       
@@ -25,7 +25,7 @@ export default function About() {
         </h2>
         <p className="font-sans text-gray-600 leading-loose mb-8 text-sm md:text-base">
           Carmel Rose Collective was born from a desire to blend strategy with soul. 
-          We believe that an event is not just a date on a calendar, but a chapter in a brand's story. 
+          We believe that an event is not just a date on a calendar, but a chapter in a brand&apos;s story. 
           We obsess over the tactile, the visual, and the emotional resonance of every space we touch.
         </p>
         <div className="grid grid-cols-2 gap-8 mt-12 border-t border-gray-300 pt-8">
