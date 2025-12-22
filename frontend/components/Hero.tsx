@@ -10,12 +10,12 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 text-center text-carmel-text px-4 w-full max-w-[90vw]">
-        <p className="font-sans text-xs tracking-[0.4em] uppercase mb-6 md:mb-8 text-gray-500 animate-fade-up">
+        <p className="font-sans text-xs tracking-[0.4em] uppercase mb-6 md:mb-8 text-gray-500">
           Est. 2024
         </p>
 
         {/* SVG Logo - larger sizes for more impact */}
-        <h1 className="mb-8 md:mb-10 animate-fade-up">
+        <h1 className="mb-8 md:mb-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/CRC-Logo.svg"
@@ -26,7 +26,7 @@ export default function Hero() {
 
         <a 
           href="#services"
-          className="inline-block border border-carmel-text px-12 py-4 text-[10px] tracking-[0.25em] uppercase hover:bg-carmel-text hover:text-white transition duration-500 animate-fade-in focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text focus-visible:ring-offset-2"
+          className="inline-block border border-carmel-text px-12 py-4 text-[10px] tracking-[0.25em] uppercase hover:bg-carmel-text hover:text-white transition duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text focus-visible:ring-offset-2"
         >
           Discover
         </a>
