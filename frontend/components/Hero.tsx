@@ -4,14 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 export default function Hero() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [animationComplete, setAnimationComplete] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-
-  // Mark animation as complete after it finishes
-  useEffect(() => {
-    const timer = setTimeout(() => setAnimationComplete(true), 3500);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Detect screen size for responsive logo scaling
   useEffect(() => {
@@ -45,29 +38,33 @@ export default function Hero() {
   const easedProgress = easeOutCubic(scrollProgress);
 
   // Responsive logo position and scale calculations
-  const startTop = 50;
+  // CHANGED: Moved startTop from 50 to 40 to lift logo up and avoid overlap
+  const startTop = 40; 
   const endTop = isMobile ? 3.5 : 5;
   const logoTop = startTop - (easedProgress * (startTop - endTop));
   
   const startScale = 1;
-  const endScale = isMobile ? 0.65 : 0.25;
+  const endScale = isMobile ? 0.65 : 0.35;
   const logoScale = startScale - (easedProgress * (startScale - endScale));
   
-  // Fade out hero content on scroll (only after animation completes)
+  // Fade out hero content on scroll
   const contentOpacity = Math.max(0, 1 - scrollProgress * 2.5);
 
   return (
     <section ref={heroRef} className="relative min-h-svh w-full bg-carmel-bg flex flex-col overflow-hidden">
-      {/* Logo - CSS animation for fade in */}
+      {/* Logo Container */}
       <div 
-        className="fixed left-1/2 z-50 pointer-events-none hero-logo hero-fade-in-logo"
+        className="fixed left-1/2 z-50 pointer-events-none hero-logo"
         style={{
           top: `${logoTop}%`,
           transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
-          ...(animationComplete && scrollProgress > 0 ? { opacity: 1 } : {}),
         }}
       >
-        <a href="/" className="pointer-events-auto hover:opacity-70 transition-opacity duration-200">
+        {/* Inner Anchor handles the fade-in animation */}
+        <a 
+          href="/" 
+          className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200 hero-fade-in-logo"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/CRC-Logo.svg"
@@ -80,32 +77,25 @@ export default function Hero() {
       {/* Main content area */}
       <div className="flex-1 flex items-center justify-center px-6 md:px-12">
         <div className="w-full max-w-4xl text-center">
-          {/* Est. 2025 */}
-          <p 
-            className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/25 mb-8 md:mb-14 hero-fade-in-delay-1"
-            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
-          >
-            Est. 2025
-          </p>
-
-          {/* Spacer for logo */}
-          <div className="h-[100px] sm:h-[120px] md:h-[180px] lg:h-[200px]" />
+          
+          {/* Spacer - Keeps content pushed down appropriately */}
+          <div className="h-[80px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
 
           {/* Tagline */}
           <p 
-            className="mt-8 md:mt-16 text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-balance hero-fade-in-delay-2"
-            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
+            className="mt-8 md:mt-16 text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-balance hero-fade-in-delay-1"
+            style={scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
           >
             Experiential Marketing &amp; Brand Activation
           </p>
 
           {/* CTA */}
           <div 
-            className="mt-8 md:mt-12 hero-fade-in-delay-3"
-            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
+            className="mt-8 md:mt-12 hero-fade-in-delay-2"
+            style={scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
           >
             <a 
-              href="#services"
+              href="#portfolio"
               className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/70 transition-colors duration-500"
             >
               <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/40 transition-colors duration-500">
