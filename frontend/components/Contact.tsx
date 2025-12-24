@@ -4,42 +4,11 @@ import { useInView } from '@/hooks/useInView';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
-interface FormErrors {
-  name?: string;
-  email?: string;
-  message?: string;
-}
-
 export default function Contact() {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState<FormErrors>({});
   const formRef = useRef<HTMLFormElement>(null);
   const { ref: sectionRef, isInView } = useInView({ threshold: 0.1 });
-
-  const validateForm = (data: { name: string; email: string; message: string }): FormErrors => {
-    const newErrors: FormErrors = {};
-    
-    if (!data.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (data.name.length > 200) {
-      newErrors.name = 'Name is too long';
-    }
-
-    if (!data.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    if (!data.message.trim()) {
-      newErrors.message = 'Message is required';
-    } else if (data.message.length > 5000) {
-      newErrors.message = 'Message is too long';
-    }
-
-    return newErrors;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,13 +20,12 @@ export default function Contact() {
       message: formData.get('message') as string,
     };
 
-    const validationErrors = validateForm(data);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    if (!data.name || !data.email || !data.message) {
+      setStatus('error');
+      setMessage('Please fill in all fields.');
       return;
     }
 
-    setErrors({});
     setStatus('loading');
 
     try {
@@ -71,11 +39,11 @@ export default function Contact() {
 
       if (res.ok) {
         setStatus('success');
-        setMessage('Your inquiry has been received. We look forward to connecting.');
+        setMessage('Thank you. We\'ll be in touch soon.');
         formRef.current?.reset();
       } else {
         setStatus('error');
-        setMessage(result.message || 'Unable to send. Please try again.');
+        setMessage(result.message || 'Something went wrong. Please try again.');
       }
     } catch {
       setStatus('error');
@@ -84,200 +52,100 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-32 md:py-40 bg-white" ref={sectionRef}>
-      <div className="px-6 md:px-20 max-w-7xl mx-auto">
-        {/* Section label */}
-        <div className="flex items-center gap-6 mb-20">
-          <div 
-            className={`flex-grow h-px bg-carmel-text/10 animate-line-draw ${
-              isInView ? 'in-view' : ''
+    <section 
+      id="contact" 
+      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-warm-white" 
+      ref={sectionRef}
+    >
+      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-lg mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10 sm:mb-12 md:mb-14">
+          <h2 
+            className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
-          />
-          <span 
-            className={`font-sans text-[10px] tracking-[0.4em] uppercase text-carmel-text/40 animate-fade-up ${
-              isInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '150ms' }}
           >
             Get in Touch
-          </span>
-          <div 
-            className={`flex-grow h-px bg-carmel-text/10 animate-line-draw ${
-              isInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '100ms', transformOrigin: 'right' }}
-          />
-        </div>
-
-        {/* Header */}
-        <div className="max-w-2xl mx-auto text-center mb-16">
-          <h2 
-            className={`font-serif text-4xl md:text-5xl lg:text-6xl mb-6 animate-blur-reveal ${
-              isInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '200ms' }}
-          >
-            Let&apos;s Create<br />
-            <span className="italic text-carmel-text/40">Something Extraordinary</span>
           </h2>
-          <p 
-            className={`font-sans text-sm text-carmel-text/50 animate-fade-up ${
-              isInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '350ms' }}
-          >
-            Every great project starts with a conversation
-          </p>
         </div>
         
         {/* Form */}
         <form 
           ref={formRef}
           onSubmit={handleSubmit} 
-          className={`max-w-xl mx-auto animate-fade-up ${isInView ? 'in-view' : ''}`}
-          style={{ animationDelay: '450ms' }}
-          noValidate
+          className={`space-y-5 sm:space-y-6 transition-all duration-700 ${
+            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
+          style={{ transitionDelay: '150ms' }}
         >
-          <div className="space-y-10">
-            {/* Name */}
-            <div className="group">
-              <label 
-                htmlFor="contact-name"
-                className="flex items-center gap-3 mb-4"
-              >
-                <span className="text-carmel-text/20 text-[10px] font-mono">01</span>
-                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
-                  Your Name
-                </span>
-              </label>
-              <input 
-                id="contact-name"
-                name="name" 
-                type="text" 
-                autoComplete="name"
-                placeholder="Jane Smith"
-                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 ${
-                  errors.name 
-                    ? 'border-red-400' 
-                    : 'border-carmel-text/10 focus:border-carmel-text/40'
-                }`}
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? 'name-error' : undefined}
-                disabled={status === 'loading'}
-                required 
-              />
-              {errors.name && (
-                <p id="name-error" className="text-red-500 text-xs mt-2" role="alert">
-                  {errors.name}
-                </p>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="group">
-              <label 
-                htmlFor="contact-email"
-                className="flex items-center gap-3 mb-4"
-              >
-                <span className="text-carmel-text/20 text-[10px] font-mono">02</span>
-                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
-                  Email Address
-                </span>
-              </label>
-              <input 
-                id="contact-email"
-                name="email" 
-                type="email" 
-                autoComplete="email"
-                placeholder="jane@company.com"
-                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 ${
-                  errors.email 
-                    ? 'border-red-400' 
-                    : 'border-carmel-text/10 focus:border-carmel-text/40'
-                }`}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : undefined}
-                disabled={status === 'loading'}
-                required 
-              />
-              {errors.email && (
-                <p id="email-error" className="text-red-500 text-xs mt-2" role="alert">
-                  {errors.email}
-                </p>
-              )}
-            </div>
-
-            {/* Message */}
-            <div className="group">
-              <label 
-                htmlFor="contact-message"
-                className="flex items-center gap-3 mb-4"
-              >
-                <span className="text-carmel-text/20 text-[10px] font-mono">03</span>
-                <span className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/40 transition-colors duration-300 group-focus-within:text-carmel-text/70">
-                  Tell Us About Your Project
-                </span>
-              </label>
-              <textarea 
-                id="contact-message"
-                name="message" 
-                rows={4}
-                placeholder="Describe your vision..."
-                className={`w-full bg-transparent border-b py-3 font-serif text-xl placeholder:text-carmel-text/20 focus:outline-none transition-colors duration-300 resize-none ${
-                  errors.message 
-                    ? 'border-red-400' 
-                    : 'border-carmel-text/10 focus:border-carmel-text/40'
-                }`}
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? 'message-error' : undefined}
-                disabled={status === 'loading'}
-                required
-              />
-              {errors.message && (
-                <p id="message-error" className="text-red-500 text-xs mt-2" role="alert">
-                  {errors.message}
-                </p>
-              )}
-            </div>
+          <div>
+            <label 
+              htmlFor="name"
+              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+            >
+              Name
+            </label>
+            <input 
+              id="name"
+              name="name" 
+              type="text" 
+              autoComplete="name"
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 placeholder:text-carmel-text/20"
+              disabled={status === 'loading'}
+              required 
+            />
           </div>
 
-          {/* Submit */}
-          <div className="mt-14">
+          <div>
+            <label 
+              htmlFor="email"
+              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+            >
+              Email
+            </label>
+            <input 
+              id="email"
+              name="email" 
+              type="email" 
+              autoComplete="email"
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 placeholder:text-carmel-text/20"
+              disabled={status === 'loading'}
+              required 
+            />
+          </div>
+
+          <div>
+            <label 
+              htmlFor="message"
+              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+            >
+              Message
+            </label>
+            <textarea 
+              id="message"
+              name="message" 
+              rows={4}
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 resize-none placeholder:text-carmel-text/20"
+              disabled={status === 'loading'}
+              required
+            />
+          </div>
+
+          <div className="pt-3 sm:pt-4">
             <button 
               type="submit" 
               disabled={status === 'loading'}
-              className="group relative w-full py-6 text-[11px] tracking-[0.3em] uppercase overflow-hidden border border-carmel-text/20 transition-all duration-500 hover:border-carmel-text/40 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-carmel-text focus-visible:ring-offset-4"
+              className="w-full py-3 sm:py-3.5 text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <span className="absolute inset-0 bg-carmel-text origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out" />
-              
-              <span className="relative z-10 flex items-center justify-center gap-3 transition-colors duration-500 delay-100 group-hover:text-white">
-                {status === 'loading' ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    <span>Sending</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Send Inquiry</span>
-                    <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </>
-                )}
-              </span>
+              {status === 'loading' ? 'Sending...' : 'Send Message'}
             </button>
           </div>
 
-          {/* Status message */}
           {message && (
             <p 
-              className={`text-center text-sm mt-8 ${
-                status === 'success' ? 'text-green-600' : 'text-red-500'
+              className={`text-center text-sm ${
+                status === 'success' ? 'text-carmel-text/50' : 'text-red-500/70'
               }`}
-              role="status"
             >
               {message}
             </p>

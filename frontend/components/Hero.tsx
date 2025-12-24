@@ -1,168 +1,119 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 export default function Hero() {
-  const [loaded, setLoaded] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
+  // Mark animation as complete after it finishes
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 100);
+    const timer = setTimeout(() => setAnimationComplete(true), 3500);
     return () => clearTimeout(timer);
   }, []);
 
+  // Detect screen size for responsive logo scaling
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const handleScroll = useCallback(() => {
+    if (!heroRef.current) return;
+    const heroHeight = heroRef.current.offsetHeight;
+    const scrollY = window.scrollY;
+    
+    // Progress: 0 at top, 1 when logo should be in final header position
+    const lockPoint = heroHeight * 0.45;
+    const progress = Math.min(scrollY / lockPoint, 1);
+    setScrollProgress(progress);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+  // Easing function for smoother animation
+  const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+  const easedProgress = easeOutCubic(scrollProgress);
+
+  // Responsive logo position and scale calculations
+  const startTop = 50;
+  const endTop = isMobile ? 3.5 : 5;
+  const logoTop = startTop - (easedProgress * (startTop - endTop));
+  
+  const startScale = 1;
+  const endScale = isMobile ? 0.65 : 0.25;
+  const logoScale = startScale - (easedProgress * (startScale - endScale));
+  
+  // Fade out hero content on scroll (only after animation completes)
+  const contentOpacity = Math.max(0, 1 - scrollProgress * 2.5);
+
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-carmel-bg">
-      {/* Subtle grid lines - editorial touch */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute left-[20%] top-0 bottom-0 w-px bg-carmel-text/[0.04]" />
-        <div className="absolute left-[40%] top-0 bottom-0 w-px bg-carmel-text/[0.04]" />
-        <div className="absolute left-[60%] top-0 bottom-0 w-px bg-carmel-text/[0.04]" />
-        <div className="absolute left-[80%] top-0 bottom-0 w-px bg-carmel-text/[0.04]" />
-      </div>
-
-      {/* Large background word - parallax */}
+    <section ref={heroRef} className="relative min-h-svh w-full bg-carmel-bg flex flex-col overflow-hidden">
+      {/* Logo - CSS animation for fade in */}
       <div 
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-serif text-carmel-text/[0.03] pointer-events-none select-none whitespace-nowrap transition-all duration-[2s] ease-out ${
-          loaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-        }`}
-        style={{ transform: `translate(-50%, calc(-50% + ${scrollY * 0.15}px))` }}
-        aria-hidden="true"
+        className="fixed left-1/2 z-50 pointer-events-none hero-logo hero-fade-in-logo"
+        style={{
+          top: `${logoTop}%`,
+          transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
+          ...(animationComplete && scrollProgress > 0 ? { opacity: 1 } : {}),
+        }}
       >
-        Experience
-      </div>
-
-      {/* Corner accents */}
-      <div className={`absolute top-8 left-8 transition-all duration-1000 delay-[800ms] ${loaded ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
-        <div className="w-20 h-px bg-carmel-text/20" />
-        <div className="w-px h-20 bg-carmel-text/20" />
-      </div>
-      <div className={`absolute top-8 right-8 transition-all duration-1000 delay-[800ms] ${loaded ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
-        <div className="w-20 h-px bg-carmel-text/20 ml-auto" />
-        <div className="w-px h-20 bg-carmel-text/20 ml-auto" />
-      </div>
-      <div className={`absolute bottom-8 left-8 transition-all duration-1000 delay-[800ms] ${loaded ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
-        <div className="w-px h-20 bg-carmel-text/20" />
-        <div className="w-20 h-px bg-carmel-text/20" />
-      </div>
-      <div className={`absolute bottom-8 right-8 transition-all duration-1000 delay-[800ms] ${loaded ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true">
-        <div className="w-px h-20 bg-carmel-text/20 ml-auto" />
-        <div className="w-20 h-px bg-carmel-text/20 ml-auto" />
-      </div>
-
-      {/* Main content container */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
-        {/* Established line */}
-        <div 
-          className={`flex items-center gap-6 mb-10 transition-all duration-1000 ease-out ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-6'
-          }`}
-        >
-          <div className={`h-px bg-carmel-text/30 transition-all duration-1000 delay-300 ${loaded ? 'w-16' : 'w-0'}`} />
-          <span className="font-sans text-[10px] tracking-[0.5em] uppercase text-carmel-text/50">
-            Est. 2025
-          </span>
-          <div className={`h-px bg-carmel-text/30 transition-all duration-1000 delay-300 ${loaded ? 'w-16' : 'w-0'}`} />
-        </div>
-
-        {/* Main logo */}
-        <h1 
-          className={`mb-8 transition-all duration-[1.2s] ease-out delay-150 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-          }`}
-          style={{ 
-            filter: loaded ? 'blur(0)' : 'blur(8px)',
-            transition: 'opacity 1.2s ease-out 150ms, transform 1.2s ease-out 150ms, filter 1.2s ease-out 150ms'
-          }}
-        >
+        <a href="/" className="pointer-events-auto hover:opacity-70 transition-opacity duration-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/CRC-Logo.svg"
             alt="Carmel Rose Collective"
-            className="w-[300px] h-auto sm:w-[380px] md:w-[500px] lg:w-[640px] xl:w-[780px] mx-auto"
+            className="w-[280px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
           />
-        </h1>
+        </a>
+      </div>
 
-        {/* Tagline */}
-        <p 
-          className={`font-sans text-[13px] md:text-[14px] tracking-[0.2em] text-carmel-text/50 text-center mb-14 transition-all duration-1000 ease-out delay-500 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          Crafting Unforgettable Brand Experiences
-        </p>
-
-        {/* CTA */}
-        <div 
-          className={`transition-all duration-1000 ease-out delay-700 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <a 
-            href="#services"
-            className="group relative inline-flex items-center"
+      {/* Main content area */}
+      <div className="flex-1 flex items-center justify-center px-6 md:px-12">
+        <div className="w-full max-w-4xl text-center">
+          {/* Est. 2025 */}
+          <p 
+            className="text-[10px] tracking-[0.3em] uppercase text-carmel-text/25 mb-8 md:mb-14 hero-fade-in-delay-1"
+            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
           >
-            {/* Left line */}
-            <span className="w-16 h-px bg-carmel-text/20 mr-6 transition-all duration-500 origin-right group-hover:scale-x-50 group-hover:bg-carmel-text/40" />
-            
-            {/* Button */}
-            <span className="relative px-12 py-5 text-[10px] tracking-[0.3em] uppercase overflow-hidden border border-carmel-text/20 transition-all duration-500 group-hover:border-carmel-text/40">
-              <span className="absolute inset-0 bg-carmel-text origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out" />
-              <span className="relative z-10 transition-colors duration-500 delay-100 group-hover:text-carmel-bg">
-                Discover Our Work
+            Est. 2025
+          </p>
+
+          {/* Spacer for logo */}
+          <div className="h-[100px] sm:h-[120px] md:h-[180px] lg:h-[200px]" />
+
+          {/* Tagline */}
+          <p 
+            className="mt-8 md:mt-16 text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-balance hero-fade-in-delay-2"
+            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
+          >
+            Experiential Marketing &amp; Brand Activation
+          </p>
+
+          {/* CTA */}
+          <div 
+            className="mt-8 md:mt-12 hero-fade-in-delay-3"
+            style={animationComplete && scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
+          >
+            <a 
+              href="#services"
+              className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/70 transition-colors duration-500"
+            >
+              <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/40 transition-colors duration-500">
+                View Our Work
               </span>
-            </span>
-            
-            {/* Right line */}
-            <span className="w-16 h-px bg-carmel-text/20 ml-6 transition-all duration-500 origin-left group-hover:scale-x-50 group-hover:bg-carmel-text/40" />
-          </a>
+            </a>
+          </div>
         </div>
-      </div>
-
-      {/* Bottom scroll indicator - properly positioned */}
-      <div 
-        className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center transition-all duration-1000 delay-1000 ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <span className="text-[9px] tracking-[0.35em] uppercase text-carmel-text/35 mb-4">
-          Scroll
-        </span>
-        <div className="relative w-px h-10 bg-carmel-text/10 overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-carmel-text/40 animate-scroll-pulse" />
-        </div>
-      </div>
-
-      {/* Side labels - editorial magazine style */}
-      <div 
-        className={`hidden lg:flex absolute left-10 top-1/2 -translate-y-1/2 items-center gap-4 transition-all duration-1000 delay-[1100ms] ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <div className="w-8 h-px bg-carmel-text/20" />
-        <span 
-          className="text-[9px] tracking-[0.3em] uppercase text-carmel-text/30 origin-center -rotate-90 whitespace-nowrap"
-        >
-          Experiential Marketing
-        </span>
-      </div>
-
-      <div 
-        className={`hidden lg:flex absolute right-10 top-1/2 -translate-y-1/2 items-center gap-4 transition-all duration-1000 delay-[1100ms] ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <span 
-          className="text-[9px] tracking-[0.3em] uppercase text-carmel-text/30 origin-center rotate-90 whitespace-nowrap"
-        >
-          Brand Activation
-        </span>
-        <div className="w-8 h-px bg-carmel-text/20" />
       </div>
     </section>
   );

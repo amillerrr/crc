@@ -1,1 +1,1 @@
-export { useInView, useStaggeredInView } from './useInView';
+export { useInView } from './useInView';

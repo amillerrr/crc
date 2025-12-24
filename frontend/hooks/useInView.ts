@@ -19,7 +19,7 @@ export function useInView<T extends HTMLElement = HTMLDivElement>({
     const element = ref.current;
     if (!element) return;
 
-    // Check for reduced motion preference
+    // Respect reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       setIsInView(true);
@@ -46,28 +46,4 @@ export function useInView<T extends HTMLElement = HTMLDivElement>({
   }, [threshold, rootMargin, triggerOnce]);
 
   return { ref, isInView };
-}
-
-// Hook for staggered children animations
-export function useStaggeredInView<T extends HTMLElement = HTMLDivElement>(
-  itemCount: number,
-  options: UseInViewOptions = {}
-) {
-  const { ref, isInView } = useInView<T>(options);
-  
-  const getDelayClass = (index: number) => {
-    const delays = [
-      'animation-delay-0',
-      'animation-delay-100',
-      'animation-delay-200',
-      'animation-delay-300',
-      'animation-delay-400',
-      'animation-delay-500',
-      'animation-delay-600',
-      'animation-delay-700',
-    ];
-    return delays[index % delays.length];
-  };
-
-  return { ref, isInView, getDelayClass };
 }

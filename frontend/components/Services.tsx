@@ -3,140 +3,71 @@ import { useInView } from '@/hooks/useInView';
 
 const services = [
   { 
-    num: "01",
+    number: "01",
     title: "Brand Activation", 
-    desc: "We transform brand stories into tangible, multi-sensory experiences that create lasting emotional connections with your audience.",
-    details: ["Pop-up Experiences", "Product Launches", "Immersive Installations"]
+    description: "We transform brand narratives into tangible, multi-sensory experiences that forge lasting emotional connections with your audience."
   },
   { 
-    num: "02",
+    number: "02",
     title: "Experiential Marketing", 
-    desc: "Strategic campaigns designed to spark conversation, drive engagement, and turn passive observers into passionate advocates.",
-    details: ["Guerrilla Marketing", "Interactive Campaigns", "Social Activations"]
+    description: "Strategic campaigns engineered to ignite conversation, drive meaningful engagement, and convert passive observers into passionate advocates."
   },
   { 
-    num: "03",
+    number: "03",
     title: "Event Production", 
-    desc: "End-to-end design and flawless execution for occasions that transcend the ordinary and become unforgettable milestones.",
-    details: ["Corporate Events", "Gala Productions", "Private Celebrations"]
+    description: "From concept to execution, we craft occasions that transcend the expected—delivering flawless, memorable experiences."
   }
 ];
 
 export default function Services() {
-  const { ref: headerRef, isInView: headerInView } = useInView({ threshold: 0.2 });
-  const { ref: gridRef, isInView: gridInView } = useInView({ threshold: 0.1 });
+  const { ref, isInView } = useInView({ threshold: 0.15 });
 
   return (
-    <section id="services" className="py-32 md:py-40 bg-carmel-bg overflow-hidden">
-      {/* Section header */}
-      <div className="px-6 md:px-20 max-w-7xl mx-auto mb-24" ref={headerRef}>
-        <div className="flex items-center gap-6 mb-6">
-          <span 
-            className={`font-sans text-[10px] tracking-[0.4em] uppercase text-carmel-text/40 animate-fade-up ${
-              headerInView ? 'in-view' : ''
-            }`}
-          >
-            Services
-          </span>
-          <div 
-            className={`flex-grow h-px bg-carmel-text/10 animate-line-draw ${
-              headerInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '200ms' }}
-          />
-        </div>
-        
-        <div className="md:flex md:items-end md:justify-between">
+    <section 
+      id="services" 
+      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-carmel-bg" 
+      ref={ref}
+    >
+      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto">
+        {/* Section header - elegant serif */}
+        <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
           <h2 
-            className={`font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-6 md:mb-0 animate-blur-reveal ${
-              headerInView ? 'in-view' : ''
+            className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl tracking-tight transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
-            style={{ animationDelay: '100ms' }}
           >
-            What We<br />
-            <span className="italic text-carmel-text/40">Bring to Life</span>
+            What We Do
           </h2>
-          
-          <p 
-            className={`font-sans text-sm text-carmel-text/50 max-w-xs leading-relaxed animate-fade-up ${
-              headerInView ? 'in-view' : ''
-            }`}
-            style={{ animationDelay: '300ms' }}
-          >
-            Every project is an opportunity to craft something extraordinary.
-          </p>
         </div>
-      </div>
 
-      {/* Services grid */}
-      <div className="px-6 md:px-20 max-w-7xl mx-auto" ref={gridRef}>
-        <div className="grid md:grid-cols-3 gap-px bg-carmel-text/5">
+        {/* Services grid - stacks on mobile, 3 columns on desktop */}
+        <div className="grid gap-10 sm:gap-8 md:grid-cols-3 md:gap-6 lg:gap-10">
           {services.map((service, i) => (
-            <article 
+            <div 
               key={service.title}
-              className={`group relative bg-carmel-bg p-8 md:p-10 lg:p-12 cursor-pointer animate-fade-up ${
-                gridInView ? 'in-view' : ''
+              className={`group transition-all duration-700 ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
-              style={{ animationDelay: `${200 + i * 150}ms` }}
+              style={{ transitionDelay: `${150 + i * 100}ms` }}
             >
-              {/* Hover background */}
-              <div className="absolute inset-0 bg-carmel-text/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
-              {/* Top line accent */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-carmel-text/10">
-                <div className="h-full w-0 bg-carmel-text/30 group-hover:w-full transition-all duration-700 ease-out" />
-              </div>
-              
               {/* Number */}
-              <div className="relative mb-16 md:mb-20">
-                <span className="font-serif text-7xl md:text-8xl lg:text-9xl text-carmel-text/[0.06] leading-none transition-all duration-700 group-hover:text-carmel-text/[0.12]">
-                  {service.num}
-                </span>
-              </div>
+              <span className="block text-[11px] tracking-[0.2em] text-carmel-text/25 mb-4 sm:mb-6">
+                {service.number}
+              </span>
               
-              {/* Content */}
-              <div className="relative">
-                <h3 className="font-serif text-2xl md:text-3xl mb-4 transition-all duration-500">
-                  <span className="relative inline-block">
-                    {service.title}
-                    <span className="absolute -bottom-1 left-0 w-full h-px bg-carmel-text scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-700 ease-out" />
-                  </span>
-                </h3>
-                
-                <p className="font-sans text-sm leading-relaxed text-carmel-text/50 mb-8 transition-colors duration-500 group-hover:text-carmel-text/70">
-                  {service.desc}
-                </p>
-                
-                {/* Detail tags */}
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {service.details.map((detail, idx) => (
-                    <span 
-                      key={detail}
-                      className="px-3 py-1 text-[9px] tracking-[0.15em] uppercase border border-carmel-text/10 text-carmel-text/40 transition-all duration-500 group-hover:border-carmel-text/20 group-hover:text-carmel-text/60"
-                      style={{ transitionDelay: `${idx * 50}ms` }}
-                    >
-                      {detail}
-                    </span>
-                  ))}
-                </div>
-                
-                {/* Arrow link */}
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-carmel-text/30 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
-                    Explore
-                  </span>
-                  <svg 
-                    className="w-4 h-4 text-carmel-text/30 translate-x-[-20px] opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-out delay-75"
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                    strokeWidth={1}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </div>
-              </div>
-            </article>
+              {/* Title */}
+              <h3 className="font-serif text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4 group-hover:text-carmel-text/70 transition-colors duration-300">
+                {service.title}
+              </h3>
+              
+              {/* Subtle line */}
+              <div className="w-8 h-px bg-carmel-text/15 mb-4 sm:mb-5 group-hover:w-12 group-hover:bg-carmel-text/30 transition-all duration-500" />
+              
+              {/* Description */}
+              <p className="text-sm text-carmel-text/50 leading-relaxed">
+                {service.description}
+              </p>
+            </div>
           ))}
         </div>
       </div>
