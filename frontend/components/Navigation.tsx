@@ -55,6 +55,7 @@ export default function Navigation() {
         Skip to main content
       </a>
 
+      {/* Main Navigation Bar */}
       <nav 
         className={`fixed w-full z-40 py-3 sm:py-4 md:py-6 transition-colors duration-300 ease-out ${
           showBackground ? 'bg-carmel-bg/95 backdrop-blur-sm' : 'bg-transparent'
@@ -64,7 +65,7 @@ export default function Navigation() {
       >
         <div className="px-4 sm:px-6 md:px-12 lg:px-16 flex justify-end items-center">
           
-          {/* Hamburger Menu Button - Now visible on ALL screen sizes */}
+          {/* Hamburger Menu Button */}
           <button
             className="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 group cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
@@ -79,7 +80,7 @@ export default function Navigation() {
         </div>
       </nav>
 
-      {/* Full Screen Menu Overlay - Now active for ALL screen sizes */}
+      {/* Full Screen Menu Overlay */}
       <div
         id="full-screen-menu"
         className={`fixed inset-0 bg-carmel-bg z-[60] flex flex-col items-center justify-center transition-all duration-700 ease-luxury ${
@@ -87,17 +88,26 @@ export default function Navigation() {
         }`}
         aria-hidden={!isOpen}
       >
-        {/* Close button inside overlay (Optional, but good for UX) */}
-        <button
-          className="absolute top-6 right-6 md:top-10 md:right-16 w-12 h-12 flex items-center justify-center cursor-pointer group"
-          onClick={() => setIsOpen(false)}
-          aria-label="Close menu"
-        >
-          <div className="relative w-8 h-8">
-            <span className="absolute top-1/2 left-0 w-8 h-px bg-carmel-text rotate-45 transition-transform duration-300 group-hover:rotate-[135deg]" />
-            <span className="absolute top-1/2 left-0 w-8 h-px bg-carmel-text -rotate-45 transition-transform duration-300 group-hover:-rotate-[135deg]" />
-          </div>
-        </button>
+        {/* HEADER MIRROR FOR CLOSE BUTTON
+            Instead of absolute positioning (top-6 right-6), we replicate the 
+            exact container classes from the main <nav> above. 
+            This guarantees the X appears in the exact same pixel as the Hamburger.
+        */}
+        <div className="absolute top-0 left-0 w-full py-3 sm:py-4 md:py-6 pointer-events-none">
+           <div className="px-4 sm:px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
+             <button
+               className="relative w-10 h-10 flex flex-col justify-center items-center group cursor-pointer"
+               onClick={() => setIsOpen(false)}
+               aria-label="Close menu"
+             >
+               {/* I adjusted the width to w-6 to match the Hamburger line width exactly */}
+               <div className="relative w-6 h-6 flex items-center justify-center">
+                 <span className="absolute w-6 h-px bg-carmel-text rotate-45 transition-transform duration-300 group-hover:rotate-[135deg]" />
+                 <span className="absolute w-6 h-px bg-carmel-text -rotate-45 transition-transform duration-300 group-hover:-rotate-[135deg]" />
+               </div>
+             </button>
+           </div>
+        </div>
 
         {/* Menu Links */}
         <div className="flex flex-col items-center gap-8 md:gap-10">

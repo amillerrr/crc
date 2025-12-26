@@ -42,7 +42,7 @@ body {
   /* Ensure starting state is invisible */
   opacity: 0; 
   /* 1.5s duration, smooth easing, keep final state */
-  animation: heroFadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  animation: heroFadeIn 7.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .hero-fade-in-delay-1 {

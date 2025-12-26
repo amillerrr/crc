@@ -37,14 +37,20 @@ export default function Hero() {
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
   const easedProgress = easeOutCubic(scrollProgress);
 
-  // Responsive logo position and scale calculations
-  // CHANGED: Moved startTop from 50 to 40 to lift logo up and avoid overlap
+  // --- POSITIONING LOGIC ---
   const startTop = 40; 
-  const endTop = isMobile ? 3.5 : 5;
+  
+  // ADJUSTED: Moved down to 8.5% (was 5%) to accommodate the larger logo size
+  // and center it vertically within the header space.
+  const endTop = 7; 
   const logoTop = startTop - (easedProgress * (startTop - endTop));
   
   const startScale = 1;
-  const endScale = isMobile ? 0.65 : 0.35;
+  
+  // Scales kept large as requested:
+  // Mobile: 0.48
+  // Desktop: 0.36 
+  const endScale = isMobile ? 0.48 : 0.36;
   const logoScale = startScale - (easedProgress * (startScale - endScale));
   
   // Fade out hero content on scroll
@@ -60,7 +66,7 @@ export default function Hero() {
           transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
         }}
       >
-        {/* Inner Anchor handles the fade-in animation */}
+        {/* Inner Anchor handles Fade In */}
         <a 
           href="/" 
           className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200 hero-fade-in-logo"
@@ -78,7 +84,7 @@ export default function Hero() {
       <div className="flex-1 flex items-center justify-center px-6 md:px-12">
         <div className="w-full max-w-4xl text-center">
           
-          {/* Spacer - Keeps content pushed down appropriately */}
+          {/* Spacer */}
           <div className="h-[80px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
 
           {/* Tagline */}
