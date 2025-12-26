@@ -4,17 +4,20 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 export default function Hero() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [windowHeight, setWindowHeight] = useState(0); // Track window height
   const heroRef = useRef<HTMLElement>(null);
 
   // Detect screen size for responsive logo scaling
   useEffect(() => {
-    const checkMobile = () => {
+    const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
+      setWindowHeight(window.innerHeight);
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    // Initial call
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -23,7 +26,8 @@ export default function Hero() {
     const scrollY = window.scrollY;
     
     // Progress: 0 at top, 1 when logo should be in final header position
-    const lockPoint = heroHeight * 0.45;
+    // We lock it a bit earlier (0.4) for a snappier feel
+    const lockPoint = heroHeight * 0.40;
     const progress = Math.min(scrollY / lockPoint, 1);
     setScrollProgress(progress);
   }, []);
@@ -38,19 +42,22 @@ export default function Hero() {
   const easedProgress = easeOutCubic(scrollProgress);
 
   // --- POSITIONING LOGIC ---
-  const startTop = 40; 
+  // Start: 40% down the screen (looks good visually as a "Hero" center)
+  const startTopPx = windowHeight * 0.40;
   
-  // ADJUSTED: Moved down to 8.5% (was 5%) to accommodate the larger logo size
-  // and center it vertically within the header space.
-  const endTop = 7; 
-  const logoTop = startTop - (easedProgress * (startTop - endTop));
+  // End: FIXED PIXEL VALUE. 
+  // 28px puts the center of the logo roughly in the vertical center of the 
+  // Nav bar (which is padded ~24px).
+  const endTopPx = 28; 
+
+  // Interpolate between the start (px) and end (px)
+  const currentTopPx = startTopPx - (easedProgress * (startTopPx - endTopPx));
   
   const startScale = 1;
-  
-  // Scales kept large as requested:
-  // Mobile: 0.48
-  // Desktop: 0.36 
-  const endScale = isMobile ? 0.48 : 0.36;
+  // Scales:
+  // Mobile: 0.42 (Slightly larger than before, cleaner look)
+  // Desktop: 0.36
+  const endScale = isMobile ? 0.42 : 0.36;
   const logoScale = startScale - (easedProgress * (startScale - endScale));
   
   // Fade out hero content on scroll
@@ -60,10 +67,12 @@ export default function Hero() {
     <section ref={heroRef} className="relative min-h-svh w-full bg-carmel-bg flex flex-col overflow-hidden">
       {/* Logo Container */}
       <div 
-        className="fixed left-1/2 z-50 pointer-events-none hero-logo"
+        className="fixed left-1/2 z-50 pointer-events-none hero-logo will-change-transform"
         style={{
-          top: `${logoTop}%`,
+          // Use pixel values for top
+          top: `${currentTopPx}px`,
           transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
+          transformOrigin: 'center center',
         }}
       >
         {/* Inner Anchor handles Fade In */}
@@ -75,7 +84,8 @@ export default function Hero() {
           <img
             src="/CRC-Logo.svg"
             alt="Carmel Rose Collective"
-            className="w-[280px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+            // Adjusted base widths
+            className="w-[260px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
           />
         </a>
       </div>
@@ -84,8 +94,8 @@ export default function Hero() {
       <div className="flex-1 flex items-center justify-center px-6 md:px-12">
         <div className="w-full max-w-4xl text-center">
           
-          {/* Spacer */}
-          <div className="h-[80px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
+          {/* Spacer - Increased to prevent overlap on mobile */}
+          <div className="h-[110px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
 
           {/* Tagline */}
           <p 

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Lato, Italianno } from "next/font/google";
+import { SmoothScroll } from "@/components"; // Import the new component
 import "./globals.css";
 
 // Font Configuration
@@ -60,10 +61,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body 
         className={`${playfair.variable} ${lato.variable} ${italianno.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
+        <SmoothScroll />
         {children}
       </body>
     </html>

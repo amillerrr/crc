@@ -12,15 +12,16 @@ export default function About() {
       ref={ref}
     >
       <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto">
-        {/* Two column layout - stacks on mobile */}
-        <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+        {/* Two column layout - stacks on mobile with more breathing room */}
+        <div className="grid gap-14 sm:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Image */}
           <div 
             className={`transition-all duration-700 ${
               isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            <div className="relative aspect-[3/4] w-full max-w-xs sm:max-w-sm mx-auto lg:mx-0 overflow-hidden">
+            {/* Full width on mobile, constrained on desktop */}
+            <div className="relative aspect-[3/4] w-full sm:max-w-sm mx-auto lg:mx-0 overflow-hidden">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
                 alt="Portrait representing Carmel Rose Collective"
@@ -34,7 +35,7 @@ export default function About() {
           {/* Content */}
           <div>
             <h2 
-              className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-5 sm:mb-6 text-balance transition-all duration-700 ${
+              className={`font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 sm:mb-6 text-balance transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
               style={{ transitionDelay: '100ms' }}
@@ -43,7 +44,7 @@ export default function About() {
             </h2>
             
             <div 
-              className={`space-y-3 sm:space-y-4 text-carmel-text/55 text-sm md:text-[15px] leading-relaxed transition-all duration-700 ${
+              className={`space-y-4 text-carmel-text/55 text-[15px] sm:text-[15px] leading-relaxed transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
               style={{ transitionDelay: '200ms' }}
@@ -60,19 +61,19 @@ export default function About() {
             
             {/* Stats */}
             <div 
-              className={`flex gap-8 sm:gap-12 mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-carmel-text/8 transition-all duration-700 ${
+              className={`flex gap-8 sm:gap-12 mt-10 sm:mt-10 pt-8 sm:pt-8 border-t border-carmel-text/8 transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
               style={{ transitionDelay: '300ms' }}
             >
               <div>
-                <p className="font-serif text-2xl sm:text-3xl md:text-4xl mb-1">50+</p>
+                <p className="font-serif text-3xl sm:text-3xl md:text-4xl mb-1">50+</p>
                 <p className="text-[9px] tracking-[0.15em] uppercase text-carmel-text/35">
                   Activations
                 </p>
               </div>
               <div>
-                <p className="font-serif text-2xl sm:text-3xl md:text-4xl mb-1">12</p>
+                <p className="font-serif text-3xl sm:text-3xl md:text-4xl mb-1">12</p>
                 <p className="text-[9px] tracking-[0.15em] uppercase text-carmel-text/35">
                   Cities
                 </p>

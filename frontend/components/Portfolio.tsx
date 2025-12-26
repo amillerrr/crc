@@ -82,17 +82,17 @@ export default function Portfolio() {
           </h2>
         </div>
         
-        {/* Gapless Masonry Grid */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-0 space-y-0">
+        {/* Gapless Masonry Grid on Desktop / Spaced Grid on Mobile */}
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-0 space-y-16 md:space-y-0">
           {portfolioItems.map((item, index) => (
             <div 
               key={item.title}
-              className={`relative break-inside-avoid group cursor-pointer overflow-hidden w-full transition-all duration-700 ${
+              className={`relative break-inside-avoid group cursor-pointer w-full transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
               }`}
               style={{ transitionDelay: `${index * 50}ms` }}
             >
-              <div className="relative aspect-[3/4] w-full">
+              <div className="relative aspect-[3/4] w-full overflow-hidden">
                 <Image
                   src={item.image}
                   alt={`${item.client} - ${item.title}`}
@@ -101,9 +101,8 @@ export default function Portfolio() {
                   className="object-cover transition-transform duration-[1.5s] ease-luxury group-hover:scale-105"
                 />
                 
-                {/* Cinema Overlay - Fixed "Pop" Issue using transition-all and explicit duration */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out flex flex-col items-center justify-center text-center p-8 z-10">
-                  
+                {/* DESKTOP: Cinema Overlay (Hover Only) */}
+                <div className="hidden md:flex absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out flex-col items-center justify-center text-center p-8 z-10">
                   <div className="w-px h-8 bg-white/30 mb-6 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-100 ease-out" />
                   
                   <span className="text-[10px] tracking-[0.25em] uppercase text-white/70 mb-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-150 ease-out">
@@ -117,9 +116,22 @@ export default function Portfolio() {
                   <span className="font-italianno text-2xl text-white/80 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-300 ease-out">
                     {item.category}
                   </span>
-
                 </div>
               </div>
+
+              {/* MOBILE: Editorial Text Below Image (No Hover needed) */}
+              <div className="md:hidden flex flex-col items-center text-center mt-6 px-4">
+                <span className="text-[9px] tracking-[0.2em] uppercase text-carmel-text/40 mb-2">
+                  {item.client}
+                </span>
+                <h3 className="font-serif text-2xl text-carmel-text mb-1">
+                  {item.title}
+                </h3>
+                <span className="font-italianno text-xl text-carmel-muted">
+                  {item.category}
+                </span>
+              </div>
+
             </div>
           ))}
         </div>

@@ -8,7 +8,8 @@ export default function Navigation() {
   useEffect(() => {
     const handleScroll = () => {
       // Show nav background after scrolling past hero
-      const threshold = window.innerHeight * 0.45;
+      // Fixed pixel threshold (150px) to sync perfectly with logo locking into place
+      const threshold = 150;
       setShowBackground(window.scrollY >= threshold);
     };
     
@@ -57,8 +58,8 @@ export default function Navigation() {
 
       {/* Main Navigation Bar */}
       <nav 
-        className={`fixed w-full z-40 py-3 sm:py-4 md:py-6 transition-colors duration-300 ease-out ${
-          showBackground ? 'bg-carmel-bg/95 backdrop-blur-sm' : 'bg-transparent'
+        className={`fixed top-0 left-0 w-full z-40 py-3 sm:py-4 md:py-6 transition-colors duration-500 ease-out ${
+          showBackground ? 'bg-carmel-bg/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
         }`}
         role="navigation"
         aria-label="Main navigation"
@@ -88,11 +89,7 @@ export default function Navigation() {
         }`}
         aria-hidden={!isOpen}
       >
-        {/* HEADER MIRROR FOR CLOSE BUTTON
-            Instead of absolute positioning (top-6 right-6), we replicate the 
-            exact container classes from the main <nav> above. 
-            This guarantees the X appears in the exact same pixel as the Hamburger.
-        */}
+        {/* HEADER MIRROR FOR CLOSE BUTTON */}
         <div className="absolute top-0 left-0 w-full py-3 sm:py-4 md:py-6 pointer-events-none">
            <div className="px-4 sm:px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
              <button
@@ -100,7 +97,6 @@ export default function Navigation() {
                onClick={() => setIsOpen(false)}
                aria-label="Close menu"
              >
-               {/* I adjusted the width to w-6 to match the Hamburger line width exactly */}
                <div className="relative w-6 h-6 flex items-center justify-center">
                  <span className="absolute w-6 h-px bg-carmel-text rotate-45 transition-transform duration-300 group-hover:rotate-[135deg]" />
                  <span className="absolute w-6 h-px bg-carmel-text -rotate-45 transition-transform duration-300 group-hover:-rotate-[135deg]" />
