@@ -23,12 +23,19 @@
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* FIX: Prevent horizontal scroll caused by fixed elements or animations */
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
   color: var(--color-charcoal);
   background: var(--color-cream);
   font-family: var(--font-sans);
+  /* FIX: Ensure body also respects the overflow constraint */
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* ===== HERO ANIMATIONS ===== */

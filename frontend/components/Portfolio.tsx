@@ -59,6 +59,13 @@ const portfolioItems = [
     image: "/portfolio/sc-booth.webp",
     year: "2024"
   },
+  {
+    title: "Knob Creek Event",
+    client: "Knob Creek",
+    category: "Brand Activation",
+    image: "/portfolio/knob-creek.webp",
+    year: "2024"
+  },
 ];
 
 export default function Portfolio() {

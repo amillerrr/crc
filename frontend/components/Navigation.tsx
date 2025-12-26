@@ -7,8 +7,7 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show nav background after scrolling past hero
-      // Fixed pixel threshold (150px) to sync perfectly with logo locking into place
+      // Sync background blur with logo locking position (approx 150px scroll)
       const threshold = 150;
       setShowBackground(window.scrollY >= threshold);
     };
@@ -48,7 +47,6 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Skip link for accessibility */}
       <a 
         href="#main-content" 
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-carmel-text focus:text-white focus:px-4 focus:py-2"
@@ -64,7 +62,8 @@ export default function Navigation() {
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="px-4 sm:px-6 md:px-12 lg:px-16 flex justify-end items-center">
+        {/* Adjusted padding: px-6 (24px) instead of px-4 (16px) for better mobile breathing room */}
+        <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center">
           
           {/* Hamburger Menu Button */}
           <button
@@ -91,7 +90,8 @@ export default function Navigation() {
       >
         {/* HEADER MIRROR FOR CLOSE BUTTON */}
         <div className="absolute top-0 left-0 w-full py-3 sm:py-4 md:py-6 pointer-events-none">
-           <div className="px-4 sm:px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
+           {/* Matched padding here as well: px-6 */}
+           <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
              <button
                className="relative w-10 h-10 flex flex-col justify-center items-center group cursor-pointer"
                onClick={() => setIsOpen(false)}

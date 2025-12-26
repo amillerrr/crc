@@ -4,12 +4,13 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 export default function Hero() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [windowHeight, setWindowHeight] = useState(0); // Track window height
+  const [windowHeight, setWindowHeight] = useState(0); 
   const heroRef = useRef<HTMLElement>(null);
 
-  // Detect screen size for responsive logo scaling
+  // Detect screen size for responsive logo scaling and positioning
   useEffect(() => {
     const handleResize = () => {
+      // 768px matches Tailwind's 'md' breakpoint
       setIsMobile(window.innerWidth < 768);
       setWindowHeight(window.innerHeight);
     };
@@ -25,8 +26,7 @@ export default function Hero() {
     const heroHeight = heroRef.current.offsetHeight;
     const scrollY = window.scrollY;
     
-    // Progress: 0 at top, 1 when logo should be in final header position
-    // We lock it a bit earlier (0.4) for a snappier feel
+    // Lock point: 40% of hero height
     const lockPoint = heroHeight * 0.40;
     const progress = Math.min(scrollY / lockPoint, 1);
     setScrollProgress(progress);
@@ -37,30 +37,24 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // Easing function for smoother animation
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
   const easedProgress = easeOutCubic(scrollProgress);
 
   // --- POSITIONING LOGIC ---
-  // Start: 40% down the screen (looks good visually as a "Hero" center)
   const startTopPx = windowHeight * 0.40;
   
-  // End: FIXED PIXEL VALUE. 
-  // 28px puts the center of the logo roughly in the vertical center of the 
-  // Nav bar (which is padded ~24px).
-  const endTopPx = 28; 
+  // CALCULATED END POSITIONS (To align perfectly with Navigation):
+  // Mobile Nav: py-3 (12px) + half icon height (20px) = 32px center
+  // Desktop Nav: md:py-6 (24px) + half icon height (20px) = 44px center
+  const endTopPx = isMobile ? 32 : 44; 
 
-  // Interpolate between the start (px) and end (px)
+  // Interpolate
   const currentTopPx = startTopPx - (easedProgress * (startTopPx - endTopPx));
   
   const startScale = 1;
-  // Scales:
-  // Mobile: 0.42 (Slightly larger than before, cleaner look)
-  // Desktop: 0.36
   const endScale = isMobile ? 0.42 : 0.36;
   const logoScale = startScale - (easedProgress * (startScale - endScale));
   
-  // Fade out hero content on scroll
   const contentOpacity = Math.max(0, 1 - scrollProgress * 2.5);
 
   return (
@@ -69,13 +63,11 @@ export default function Hero() {
       <div 
         className="fixed left-1/2 z-50 pointer-events-none hero-logo will-change-transform"
         style={{
-          // Use pixel values for top
           top: `${currentTopPx}px`,
           transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
           transformOrigin: 'center center',
         }}
       >
-        {/* Inner Anchor handles Fade In */}
         <a 
           href="/" 
           className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200 hero-fade-in-logo"
@@ -84,7 +76,6 @@ export default function Hero() {
           <img
             src="/CRC-Logo.svg"
             alt="Carmel Rose Collective"
-            // Adjusted base widths
             className="w-[260px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
           />
         </a>
@@ -94,7 +85,7 @@ export default function Hero() {
       <div className="flex-1 flex items-center justify-center px-6 md:px-12">
         <div className="w-full max-w-4xl text-center">
           
-          {/* Spacer - Increased to prevent overlap on mobile */}
+          {/* Spacer */}
           <div className="h-[110px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
 
           {/* Tagline */}

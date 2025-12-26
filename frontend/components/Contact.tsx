@@ -135,7 +135,8 @@ export default function Contact() {
             <button 
               type="submit" 
               disabled={status === 'loading'}
-              className="w-full py-3 sm:py-3.5 text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              // FIX: Added 'pl-[0.15em]' to balance the tracking spacing on the right
+              className="w-full py-3 sm:py-3.5 flex justify-center items-center pl-[0.15em] text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {status === 'loading' ? 'Sending...' : 'Send Message'}
             </button>
