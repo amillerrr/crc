@@ -1,75 +1,119 @@
 "use client";
+import { useState } from 'react';
 import { useInView } from '@/hooks/useInView';
 
 const services = [
   { 
-    number: "01",
+    number: "I",
     title: "Brand Activation", 
     description: "We transform brand narratives into tangible, multi-sensory experiences that forge lasting emotional connections with your audience."
   },
   { 
-    number: "02",
+    number: "II",
     title: "Experiential Marketing", 
     description: "Strategic campaigns engineered to ignite conversation, drive meaningful engagement, and convert passive observers into passionate advocates."
   },
   { 
-    number: "03",
+    number: "III",
     title: "Event Production", 
     description: "From concept to execution, we craft occasions that transcend the expected—delivering flawless, memorable experiences."
   }
 ];
 
 export default function Services() {
-  const { ref, isInView } = useInView({ threshold: 0.15 });
+  const [activeService, setActiveService] = useState<number | null>(null);
+  const { ref, isInView } = useInView({ threshold: 0.1 });
 
   return (
     <section 
       id="services" 
-      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-carmel-bg" 
+      className="scroll-mt-20 py-24 md:py-36 bg-carmel-bg relative overflow-hidden" 
       ref={ref}
     >
-      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto">
-        {/* Section header - elegant serif */}
-        <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-24">
-          <h2 
-            className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl tracking-tight transition-all duration-700 ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
+      <div className="px-6 md:px-12 lg:px-16 max-w-5xl mx-auto">
+        
+        {/* Centered Minimalist Header */}
+        <div className={`text-center mb-16 md:mb-24 transition-all duration-1000 ${
+           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        }`}>
+          <span className="block font-italianno text-3xl sm:text-4xl text-carmel-muted mb-4">
+            Our Expertise
+          </span>
+          <h2 className="font-serif text-4xl sm:text-5xl md:text-7xl text-carmel-text tracking-tight leading-tight">
             What We Do
           </h2>
         </div>
 
-        {/* Services grid - stacks on mobile, 3 columns on desktop */}
-        <div className="grid gap-10 sm:gap-8 md:grid-cols-3 md:gap-6 lg:gap-10">
-          {services.map((service, i) => (
+        {/* The "Executive Index" List */}
+        <div className="flex flex-col">
+          {services.map((service, index) => (
             <div 
-              key={service.title}
-              className={`group transition-all duration-700 ${
-                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              key={service.number}
+              className={`group border-t border-carmel-text/15 first:border-t transition-colors duration-500 hover:border-carmel-text/50 cursor-default ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
-              style={{ transitionDelay: `${150 + i * 100}ms` }}
+              style={{ transitionDelay: `${index * 100}ms` }}
+              onMouseEnter={() => setActiveService(index)}
+              onMouseLeave={() => setActiveService(null)}
             >
-              {/* Number */}
-              <span className="block text-[11px] tracking-[0.2em] text-carmel-text/25 mb-4 sm:mb-6">
-                {service.number}
-              </span>
-              
-              {/* Title */}
-              <h3 className="font-serif text-lg sm:text-xl md:text-2xl mb-3 sm:mb-4 group-hover:text-carmel-text/70 transition-colors duration-300">
-                {service.title}
-              </h3>
-              
-              {/* Subtle line */}
-              <div className="w-8 h-px bg-carmel-text/15 mb-4 sm:mb-5 group-hover:w-12 group-hover:bg-carmel-text/30 transition-all duration-500" />
-              
-              {/* Description */}
-              <p className="text-sm text-carmel-text/50 leading-relaxed">
-                {service.description}
-              </p>
+              <div className="py-8 md:py-12 relative">
+                
+                {/* Main Row Content */}
+                <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 md:gap-8">
+                  
+                  {/* Left: Numeral & Title */}
+                  <div className="flex items-baseline gap-6 md:gap-8">
+                    <span className="text-xs md:text-sm font-serif tracking-widest text-carmel-muted w-8 transition-colors duration-500 group-hover:text-carmel-text">
+                      {service.number}
+                    </span>
+                    <h3 className="font-serif text-3xl sm:text-4xl md:text-6xl text-carmel-text transition-transform duration-700 ease-luxury group-hover:translate-x-4">
+                      {service.title}
+                    </h3>
+                  </div>
+
+                  {/* Right: The Interaction Icon (Arrow) */}
+                  <div className="hidden md:flex items-center justify-end w-12">
+                     <svg 
+                       width="24" 
+                       height="24" 
+                       viewBox="0 0 24 24" 
+                       fill="none" 
+                       xmlns="http://www.w3.org/2000/svg"
+                       className="text-carmel-text/30 transform transition-all duration-700 ease-luxury group-hover:rotate-45 group-hover:text-carmel-text group-hover:scale-110"
+                     >
+                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                     </svg>
+                  </div>
+                </div>
+
+                {/* Description - Accordion Reveal */}
+                <div className={`grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-700 ease-luxury`}>
+                  <div className="overflow-hidden">
+                    <div className="pt-6 md:pt-8 md:pl-16 lg:pl-20 max-w-2xl">
+                      <p className="text-base md:text-lg text-carmel-text/60 leading-relaxed opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700 delay-100 ease-out">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Description (Always Visible, no accordion) */}
+                <div className="md:hidden mt-4 pl-10">
+                   <p className="text-sm text-carmel-text/60 leading-relaxed">
+                     {service.description}
+                   </p>
+                </div>
+
+              </div>
             </div>
           ))}
+          
+          {/* Closing Border */}
+          <div className={`border-t border-carmel-text/15 transition-all duration-700 delay-300 ${
+            isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+          }`} />
         </div>
+
       </div>
     </section>
   );
