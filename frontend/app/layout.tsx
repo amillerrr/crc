@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Lato, Italianno } from "next/font/google";
-import { SmoothScroll } from "@/components"; // Import the new component
+import { SmoothScroll, ScrollProgress } from "@/components";
 import "./globals.css";
 
 // Font Configuration
@@ -65,7 +65,12 @@ export default function RootLayout({
       <body 
         className={`${playfair.variable} ${lato.variable} ${italianno.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
+        {/* Subtle scroll progress indicator */}
+        <ScrollProgress />
+        
+        {/* Smooth scroll behavior */}
         <SmoothScroll />
+        
         {children}
       </body>
     </html>

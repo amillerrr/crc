@@ -67,7 +67,7 @@ export default function Navigation() {
           
           {/* Hamburger Menu Button */}
           <button
-            className="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 group cursor-pointer"
+            className="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 group"
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
             aria-controls="full-screen-menu"
@@ -93,7 +93,7 @@ export default function Navigation() {
            {/* Matched padding here as well: px-6 */}
            <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
              <button
-               className="relative w-10 h-10 flex flex-col justify-center items-center group cursor-pointer"
+               className="relative w-10 h-10 flex flex-col justify-center items-center group"
                onClick={() => setIsOpen(false)}
                aria-label="Close menu"
              >
@@ -112,7 +112,7 @@ export default function Navigation() {
               key={link.href}
               href={link.href}
               onClick={() => setIsOpen(false)}
-              className={`font-serif text-3xl sm:text-4xl md:text-6xl tracking-tight transition-all duration-700 hover:text-carmel-muted ${
+              className={`font-serif text-3xl sm:text-4xl md:text-6xl tracking-tight transition-all duration-700 hover:text-carmel-muted link-underline ${
                 isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
               style={{ transitionDelay: isOpen ? `${100 + i * 100}ms` : '0ms' }}

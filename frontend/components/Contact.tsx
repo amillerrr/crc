@@ -7,6 +7,7 @@ type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 export default function Contact() {
   const [status, setStatus] = useState<FormStatus>('idle');
   const [message, setMessage] = useState('');
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const { ref: sectionRef, isInView } = useInView({ threshold: 0.1 });
 
@@ -54,34 +55,59 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-warm-white" 
+      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-warm-white relative overflow-hidden" 
       ref={sectionRef}
     >
-      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-lg mx-auto">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div 
+          className="absolute top-0 right-0 w-96 h-96 rounded-full animate-float-slower opacity-30"
+          style={{
+            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.05) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-lg mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-12 md:mb-14">
+          <span className={`block font-italianno text-2xl text-carmel-muted mb-2 transition-all duration-700 ${
+            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}>
+            Let&apos;s Connect
+          </span>
           <h2 
-            className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl transition-all duration-700 ${
+            className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl transition-all duration-700 delay-100 ${
               isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
             Get in Touch
           </h2>
+          
+          {/* Decorative line */}
+          <div className={`mt-6 w-12 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 delay-200 ${
+            isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+          }`} />
         </div>
         
         {/* Form */}
         <form 
           ref={formRef}
           onSubmit={handleSubmit} 
-          className={`space-y-5 sm:space-y-6 transition-all duration-700 ${
+          className={`space-y-6 sm:space-y-8 transition-all duration-700 ${
             isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
           style={{ transitionDelay: '150ms' }}
         >
-          <div>
+          {/* Name field */}
+          <div className="relative">
             <label 
               htmlFor="name"
-              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+              className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                focusedField === 'name' || (formRef.current?.elements.namedItem('name') as HTMLInputElement)?.value
+                  ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50'
+                  : 'top-2.5 text-base text-carmel-text/30'
+              }`}
             >
               Name
             </label>
@@ -90,16 +116,23 @@ export default function Contact() {
               name="name" 
               type="text" 
               autoComplete="name"
-              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 placeholder:text-carmel-text/20"
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300"
               disabled={status === 'loading'}
-              required 
+              required
+              onFocus={() => setFocusedField('name')}
+              onBlur={(e) => !e.target.value && setFocusedField(null)}
             />
           </div>
 
-          <div>
+          {/* Email field */}
+          <div className="relative">
             <label 
               htmlFor="email"
-              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+              className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                focusedField === 'email' || (formRef.current?.elements.namedItem('email') as HTMLInputElement)?.value
+                  ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50'
+                  : 'top-2.5 text-base text-carmel-text/30'
+              }`}
             >
               Email
             </label>
@@ -108,16 +141,23 @@ export default function Contact() {
               name="email" 
               type="email" 
               autoComplete="email"
-              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 placeholder:text-carmel-text/20"
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300"
               disabled={status === 'loading'}
-              required 
+              required
+              onFocus={() => setFocusedField('email')}
+              onBlur={(e) => !e.target.value && setFocusedField(null)}
             />
           </div>
 
-          <div>
+          {/* Message field */}
+          <div className="relative">
             <label 
               htmlFor="message"
-              className="block text-[10px] tracking-[0.15em] uppercase text-carmel-text/35 mb-2"
+              className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                focusedField === 'message' || (formRef.current?.elements.namedItem('message') as HTMLTextAreaElement)?.value
+                  ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50'
+                  : 'top-2.5 text-base text-carmel-text/30'
+              }`}
             >
               Message
             </label>
@@ -125,17 +165,19 @@ export default function Contact() {
               id="message"
               name="message" 
               rows={4}
-              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 resize-none placeholder:text-carmel-text/20"
+              className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 resize-none"
               disabled={status === 'loading'}
               required
+              onFocus={() => setFocusedField('message')}
+              onBlur={(e) => !e.target.value && setFocusedField(null)}
             />
           </div>
 
+          {/* Submit button */}
           <div className="pt-3 sm:pt-4">
             <button 
               type="submit" 
               disabled={status === 'loading'}
-              // FIX: Added 'pl-[0.15em]' to balance the tracking spacing on the right
               className="w-full py-3 sm:py-3.5 flex justify-center items-center pl-[0.15em] text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {status === 'loading' ? 'Sending...' : 'Send Message'}

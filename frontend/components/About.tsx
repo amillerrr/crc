@@ -34,6 +34,12 @@ export default function About() {
           
           {/* Content */}
           <div>
+            <span className={`block font-italianno text-2xl text-carmel-muted mb-3 transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            }`}>
+              Our Story
+            </span>
+            
             <h2 
               className={`font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 sm:mb-6 text-balance transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'

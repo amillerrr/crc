@@ -59,6 +59,44 @@ export default function Hero() {
 
   return (
     <section ref={heroRef} className="relative min-h-svh w-full bg-carmel-bg flex flex-col overflow-hidden">
+      
+      {/* ===== ATMOSPHERIC FLOATING ELEMENTS ===== */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Large gradient orb - top left */}
+        <div 
+          className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full animate-float-slow"
+          style={{
+            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.08) 0%, transparent 70%)',
+          }}
+        />
+        
+        {/* Medium gradient orb - right side */}
+        <div 
+          className="absolute top-1/4 -right-24 w-[400px] h-[400px] rounded-full animate-float-slower"
+          style={{
+            background: 'radial-gradient(circle, rgba(200, 180, 160, 0.06) 0%, transparent 70%)',
+            animationDelay: '-5s',
+          }}
+        />
+        
+        {/* Small accent orb - bottom left */}
+        <div 
+          className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] rounded-full animate-float-slowest"
+          style={{
+            background: 'radial-gradient(circle, rgba(160, 140, 120, 0.05) 0%, transparent 70%)',
+            animationDelay: '-10s',
+          }}
+        />
+        
+        {/* Subtle bottom gradient orb */}
+        <div 
+          className="absolute -bottom-48 right-1/3 w-[600px] h-[600px] rounded-full animate-pulse-soft"
+          style={{
+            background: 'radial-gradient(circle, rgba(190, 170, 150, 0.04) 0%, transparent 60%)',
+          }}
+        />
+      </div>
+
       {/* Logo Container */}
       <div 
         className="fixed left-1/2 z-50 pointer-events-none hero-logo will-change-transform"
@@ -82,7 +120,7 @@ export default function Hero() {
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 flex items-center justify-center px-6 md:px-12">
+      <div className="flex-1 flex items-center justify-center px-6 md:px-12 relative z-10">
         <div className="w-full max-w-4xl text-center">
           
           {/* Spacer */}
@@ -96,16 +134,16 @@ export default function Hero() {
             Experiential Marketing &amp; Brand Activation
           </p>
 
-          {/* CTA */}
+          {/* CTA - Elegant and refined */}
           <div 
             className="mt-8 md:mt-12 hero-fade-in-delay-2"
             style={scrollProgress > 0 ? { opacity: contentOpacity } : undefined}
           >
             <a 
               href="#portfolio"
-              className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/70 transition-colors duration-500"
+              className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/60 transition-colors duration-500"
             >
-              <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/40 transition-colors duration-500">
+              <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/30 transition-colors duration-500">
                 View Our Work
               </span>
             </a>

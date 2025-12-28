@@ -30,7 +30,17 @@ export default function Services() {
       className="scroll-mt-20 py-24 md:py-36 bg-carmel-bg relative overflow-hidden" 
       ref={ref}
     >
-      <div className="px-6 md:px-12 lg:px-16 max-w-5xl mx-auto">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div 
+          className="absolute -bottom-48 -left-48 w-[600px] h-[600px] rounded-full animate-float-slowest opacity-50"
+          style={{
+            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.04) 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      <div className="px-6 md:px-12 lg:px-16 max-w-5xl mx-auto relative z-10">
         
         {/* Centered Minimalist Header */}
         <div className={`text-center mb-16 md:mb-24 transition-all duration-1000 ${
@@ -42,6 +52,11 @@ export default function Services() {
           <h2 className="font-serif text-4xl sm:text-5xl md:text-7xl text-carmel-text tracking-tight leading-tight">
             What We Do
           </h2>
+          
+          {/* Decorative line */}
+          <div className={`mt-8 w-16 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 delay-200 ${
+            isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+          }`} />
         </div>
 
         {/* The "Executive Index" List */}
