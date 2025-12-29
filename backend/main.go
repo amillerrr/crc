@@ -3,11 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"regexp"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -22,9 +25,18 @@ const (
 	writeTimeout    = 10 * time.Second
 	idleTimeout     = 60 * time.Second
 	shutdownTimeout = 30 * time.Second
+
+	// Rate limiting
+	rateLimitWindow   = 1 * time.Minute
+	rateLimitRequests = 5 // 5 requests per minute per IP
 )
 
-var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+// Stricter email regex - requires valid TLD length and proper domain format
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9][a-zA-Z0-9.\-]*\.[a-zA-Z]{2,63}$`)
+
+type contextKey string
+
+const requestIDKey contextKey = "requestID"
 
 type ContactRequest struct {
 	Name    string `json:"name"`
@@ -37,6 +49,70 @@ type APIResponse struct {
 	Message string `json:"message"`
 }
 
+// RateLimiter provides simple in-memory rate limiting per IP
+type RateLimiter struct {
+	mu       sync.Mutex
+	requests map[string][]time.Time
+	limit    int
+	window   time.Duration
+}
+
+func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
+	rl := &RateLimiter{
+		requests: make(map[string][]time.Time),
+		limit:    limit,
+		window:   window,
+	}
+	// Cleanup old entries periodically
+	go rl.cleanup()
+	return rl
+}
+
+func (rl *RateLimiter) cleanup() {
+	ticker := time.NewTicker(5 * time.Minute)
+	for range ticker.C {
+		rl.mu.Lock()
+		now := time.Now()
+		for ip, times := range rl.requests {
+			valid := times[:0]
+			for _, t := range times {
+				if now.Sub(t) < rl.window {
+					valid = append(valid, t)
+				}
+			}
+			if len(valid) == 0 {
+				delete(rl.requests, ip)
+			} else {
+				rl.requests[ip] = valid
+			}
+		}
+		rl.mu.Unlock()
+	}
+}
+
+func (rl *RateLimiter) Allow(ip string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+	cutoff := now.Add(-rl.window)
+
+	// Filter old requests
+	valid := rl.requests[ip][:0]
+	for _, t := range rl.requests[ip] {
+		if t.After(cutoff) {
+			valid = append(valid, t)
+		}
+	}
+	rl.requests[ip] = valid
+
+	if len(rl.requests[ip]) >= rl.limit {
+		return false
+	}
+	rl.requests[ip] = append(rl.requests[ip], now)
+	return true
+}
+
 // Structured logging helper
 func logJSON(level, message string, fields map[string]any) {
 	entry := map[string]any{
@@ -47,13 +123,78 @@ func logJSON(level, message string, fields map[string]any) {
 	for k, v := range fields {
 		entry[k] = v
 	}
-	json.NewEncoder(os.Stdout).Encode(entry)
+	if err := json.NewEncoder(os.Stdout).Encode(entry); err != nil {
+		fmt.Fprintf(os.Stderr, "logging error: %v\n", err)
+	}
 }
 
 func sendJSON(w http.ResponseWriter, status int, response APIResponse) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(response)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		logJSON("error", "Failed to encode response", map[string]any{
+			"error": err.Error(),
+		})
+	}
+}
+
+// getClientIP extracts the real client IP, considering proxy headers
+func getClientIP(r *http.Request) string {
+	// Check X-Forwarded-For first (set by Caddy)
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		// Take the first IP in the chain
+		if idx := strings.Index(xff, ","); idx != -1 {
+			return strings.TrimSpace(xff[:idx])
+		}
+		return strings.TrimSpace(xff)
+	}
+	// Check X-Real-IP
+	if xri := r.Header.Get("X-Real-IP"); xri != "" {
+		return xri
+	}
+	// Fall back to RemoteAddr
+	if idx := strings.LastIndex(r.RemoteAddr, ":"); idx != -1 {
+		return r.RemoteAddr[:idx]
+	}
+	return r.RemoteAddr
+}
+
+// generateRequestID creates a unique request identifier
+func generateRequestID() string {
+	return fmt.Sprintf("%d-%d", time.Now().UnixNano(), rand.Int63()%100000)
+}
+
+// requestIDMiddleware adds a unique request ID to each request
+func requestIDMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		requestID := r.Header.Get("X-Request-ID")
+		if requestID == "" {
+			requestID = generateRequestID()
+		}
+		ctx := context.WithValue(r.Context(), requestIDKey, requestID)
+		w.Header().Set("X-Request-ID", requestID)
+		next(w, r.WithContext(ctx))
+	}
+}
+
+// rateLimitMiddleware applies rate limiting per IP
+func rateLimitMiddleware(rl *RateLimiter, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ip := getClientIP(r)
+		if !rl.Allow(ip) {
+			requestID, _ := r.Context().Value(requestIDKey).(string)
+			logJSON("warn", "Rate limit exceeded", map[string]any{
+				"ip":         ip,
+				"request_id": requestID,
+			})
+			sendJSON(w, http.StatusTooManyRequests, APIResponse{
+				Status:  "error",
+				Message: "Too many requests. Please try again later.",
+			})
+			return
+		}
+		next(w, r)
+	}
 }
 
 func validateContactRequest(req *ContactRequest) (bool, string) {
@@ -93,11 +234,23 @@ func validateContactRequest(req *ContactRequest) (bool, string) {
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
+	requestID, _ := r.Context().Value(requestIDKey).(string)
+	clientIP := getClientIP(r)
+
 	// Only allow POST
 	if r.Method != http.MethodPost {
 		sendJSON(w, http.StatusMethodNotAllowed, APIResponse{
 			Status:  "error",
 			Message: "Method not allowed",
+		})
+		return
+	}
+
+	// Check Content-Length before reading
+	if r.ContentLength > maxRequestSize {
+		sendJSON(w, http.StatusRequestEntityTooLarge, APIResponse{
+			Status:  "error",
+			Message: "Request too large",
 		})
 		return
 	}
@@ -108,8 +261,9 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 	var req ContactRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logJSON("warn", "Failed to decode request body", map[string]any{
-			"error":     err.Error(),
-			"remote_ip": r.RemoteAddr,
+			"error":      err.Error(),
+			"remote_ip":  clientIP,
+			"request_id": requestID,
 		})
 		sendJSON(w, http.StatusBadRequest, APIResponse{
 			Status:  "error",
@@ -129,10 +283,11 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Log the inquiry (structured)
 	logJSON("info", "New inquiry received", map[string]any{
-		"name":  req.Name,
-		"email": req.Email,
-		// Don't log full message for privacy, just length
+		"name":           req.Name,
+		"email":          req.Email,
 		"message_length": len(req.Message),
+		"remote_ip":      clientIP,
+		"request_id":     requestID,
 	})
 
 	// TODO: Integrate SendGrid or SMTP here to actually email the client
@@ -155,8 +310,16 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Seed random for request IDs
+	rand.Seed(time.Now().UnixNano())
+
+	// Initialize rate limiter
+	rateLimiter := NewRateLimiter(rateLimitRequests, rateLimitWindow)
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/contact", contactHandler)
+
+	// Apply middleware chain: requestID -> rateLimit -> handler
+	mux.HandleFunc("/contact", requestIDMiddleware(rateLimitMiddleware(rateLimiter, contactHandler)))
 	mux.HandleFunc("/health", healthHandler)
 
 	server := &http.Server{
@@ -174,7 +337,9 @@ func main() {
 	// Start server in goroutine
 	go func() {
 		logJSON("info", "Server starting", map[string]any{
-			"port": 8080,
+			"port":             8080,
+			"rate_limit":       rateLimitRequests,
+			"rate_limit_window": rateLimitWindow.String(),
 		})
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logJSON("error", "Server failed to start", map[string]any{
