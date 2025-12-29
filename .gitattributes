@@ -1,0 +1,38 @@
+# ----------------------------------------------------------------------
+# 1. AUTO-DETECT
+# ----------------------------------------------------------------------
+* text=auto
+
+# ----------------------------------------------------------------------
+# 2. BINARY ASSETS 
+# ----------------------------------------------------------------------
+*.webp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# ----------------------------------------------------------------------
+# 3. CODEBASE 
+# ----------------------------------------------------------------------
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.go text eol=lf
+*.mod text eol=lf
+*.sum text eol=lf
+
+# ----------------------------------------------------------------------
+# 4. CONFIG & DOCKER 
+# ----------------------------------------------------------------------
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+Caddyfile text eol=lf
+.gitignore text eol=lf
+.dockerignore text eol=lf
