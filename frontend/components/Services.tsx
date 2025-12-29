@@ -2,21 +2,14 @@
 import { useState } from 'react';
 import { useInView } from '@/hooks/useInView';
 
-const services = [
+const subCategories = [
   { 
-    number: "I",
     title: "Brand Activation", 
-    description: "We transform brand narratives into tangible, multi-sensory experiences that forge lasting emotional connections with your audience."
+    description: "We transform brand narratives into tangible, multi-sensory experiences. By merging strategy with soul, we create moments that forge lasting emotional connections and turn passive observers into passionate advocates."
   },
   { 
-    number: "II",
-    title: "Experiential Marketing", 
-    description: "Strategic campaigns engineered to ignite conversation, drive meaningful engagement, and convert passive observers into passionate advocates."
-  },
-  { 
-    number: "III",
     title: "Event Production", 
-    description: "From concept to execution, we craft occasions that transcend the expected—delivering flawless, memorable experiences."
+    description: "From initial concept to flawless execution, we craft occasions that transcend the expected. Our technical precision and logistical mastery ensure that every detail contributes to a seamless, memorable narrative."
   }
 ];
 
@@ -33,100 +26,77 @@ export default function Services() {
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
-          className="absolute -bottom-48 -left-48 w-[600px] h-[600px] rounded-full animate-float-slowest opacity-50"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-30 blur-3xl"
           style={{
-            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.04) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.05) 0%, transparent 70%)',
           }}
         />
       </div>
 
-      <div className="px-6 md:px-12 lg:px-16 max-w-5xl mx-auto relative z-10">
+      <div className="px-6 md:px-12 lg:px-16 max-w-6xl mx-auto relative z-10">
         
-        {/* Centered Minimalist Header */}
-        <div className={`text-center mb-16 md:mb-24 transition-all duration-1000 ${
+        {/* Main Category Header */}
+        <div className={`text-center mb-20 md:mb-28 transition-all duration-1000 ${
            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <span className="block font-italianno text-3xl sm:text-4xl text-carmel-muted mb-4">
+          <span className="block font-italianno text-3xl sm:text-4xl text-carmel-muted mb-6">
             Our Expertise
           </span>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-7xl text-carmel-text tracking-tight leading-tight">
-            What We Do
+          <h2 className="font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight leading-none">
+            Experiential<br />Marketing
           </h2>
           
+          <div className="mt-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-carmel-text/60 leading-relaxed">
+              We engineer strategic campaigns that ignite conversation and drive meaningful engagement, positioning your brand at the center of culture.
+            </p>
+          </div>
+
           {/* Decorative line */}
-          <div className={`mt-8 w-16 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 delay-200 ${
+          <div className={`mt-12 w-24 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 delay-200 ${
             isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
           }`} />
         </div>
 
-        {/* The "Executive Index" List */}
-        <div className="flex flex-col">
-          {services.map((service, index) => (
+        {/* Sub-Categories Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 relative">
+          {/* Central Divider (Desktop only) */}
+          <div className={`hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 transition-all duration-1000 delay-300 ${
+             isInView ? 'opacity-100 scale-y-100 origin-top' : 'opacity-0 scale-y-0'
+          }`} />
+
+          {subCategories.map((service, index) => (
             <div 
-              key={service.number}
-              className={`group border-t border-carmel-text/15 first:border-t transition-colors duration-500 hover:border-carmel-text/50 cursor-default ${
-                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              key={service.title}
+              className={`group flex flex-col items-center text-center md:items-start md:text-left transition-all duration-700 ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
               }`}
-              style={{ transitionDelay: `${index * 100}ms` }}
+              style={{ transitionDelay: `${400 + (index * 200)}ms` }}
               onMouseEnter={() => setActiveService(index)}
               onMouseLeave={() => setActiveService(null)}
             >
-              <div className="py-8 md:py-12 relative">
-                
-                {/* Main Row Content */}
-                <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 md:gap-8">
-                  
-                  {/* Left: Numeral & Title */}
-                  <div className="flex items-baseline gap-6 md:gap-8">
-                    <span className="text-xs md:text-sm font-serif tracking-widest text-carmel-muted w-8 transition-colors duration-500 group-hover:text-carmel-text">
-                      {service.number}
-                    </span>
-                    <h3 className="font-serif text-3xl sm:text-4xl md:text-6xl text-carmel-text transition-transform duration-700 ease-luxury group-hover:translate-x-4">
-                      {service.title}
-                    </h3>
-                  </div>
+              <div className="mb-6 overflow-hidden">
+                <span className="inline-block text-xs font-serif tracking-widest text-carmel-muted uppercase border-b border-carmel-muted/30 pb-1">
+                  0{index + 1}
+                </span>
+              </div>
+              
+              <h3 className="font-serif text-3xl sm:text-4xl text-carmel-text mb-6 group-hover:text-carmel-muted transition-colors duration-300">
+                {service.title}
+              </h3>
+              
+              <p className="text-base text-carmel-text/70 leading-relaxed max-w-md">
+                {service.description}
+              </p>
 
-                  {/* Right: The Interaction Icon (Arrow) */}
-                  <div className="hidden md:flex items-center justify-end w-12">
-                     <svg 
-                       width="24" 
-                       height="24" 
-                       viewBox="0 0 24 24" 
-                       fill="none" 
-                       xmlns="http://www.w3.org/2000/svg"
-                       className="text-carmel-text/30 transform transition-all duration-700 ease-luxury group-hover:rotate-45 group-hover:text-carmel-text group-hover:scale-110"
-                     >
-                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                     </svg>
-                  </div>
-                </div>
-
-                {/* Description - Accordion Reveal */}
-                <div className={`grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-700 ease-luxury`}>
-                  <div className="overflow-hidden">
-                    <div className="pt-6 md:pt-8 md:pl-16 lg:pl-20 max-w-2xl">
-                      <p className="text-base md:text-lg text-carmel-text/60 leading-relaxed opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700 delay-100 ease-out">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile Description (Always Visible, no accordion) */}
-                <div className="md:hidden mt-4 pl-10">
-                   <p className="text-sm text-carmel-text/60 leading-relaxed">
-                     {service.description}
-                   </p>
-                </div>
-
+              {/* Interactive Arrow */}
+              <div className="mt-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-carmel-text">
+                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
             </div>
           ))}
-          
-          {/* Closing Border */}
-          <div className={`border-t border-carmel-text/15 transition-all duration-700 delay-300 ${
-            isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
-          }`} />
         </div>
 
       </div>

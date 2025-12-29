@@ -24,7 +24,7 @@ export default function About() {
             <div className="relative aspect-[3/4] w-full sm:max-w-sm mx-auto lg:mx-0 overflow-hidden">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
-                alt="Portrait representing Carmel Rose Collective"
+                alt="Bree Chenelia - Founder of Carmel Rose Collective"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -50,18 +50,22 @@ export default function About() {
             </h2>
             
             <div 
-              className={`space-y-4 text-carmel-text/55 text-[15px] sm:text-[15px] leading-relaxed transition-all duration-700 ${
+              className={`space-y-4 text-carmel-text/60 text-[15px] sm:text-[15px] leading-relaxed transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
               style={{ transitionDelay: '200ms' }}
             >
               <p>
-                Carmel Rose Collective was born from a desire to blend strategy with soul. 
-                We believe an event is not merely a date on a calendar—it&apos;s a chapter in your brand&apos;s story.
+                Carmel Rose Collective was founded by Los Angeles native Bree Chenelia to bring together what she does best: design forward experiences executed with precision, calm, and an uncompromising eye for detail.
               </p>
               <p>
-                We obsess over the tactile, the visual, and the emotional resonance of every space we touch. 
-                Each project is an opportunity to create something that lingers long after the moment passes.
+                With more than a decade in events, hospitality, and experiential marketing, Bree built her career from the ground up—earning a reputation as the go-to partner for high stakes projects, tight timelines, and moments that feel effortless to the untrained eye. Her work spans collaborations across a wide range of brands, from luxury, high touch houses to everyday consumer names, always bringing the same level of intention, polish, and operational excellence.
+              </p>
+              <p>
+                Carmel Rose Collective exists at the intersection of artistry and logistics—concepting, production, and finishing touches carried through from the first idea to the final guest moment. Bree is known for delivering under pressure and tight turnarounds, and for curating every detail that makes an experience feel elevated, intentional, and truly memorable.
+              </p>
+              <p>
+                With every project, Carmel Rose Collective aims to redefine what’s possible—creating spaces and experiences that are as beautifully designed as they are flawlessly executed.
               </p>
             </div>
             

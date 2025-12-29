@@ -5,17 +5,24 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
 
+  // Optimized scroll listener
   useEffect(() => {
     const handleScroll = () => {
-      // Sync background blur with logo locking position (approx 150px scroll)
       const threshold = 150;
-      setShowBackground(window.scrollY >= threshold);
+      const shouldShow = window.scrollY >= threshold;
+      
+      // Only update state if value changes to prevent re-renders
+      setShowBackground(prev => {
+        if (prev !== shouldShow) return shouldShow;
+        return prev;
+      });
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close menu on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsOpen(false);
@@ -24,18 +31,14 @@ export default function Navigation() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
+  // Lock body scroll when menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      document.body.classList.add('mobile-menu-open');
     } else {
       document.body.style.overflow = '';
-      document.body.classList.remove('mobile-menu-open');
     }
-    return () => { 
-      document.body.style.overflow = ''; 
-      document.body.classList.remove('mobile-menu-open');
-    };
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   const navLinks = [
@@ -62,12 +65,11 @@ export default function Navigation() {
         role="navigation"
         aria-label="Main navigation"
       >
-        {/* Adjusted padding: px-6 (24px) instead of px-4 (16px) for better mobile breathing room */}
         <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center">
           
           {/* Hamburger Menu Button */}
           <button
-            className="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 group"
+            className="relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 group z-50"
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
             aria-controls="full-screen-menu"
@@ -83,28 +85,14 @@ export default function Navigation() {
       {/* Full Screen Menu Overlay */}
       <div
         id="full-screen-menu"
-        className={`fixed inset-0 bg-carmel-bg z-[60] flex flex-col items-center justify-center transition-all duration-700 ease-luxury ${
+        className={`fixed inset-0 bg-carmel-bg z-[45] flex flex-col items-center justify-center transition-all duration-700 ease-luxury ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
         aria-hidden={!isOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
       >
-        {/* HEADER MIRROR FOR CLOSE BUTTON */}
-        <div className="absolute top-0 left-0 w-full py-3 sm:py-4 md:py-6 pointer-events-none">
-           {/* Matched padding here as well: px-6 */}
-           <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center pointer-events-auto">
-             <button
-               className="relative w-10 h-10 flex flex-col justify-center items-center group"
-               onClick={() => setIsOpen(false)}
-               aria-label="Close menu"
-             >
-               <div className="relative w-6 h-6 flex items-center justify-center">
-                 <span className="absolute w-6 h-px bg-carmel-text rotate-45 transition-transform duration-300 group-hover:rotate-[135deg]" />
-                 <span className="absolute w-6 h-px bg-carmel-text -rotate-45 transition-transform duration-300 group-hover:-rotate-[135deg]" />
-               </div>
-             </button>
-           </div>
-        </div>
-
         {/* Menu Links */}
         <div className="flex flex-col items-center gap-8 md:gap-10">
           {navLinks.map((link, i) => (

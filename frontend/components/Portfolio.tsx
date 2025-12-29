@@ -89,12 +89,15 @@ export default function Portfolio() {
           </h2>
         </div>
         
-        {/* Gapless Masonry Grid on Desktop / Spaced Grid on Mobile */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-0 space-y-16 md:space-y-0">
+        {/* Grid Layout vs Masonry:
+          Switched to standard Grid because all items share aspect-[3/4].
+          This ensures correct DOM order (accessibility) while maintaining the layout.
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 md:gap-y-0">
           {portfolioItems.map((item, index) => (
             <div 
               key={item.title}
-              className={`relative break-inside-avoid group cursor-pointer w-full transition-all duration-700 ${
+              className={`relative group cursor-pointer w-full transition-all duration-700 ${
                 isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
               }`}
               style={{ transitionDelay: `${index * 50}ms` }}
