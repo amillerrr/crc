@@ -61,29 +61,31 @@ export default function Hero() {
       </div>
 
       {/* Logo Container 
-        Using CSS calc() to interpolate between start and end variables defined in globals.css
-        Top = start - (progress * (start - end))
-        Scale = start - (progress * (start - end))
+          UPDATED: Raised to z-[250]
+          This places it ABOVE the scrolling header (z-200) but BELOW the menu overlay (z-290).
       */}
       <div 
-        className="fixed left-1/2 z-50 pointer-events-none hero-logo will-change-transform"
+        className="fixed left-1/2 z-[250] pointer-events-none hero-logo will-change-transform"
         style={{
           top: `calc(var(--hero-logo-start-top) - (var(--scroll-progress) * (var(--hero-logo-start-top) - var(--hero-logo-end-top))))`,
           transform: `translateX(-50%) translateY(-50%) scale(calc(var(--hero-logo-start-scale) - (var(--scroll-progress) * (var(--hero-logo-start-scale) - var(--hero-logo-end-scale)))))`,
           transformOrigin: 'center center',
         }}
       >
-        <a 
-          href="/" 
-          className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200 hero-fade-in-logo"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/CRC-Logo.svg"
-            alt="Carmel Rose Collective"
-            className="w-[260px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
-          />
-        </a>
+        {/* Logo animation wrapper */}
+        <div className="hero-fade-in-logo">
+          <a 
+            href="/" 
+            className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/CRC-Logo.svg"
+              alt="Carmel Rose Collective"
+              className="w-[260px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+            />
+          </a>
+        </div>
       </div>
 
       {/* Main content area */}
@@ -94,26 +96,30 @@ export default function Hero() {
           <div className="h-[110px] sm:h-[100px] md:h-[160px] lg:h-[180px]" />
 
           {/* Tagline */}
-          <p 
-            className="mt-8 md:mt-16 text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-balance hero-fade-in-delay-1"
-            style={{ opacity: scrollProgress > 0 ? contentOpacity : undefined }}
-          >
-            Experiential Marketing &amp; Brand Activation
-          </p>
+          <div className="hero-fade-in-delay-1">
+            <p 
+              className="mt-8 md:mt-16 text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-balance"
+              style={{ opacity: contentOpacity }}
+            >
+              Experiential Marketing &amp; Brand Activation
+            </p>
+          </div>
 
           {/* CTA */}
-          <div 
-            className="mt-8 md:mt-12 hero-fade-in-delay-2"
-            style={{ opacity: scrollProgress > 0 ? contentOpacity : undefined }}
-          >
-            <a 
-              href="#portfolio"
-              className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/60 transition-colors duration-500"
+          <div className="hero-fade-in-delay-2">
+            <div 
+              className="mt-8 md:mt-12"
+              style={{ opacity: contentOpacity }}
             >
-              <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/30 transition-colors duration-500">
-                View Our Work
-              </span>
-            </a>
+              <a 
+                href="#portfolio"
+                className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/60 transition-colors duration-500"
+              >
+                <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/30 transition-colors duration-500">
+                  View Our Work
+                </span>
+              </a>
+            </div>
           </div>
         </div>
       </div>

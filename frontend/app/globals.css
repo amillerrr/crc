@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
-/* ===== TAILWIND V4.1 THEME ===== */
+/* ===== TAILWIND V4.1 CONFIGURATION ===== */
 @theme {
-  --color-cream: oklch(0.97 0.008 85);
-  --color-charcoal: oklch(0.22 0.01 260);
-  --color-stone: oklch(0.50 0.015 60);
+  /* Colors */
+  --color-carmel-bg: oklch(0.97 0.008 85);       /* Cream */
+  --color-carmel-text: oklch(0.22 0.01 260);     /* Charcoal */
+  --color-carmel-muted: oklch(0.50 0.015 60);    /* Stone */
   --color-warm-white: oklch(0.995 0.003 90);
   
-  --color-carmel-bg: var(--color-cream);
-  --color-carmel-text: var(--color-charcoal);
-  --color-carmel-muted: var(--color-stone);
+  /* Fonts - Mapped for Utility Classes */
+  --font-serif: var(--font-poiret-one), "Georgia", serif;
+  --font-sans: var(--font-cormorant), "Garamond", serif; 
+  /* We map the existing utility class name to the NEW font variable */
+  --font-italianno: var(--font-parisienne), cursive;
   
-  --font-serif: var(--font-playfair), "Georgia", serif;
-  --font-sans: var(--font-lato), system-ui, sans-serif;
-  
+  /* Utilities */
   --tracking-luxury: 0.15em;
-  
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
 
-  /* Animation durations */
+  /* Animation Durations */
   --duration-slow: 20s;
   --duration-slower: 25s;
   --duration-slowest: 30s;
@@ -33,19 +33,29 @@ html {
 }
 
 body {
-  color: var(--color-charcoal);
-  background: var(--color-cream);
-  font-family: var(--font-sans);
+  color: var(--color-carmel-text);
+  background: var(--color-carmel-bg);
+  
+  /* NUCLEAR OPTION: Force the body font with !important */
+  font-family: var(--font-cormorant), "Garamond", serif !important;
+  
+  font-size: 20px;
   overflow-x: hidden;
   width: 100%;
   position: relative;
 }
 
+/* Headers override */
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: var(--font-poiret-one), serif !important;
+}
+
+/* Accent override - Updated to use Parisienne */
+.font-italianno {
+  font-family: var(--font-parisienne), cursive !important;
+}
+
 /* ===== HERO VARIABLES ===== */
-/* We define the end position in CSS to avoid JS media query mismatches.
-   Mobile end top: 32px
-   Desktop (md) end top: 44px
-*/
 :root {
   --hero-logo-start-top: 40vh;
   --hero-logo-end-top: 32px; 
@@ -60,7 +70,7 @@ body {
   }
 }
 
-/* ===== NOISE TEXTURE OVERLAY ===== */
+/* ===== NOISE TEXTURE ===== */
 body::before {
   content: '';
   position: fixed;
@@ -71,7 +81,7 @@ body::before {
   z-index: 1000;
 }
 
-/* ===== FLOATING ANIMATIONS ===== */
+/* ===== KEYFRAMES & ANIMATIONS ===== */
 @keyframes float-slow {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
@@ -95,16 +105,21 @@ body::before {
   50% { opacity: 0.5; transform: scale(1.05); }
 }
 
-.animate-float-slow { animation: float-slow var(--duration-slow) ease-in-out infinite; }
-.animate-float-slower { animation: float-slower var(--duration-slower) ease-in-out infinite; }
-.animate-float-slowest { animation: float-slowest var(--duration-slowest) ease-in-out infinite; }
-.animate-pulse-soft { animation: pulse-soft 8s ease-in-out infinite; }
-
-/* ===== HERO ANIMATIONS ===== */
 @keyframes heroFadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.animate-float-slow { animation: float-slow var(--duration-slow) ease-in-out infinite; }
+.animate-float-slower { animation: float-slower var(--duration-slower) ease-in-out infinite; }
+.animate-float-slowest { animation: float-slowest var(--duration-slowest) ease-in-out infinite; }
+.animate-pulse-soft { animation: pulse-soft 8s ease-in-out infinite; }
 
 .hero-fade-in-logo {
   opacity: 0; 
@@ -121,9 +136,8 @@ body::before {
   animation: heroFadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.8s forwards;
 }
 
-/* ===== GRADIENT TEXT & SHIMMER ===== */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-charcoal) 0%, var(--color-stone) 50%, var(--color-charcoal) 100%);
+  background: linear-gradient(135deg, var(--color-carmel-text) 0%, var(--color-carmel-muted) 50%, var(--color-carmel-text) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -131,12 +145,6 @@ body::before {
   animation: shimmer 8s linear infinite;
 }
 
-@keyframes shimmer {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
-}
-
-/* ===== SMOOTH LINK UNDERLINES ===== */
 .link-underline { position: relative; }
 .link-underline::after {
   content: '';
@@ -150,12 +158,11 @@ body::before {
 }
 .link-underline:hover::after { width: 100%; }
 
-/* ===== SELECTION ===== */
-::selection { background: var(--color-charcoal); color: var(--color-cream); }
-::-moz-selection { background: var(--color-charcoal); color: var(--color-cream); }
+/* ===== SELECTION & SCROLLBAR ===== */
+::selection { background: var(--color-carmel-text); color: var(--color-carmel-bg); }
+::-moz-selection { background: var(--color-carmel-text); color: var(--color-carmel-bg); }
 
-/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--color-cream); }
-::-webkit-scrollbar-thumb { background: var(--color-stone); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-charcoal); }
+::-webkit-scrollbar-track { background: var(--color-carmel-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-carmel-muted); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-carmel-text); }

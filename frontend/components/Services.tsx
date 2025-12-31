@@ -75,26 +75,20 @@ export default function Services() {
               onMouseEnter={() => setActiveService(index)}
               onMouseLeave={() => setActiveService(null)}
             >
-              <div className="mb-6 overflow-hidden">
-                <span className="inline-block text-xs font-serif tracking-widest text-carmel-muted uppercase border-b border-carmel-muted/30 pb-1">
-                  0{index + 1}
-                </span>
-              </div>
+              {/* REMOVED: Number container */}
               
-              <h3 className="font-serif text-3xl sm:text-4xl text-carmel-text mb-6 group-hover:text-carmel-muted transition-colors duration-300">
+              {/* Title with Underline Animation */}
+              <h3 className="font-serif text-3xl sm:text-4xl text-carmel-text mb-6 group-hover:text-carmel-muted transition-colors duration-300 relative inline-block w-fit">
                 {service.title}
+                {/* The Underline Line */}
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-carmel-text/60 transition-all duration-500 ease-luxury group-hover:w-full" />
               </h3>
               
               <p className="text-base text-carmel-text/70 leading-relaxed max-w-md">
                 {service.description}
               </p>
 
-              {/* Interactive Arrow */}
-              <div className="mt-8 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-carmel-text">
-                  <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
+              {/* REMOVED: Interactive Arrow */}
             </div>
           ))}
         </div>

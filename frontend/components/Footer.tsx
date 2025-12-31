@@ -22,10 +22,10 @@ export default function Footer() {
           </div>
           
           <a 
-            href="mailto:hello@carmelrose.com" 
+            href="mailto:bree@carmelrose.com" 
             className="text-sm sm:text-base md:text-lg text-white/60 hover:text-white transition-colors duration-300 link-underline"
           >
-            hello@carmelrose.com
+            bree@carmelrose.com
           </a>
         </div>
         

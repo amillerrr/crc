@@ -1,27 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Lato, Italianno } from "next/font/google";
+import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
 import { SmoothScroll, ScrollProgress } from "@/components";
 import "./globals.css";
 
-// Font Configuration
-const playfair = Playfair_Display({ 
+// 1. Header Font
+const poiretOne = Poiret_One({ 
+  weight: "400",
   subsets: ["latin"], 
-  variable: '--font-playfair',
-  display: 'swap',
+  variable: "--font-poiret-one",
+  display: "swap",
 });
 
-const lato = Lato({ 
-  weight: ["300", "400"], 
+// 2. Body Font
+const cormorant = Cormorant_Garamond({ 
+  weight: ["300", "400", "500", "600", "700"], 
   subsets: ["latin"], 
-  variable: '--font-lato',
-  display: 'swap',
+  variable: "--font-cormorant",
+  display: "swap",
 });
 
-const italianno = Italianno({ 
-  weight: ["400"], 
+// 3. New Accent Font (Parisienne)
+const parisienne = Parisienne({ 
+  weight: "400",
   subsets: ["latin"], 
-  variable: '--font-italianno',
-  display: 'swap',
+  variable: "--font-parisienne", // Updated variable name
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -36,30 +39,10 @@ export const metadata: Metadata = {
     template: "%s | Carmel Rose Collective",
   },
   description: "Experiential marketing and brand activations. We craft immersive events that bring your brand narrative to life.",
-  keywords: ["experiential marketing", "brand activation", "event production", "luxury events", "corporate events"],
-  authors: [{ name: "Carmel Rose Collective" }],
-  creator: "Carmel Rose Collective",
-  // Updated icons configuration
   icons: {
-    icon: '/CR-Favicon.webp', // Reference to public/CR-favicon.webp
+    icon: '/CR-Favicon.webp',
     shortcut: '/CR-Favicon.webp',
     apple: '/CR-Favicon.webp',
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "Carmel Rose Collective",
-    title: "Carmel Rose Collective",
-    description: "Experiential marketing and brand activations. We craft immersive events that bring your brand narrative to life.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Carmel Rose Collective",
-    description: "Experiential marketing and brand activations.",
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
 };
 
@@ -69,14 +52,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body 
-        className={`${playfair.variable} ${lato.variable} ${italianno.variable} bg-carmel-bg text-carmel-text antialiased`}
+        // Updated to inject the parisienne variable
+        className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
-        {/* Subtle scroll progress indicator */}
         <ScrollProgress />
-        
-        {/* Smooth scroll behavior */}
         <SmoothScroll />
-        
         {children}
       </body>
     </html>
