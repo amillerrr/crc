@@ -39,11 +39,11 @@ export default function Services() {
         <div className={`text-center mb-20 md:mb-28 transition-all duration-1000 ${
            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <span className="block font-italianno text-3xl sm:text-4xl text-carmel-muted mb-6">
-            Our Expertise
+          <span className="block text-carmel-text text-3xl sm:text-4xl text-carmel-muted mb-6">
+            OUR EXPERTISE
           </span>
           <h2 className="font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight leading-none">
-            Experiential<br />Marketing
+            Experiential Marketing
           </h2>
           
           <div className="mt-8 max-w-2xl mx-auto">

@@ -79,20 +79,13 @@ export default function Portfolio() {
     >
       <div className="w-full max-w-[1920px] mx-auto">
         
-        {/* Minimalist Header */}
+        {/* Minimalist Header - Removed "Selected Works" */}
         <div className="flex flex-col items-center text-center mb-16 px-6">
-          <span className={`font-italianno text-3xl text-carmel-muted mb-2 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Selected Works
-          </span>
-          <h2 className={`font-serif text-4xl sm:text-5xl md:text-6xl text-carmel-text tracking-tight transition-all duration-700 delay-100 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <h2 className={`font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight transition-all duration-700 delay-100 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             Our Portfolio
           </h2>
         </div>
         
-        {/* Grid Layout vs Masonry:
-          Switched to standard Grid because all items share aspect-[3/4].
-          This ensures correct DOM order (accessibility) while maintaining the layout.
-        */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 md:gap-y-0">
           {portfolioItems.map((item, index) => (
             <div 
@@ -119,11 +112,12 @@ export default function Portfolio() {
                     {item.client}
                   </span>
                   
-                  <h3 className="font-serif text-3xl md:text-4xl text-white mb-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-200 ease-out">
+                  {/* UPDATED: Changed font-serif (Poiret) to font-sans (Cormorant) */}
+                  <h3 className="font-sans text-3xl md:text-4xl text-white mb-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-200 ease-out">
                     {item.title}
                   </h3>
                   
-                  <span className="font-italianno text-2xl text-white/80 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-300 ease-out">
+                  <span className="font-sans text-2xl text-white/80 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-300 ease-out">
                     {item.category}
                   </span>
                 </div>
@@ -134,10 +128,11 @@ export default function Portfolio() {
                 <span className="text-[9px] tracking-[0.2em] uppercase text-carmel-text/40 mb-2">
                   {item.client}
                 </span>
-                <h3 className="font-serif text-2xl text-carmel-text mb-1">
+                {/* UPDATED: Changed font-serif (Poiret) to font-sans (Cormorant) */}
+                <h3 className="font-sans text-2xl text-carmel-text mb-1">
                   {item.title}
                 </h3>
-                <span className="font-italianno text-xl text-carmel-muted">
+                <span className="font-sans text-xl text-carmel-muted">
                   {item.category}
                 </span>
               </div>

@@ -71,11 +71,7 @@ export default function Contact() {
       <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-lg mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-12 md:mb-14">
-          <span className={`block font-italianno text-2xl text-carmel-muted mb-2 transition-all duration-700 ${
-            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}>
-            Let&apos;s Connect
-          </span>
+          {/* REMOVED: "Let's Connect" span */}
           <h2 
             className={`font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl transition-all duration-700 delay-100 ${
               isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'

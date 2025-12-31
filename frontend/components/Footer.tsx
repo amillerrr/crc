@@ -13,10 +13,26 @@ export default function Footer() {
           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
           <div className="mb-5 md:mb-0">
-            <p className="font-italianno text-3xl sm:text-4xl md:text-5xl mb-2">
-              Carmel Rose
-            </p>
-            <p className="text-[10px] tracking-[0.15em] uppercase text-white/35">
+            {/* LOGO REPLACEMENT 
+              Using CSS Mask to apply the 'Cream' (bg-carmel-bg) color to the SVG shape.
+            */}
+            <div 
+              className="w-48 sm:w-64 md:w-80 h-10 sm:h-12 md:h-14 bg-carmel-bg mb-4"
+              style={{
+                maskImage: 'url(/CRC-Logo.svg)',
+                maskPosition: 'left center',
+                maskRepeat: 'no-repeat',
+                maskSize: 'contain',
+                WebkitMaskImage: 'url(/CRC-Logo.svg)',
+                WebkitMaskPosition: 'left center',
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskSize: 'contain'
+              }}
+              role="img"
+              aria-label="Carmel Rose"
+            />
+            
+            <p className="text-[10px] tracking-[0.15em] uppercase text-white/35 pl-1">
               Los Angeles, California
             </p>
           </div>
