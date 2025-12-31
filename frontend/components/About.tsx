@@ -68,27 +68,6 @@ export default function About() {
                 With every project, Carmel Rose Collective aims to redefine what’s possible—creating spaces and experiences that are as beautifully designed as they are flawlessly executed.
               </p>
             </div>
-            
-            {/* Stats */}
-            <div 
-              className={`flex gap-8 sm:gap-12 mt-10 sm:mt-10 pt-8 sm:pt-8 border-t border-carmel-text/8 transition-all duration-700 ${
-                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-              }`}
-              style={{ transitionDelay: '300ms' }}
-            >
-              <div>
-                <p className="font-serif text-3xl sm:text-3xl md:text-4xl mb-1">50+</p>
-                <p className="text-[9px] tracking-[0.15em] uppercase text-carmel-text/35">
-                  Activations
-                </p>
-              </div>
-              <div>
-                <p className="font-serif text-3xl sm:text-3xl md:text-4xl mb-1">12</p>
-                <p className="text-[9px] tracking-[0.15em] uppercase text-carmel-text/35">
-                  Cities
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

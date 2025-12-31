@@ -39,6 +39,12 @@ export const metadata: Metadata = {
   keywords: ["experiential marketing", "brand activation", "event production", "luxury events", "corporate events"],
   authors: [{ name: "Carmel Rose Collective" }],
   creator: "Carmel Rose Collective",
+  // Updated icons configuration
+  icons: {
+    icon: '/CR-Favicon.webp', // Reference to public/CR-favicon.webp
+    shortcut: '/CR-Favicon.webp',
+    apple: '/CR-Favicon.webp',
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
