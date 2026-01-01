@@ -166,3 +166,60 @@ body::before {
 ::-webkit-scrollbar-track { background: var(--color-carmel-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-carmel-muted); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-carmel-text); }
+
+/* ===== THEATRICAL ANIMATIONS (UPDATED) ===== */
+
+/* 1. Image Reveal (The "Curtain Raise") */
+.reveal-image-hidden {
+  opacity: 0;
+  transform: scale(1.1); /* Slight zoom out effect */
+  clip-path: inset(0 0 100% 0); /* Hidden from bottom */
+  filter: grayscale(100%);
+}
+
+.reveal-image-visible {
+  opacity: 1;
+  transform: scale(1);
+  clip-path: inset(0 0 0 0);
+  filter: grayscale(0%);
+  transition: 
+    clip-path 1.5s var(--ease-luxury),
+    transform 1.8s var(--ease-luxury),
+    filter 1.5s ease-out,
+    opacity 1s ease-out;
+}
+
+/* 2. Text Reveal (The "Magazine Slide") */
+.reveal-text-hidden {
+  opacity: 0;
+  transform: translateY(40px); /* Deeper start position */
+}
+
+.reveal-text-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 
+    opacity 1.2s ease-out,
+    transform 1.2s var(--ease-luxury);
+}
+
+/* 3. Stagger Delays (Utility classes for orchestration) */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+
+/* 4. Soft Scroll Snap */
+.snap-container {
+  /* Proximity is key for luxury. Mandatory feels too aggressive */
+  scroll-snap-type: y proximity; 
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  scroll-margin-top: 0px; 
+}

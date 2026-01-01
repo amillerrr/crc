@@ -3,39 +3,29 @@ import Image from 'next/image';
 import { useInView } from '@/hooks/useInView';
 
 export default function About() {
-  const { ref, isInView } = useInView({ threshold: 0.15 });
+  const { ref, isInView } = useInView({ 
+    threshold: 0.25,
+    rootMargin: '0px 0px -50% 0px' 
+  });
 
   return (
     <section 
       id="about" 
-      className="scroll-mt-20 md:scroll-mt-24 py-16 sm:py-20 md:py-28 lg:py-32 bg-carmel-bg" 
+      className="snap-section scroll-mt-0 py-16 sm:py-20 md:py-28 lg:py-32 bg-carmel-bg min-h-screen flex items-center" 
       ref={ref}
     >
-      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto">
-        
-        {/* HEADER: Centered above the content */}
+      <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto w-full">
         <div className="text-center mb-12 sm:mb-16">
           <h2 
-            className={`font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight text-balance transition-all duration-700 ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
+            className={`font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight text-balance relative inline-block ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}
           >
             Our Story
+            <span className={`absolute -bottom-2 left-0 h-[1px] bg-carmel-text/60 transition-all duration-[1.5s] ease-luxury delay-500 ${isInView ? 'w-full' : 'w-0'}`} />
           </h2>
         </div>
 
-        {/* CONTENT GRID: Image and Text
-            UPDATED: Changed 'items-start' to 'items-center'.
-            This vertically aligns the paragraph text block with the center of the image.
-        */}
         <div className="grid gap-14 sm:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
-          
-          {/* Image Column */}
-          <div 
-            className={`transition-all duration-700 ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
+          <div className={`${isInView ? 'reveal-image-visible' : 'reveal-image-hidden'}`}>
             <div className="relative aspect-[3/4] w-full sm:max-w-sm mx-auto lg:mx-0 overflow-hidden">
               <Image
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
@@ -47,23 +37,19 @@ export default function About() {
             </div>
           </div>
           
-          {/* Text Column - Paragraphs */}
           <div 
-            className={`space-y-4 text-carmel-text/60 text-[15px] sm:text-[15px] leading-relaxed transition-all duration-700 ${
-              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-            style={{ transitionDelay: '200ms' }}
+            className={`space-y-4 text-carmel-text/60 text-[15px] sm:text-[15px] leading-relaxed delay-200 ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}
           >
             <p>
               Carmel Rose Collective was founded by Los Angeles native Bree Chenelia to bring together what she does best: design forward experiences executed with precision, calm, and an uncompromising eye for detail.
             </p>
-            <p>
+            <p className="delay-100">
               With more than a decade in events, hospitality, and experiential marketing, Bree built her career from the ground up—earning a reputation as the go-to partner for high stakes projects, tight timelines, and moments that feel effortless to the untrained eye. Her work spans collaborations across a wide range of brands, from luxury, high touch houses to everyday consumer names, always bringing the same level of intention, polish, and operational excellence.
             </p>
-            <p>
+            <p className="delay-200">
               Carmel Rose Collective exists at the intersection of artistry and logistics—concepting, production, and finishing touches carried through from the first idea to the final guest moment. Bree is known for delivering under pressure and tight turnarounds, and for curating every detail that makes an experience feel elevated, intentional, and truly memorable.
             </p>
-            <p>
+            <p className="delay-300">
               With every project, Carmel Rose Collective aims to redefine what’s possible—creating spaces and experiences that are as beautifully designed as they are flawlessly executed.
             </p>
           </div>

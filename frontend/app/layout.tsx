@@ -50,9 +50,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    // Added snap-container for soft scrolling physics
+    <html lang="en" className="snap-container">
       <body 
-        // Updated to inject the parisienne variable
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
         <ScrollProgress />
