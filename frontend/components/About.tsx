@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useInView } from '@/hooks/useInView';
 
 export default function About() {
+  // Use the strict margins defined in your system
   const { ref, isInView } = useInView({ 
     threshold: 0.25,
     rootMargin: '0px 0px -50% 0px' 
@@ -15,6 +16,8 @@ export default function About() {
       ref={ref}
     >
       <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-6xl mx-auto w-full">
+        
+        {/* HEADER */}
         <div className="text-center mb-12 sm:mb-16">
           <h2 
             className={`font-serif text-3xl sm:text-3xl md:text-4xl lg:text-5xl leading-tight text-balance relative inline-block ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}
@@ -25,18 +28,22 @@ export default function About() {
         </div>
 
         <div className="grid gap-14 sm:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+          
+          {/* IMAGE COLUMN */}
           <div className={`${isInView ? 'reveal-image-visible' : 'reveal-image-hidden'}`}>
             <div className="relative aspect-[3/4] w-full sm:max-w-sm mx-auto lg:mx-0 overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
+                src="/about/profile-bree.webp"
                 alt="Bree Chenelia - Founder of Carmel Rose Collective"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
+                priority // Added priority since this is a key visual
               />
             </div>
           </div>
           
+          {/* TEXT COLUMN */}
           <div 
             className={`space-y-4 text-carmel-text/60 text-[15px] sm:text-[15px] leading-relaxed delay-200 ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}
           >
