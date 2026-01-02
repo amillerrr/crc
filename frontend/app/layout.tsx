@@ -3,7 +3,6 @@ import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
 import { SmoothScroll, ScrollProgress } from "@/components";
 import "./globals.css";
 
-// 1. Header Font
 const poiretOne = Poiret_One({ 
   weight: "400",
   subsets: ["latin"], 
@@ -11,7 +10,6 @@ const poiretOne = Poiret_One({
   display: "swap",
 });
 
-// 2. Body Font
 const cormorant = Cormorant_Garamond({ 
   weight: ["300", "400", "500", "600", "700"], 
   subsets: ["latin"], 
@@ -19,11 +17,10 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-// 3. New Accent Font (Parisienne)
 const parisienne = Parisienne({ 
   weight: "400",
   subsets: ["latin"], 
-  variable: "--font-parisienne", // Updated variable name
+  variable: "--font-parisienne",
   display: "swap",
 });
 
@@ -50,9 +47,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // Added snap-container for soft scrolling physics
-    <html lang="en" className="snap-container">
+    <html lang="en">
       <body 
+        // REMOVED: snap-container class to prevent scroll conflicts
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
         <ScrollProgress />

@@ -5,17 +5,20 @@ interface UseInViewOptions {
   threshold?: number;
   rootMargin?: string;
   triggerOnce?: boolean;
-  delay?: number; // Wait time before observation begins
+  delay?: number; 
 }
 
 export function useInView<T extends HTMLElement = HTMLDivElement>({
   threshold = 0.2, 
-  // STAGE CENTER TRIGGER: 
-  // -50% margin means the element must cross the CENTER line of the screen before triggering.
-  rootMargin = '0px 0px -50% 0px', 
+  // TRIGGER ZONE:
+  // -40% margin means the animation triggers when the element's top 
+  // crosses the line 40% up from the bottom of the screen.
+  // This creates a "Stage Center" reveal effect.
+  rootMargin = '0px 0px -40% 0px', 
   triggerOnce = true,
-  // MOUNT SAFETY:
-  // Wait 600ms after load/mount before checking. This ensures no "on-load" flashes.
+  // MOUNT DELAY:
+  // Waits 600ms before checking intersection to prevent "on-load" flashes
+  // caused by initial layout shifts or loading states.
   delay = 600, 
 }: UseInViewOptions = {}) {
   const ref = useRef<T>(null);
@@ -51,7 +54,6 @@ export function useInView<T extends HTMLElement = HTMLDivElement>({
       observer.observe(element);
     };
 
-    // Strict delay to prevent load-time false positives
     timeoutId = setTimeout(startObserving, delay);
 
     return () => {
