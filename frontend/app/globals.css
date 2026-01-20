@@ -16,19 +16,20 @@
   /* Utilities */
   --tracking-luxury: 0.15em;
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
-
-  /* Animation Durations */
-  --duration-slow: 20s;
-  --duration-slower: 25s;
-  --duration-slowest: 30s;
 }
 
 /* ===== BASE STYLES ===== */
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
   width: 100%;
+  
+  /* CRITICAL: Disable native smoothing so JS works instantly */
+  scroll-behavior: auto !important;
+  
+  /* Stop rubber-banding/bouncing on Mac/iOS */
+  overscroll-behavior-y: none;
+  overflow-y: scroll;
 }
 
 body {
@@ -36,46 +37,30 @@ body {
   background: var(--color-carmel-bg);
   font-family: var(--font-cormorant), "Garamond", serif !important;
   font-size: 20px;
-  overflow-x: hidden;
   width: 100%;
   position: relative;
-}
-
-/* ===== SCROLL SNAP SYSTEM ===== */
-/* 
- * PowerPoint-style scroll snapping.
- * Using 'proximity' for a smoother, less jarring experience.
- * Switch to 'mandatory' for strict snap-to-section behavior.
- */
-.snap-container {
-  scroll-snap-type: y proximity;
-  overflow-y: auto;
+  margin: 0;
+  
+  /* Safety checks */
+  overscroll-behavior-y: none;
   overflow-x: hidden;
-  height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile */
-  scroll-behavior: smooth;
 }
 
-/* Strict PowerPoint-style snapping (uncomment to use) */
-/*
-.snap-container {
-  scroll-snap-type: y mandatory;
-}
-*/
-
-/* Individual snap sections */
+/* ===== LAYOUT UTILS ===== */
+/* Enforce strict 100vh sections */
 .snap-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
+  height: 100vh;            
+  width: 100%;
+  overflow: hidden;         
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-/* Ensure sections fill viewport properly */
-.snap-section-full {
-  scroll-snap-align: start;
-  scroll-snap-stop: always; /* Forces stop at this section */
-  min-height: 100vh;
-  min-height: 100dvh;
-}
+/* Hide Scrollbar for Horizontal Portfolio */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Typography Overrides */
 h1, h2, h3, h4, h5, h6, .font-serif {
@@ -91,12 +76,7 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   --hero-logo-end-top: 42px; 
   --hero-logo-start-scale: 1;
   --hero-logo-end-scale: 0.60;
-  
-  /* Scroll snap transition timing */
-  --snap-transition-duration: 0.8s;
-  --snap-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
 }
-
 @media (min-width: 768px) {
   :root {
     --hero-logo-end-top: 40px;
@@ -115,7 +95,7 @@ body::before {
   z-index: 1000;
 }
 
-/* ===== KEYFRAMES ===== */
+/* ===== ANIMATIONS ===== */
 @keyframes float-slow {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
@@ -144,7 +124,6 @@ body::before {
   100% { background-position: 200% center; }
 }
 
-/* ===== UTILITY CLASSES ===== */
 .animate-float-slow { animation: float-slow var(--duration-slow) ease-in-out infinite; }
 .animate-float-slower { animation: float-slower var(--duration-slower) ease-in-out infinite; }
 .animate-float-slowest { animation: float-slowest var(--duration-slowest) ease-in-out infinite; }
@@ -176,130 +155,24 @@ body::before {
 }
 .link-underline:hover::after { width: 100%; }
 
-/* ===== SELECTION & SCROLLBAR ===== */
-::selection { background: var(--color-carmel-text); color: var(--color-carmel-bg); }
-::-moz-selection { background: var(--color-carmel-text); color: var(--color-carmel-bg); }
+/* Reveal Classes */
+.reveal-image-hidden { opacity: 0; transform: scale(1.1); clip-path: inset(0 0 100% 0); filter: grayscale(100%); }
+.reveal-image-visible { opacity: 1; transform: scale(1); clip-path: inset(0 0 0 0); filter: grayscale(0%); transition: clip-path 1.5s var(--ease-luxury), transform 1.8s var(--ease-luxury), filter 1.5s ease-out, opacity 1s ease-out; }
 
-/* Hide scrollbar for cleaner snap experience */
-.snap-container::-webkit-scrollbar { width: 0; height: 0; }
-.snap-container { scrollbar-width: none; -ms-overflow-style: none; }
+.reveal-text-hidden { opacity: 0; transform: translateY(40px); }
+.reveal-text-visible { opacity: 1; transform: translateY(0); transition: opacity 1.2s ease-out, transform 1.2s var(--ease-luxury); }
 
-/* Regular scrollbar for non-snap contexts */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--color-carmel-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-carmel-muted); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-carmel-text); }
+.snap-reveal-hidden { opacity: 0; transform: translateY(60px) scale(0.95); filter: blur(4px); }
+.snap-reveal-visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); transition: opacity 0.8s var(--ease-luxury), transform 1s var(--ease-luxury), filter 0.6s ease-out; }
 
-/* ===== THEATRICAL ANIMATIONS ===== */
+.reveal-slide-left-hidden { opacity: 0; transform: translateX(-80px); }
+.reveal-slide-left-visible { opacity: 1; transform: translateX(0); transition: opacity 1s ease-out, transform 1.2s var(--ease-luxury); }
 
-/* 1. Image Reveal (The "Curtain Raise") */
-.reveal-image-hidden {
-  opacity: 0;
-  transform: scale(1.1);
-  clip-path: inset(0 0 100% 0);
-  filter: grayscale(100%);
-}
+.reveal-slide-right-hidden { opacity: 0; transform: translateX(80px); }
+.reveal-slide-right-visible { opacity: 1; transform: translateX(0); transition: opacity 1s ease-out, transform 1.2s var(--ease-luxury); }
 
-.reveal-image-visible {
-  opacity: 1;
-  transform: scale(1);
-  clip-path: inset(0 0 0 0);
-  filter: grayscale(0%);
-  transition: 
-    clip-path 1.5s var(--ease-luxury),
-    transform 1.8s var(--ease-luxury),
-    filter 1.5s ease-out,
-    opacity 1s ease-out;
-}
-
-/* 2. Text Reveal (The "Magazine Slide") */
-.reveal-text-hidden {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
-.reveal-text-visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition: 
-    opacity 1.2s ease-out,
-    transform 1.2s var(--ease-luxury);
-}
-
-/* 3. Snap-Enhanced Reveals - More dramatic for PowerPoint feel */
-.snap-reveal-hidden {
-  opacity: 0;
-  transform: translateY(60px) scale(0.95);
-  filter: blur(4px);
-}
-
-.snap-reveal-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
-  transition: 
-    opacity 0.8s var(--ease-luxury),
-    transform 1s var(--ease-luxury),
-    filter 0.6s ease-out;
-}
-
-/* 4. Slide-in from sides */
-.reveal-slide-left-hidden {
-  opacity: 0;
-  transform: translateX(-80px);
-}
-
-.reveal-slide-left-visible {
-  opacity: 1;
-  transform: translateX(0);
-  transition: 
-    opacity 1s ease-out,
-    transform 1.2s var(--ease-luxury);
-}
-
-.reveal-slide-right-hidden {
-  opacity: 0;
-  transform: translateX(80px);
-}
-
-.reveal-slide-right-visible {
-  opacity: 1;
-  transform: translateX(0);
-  transition: 
-    opacity 1s ease-out,
-    transform 1.2s var(--ease-luxury);
-}
-
-/* 5. Scale-up reveal */
-.reveal-scale-hidden {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.reveal-scale-visible {
-  opacity: 1;
-  transform: scale(1);
-  transition: 
-    opacity 0.8s ease-out,
-    transform 1s var(--ease-luxury);
-}
-
-/* 6. Stagger Delays - Extended for more elements */
 .delay-100 { transition-delay: 100ms; }
 .delay-200 { transition-delay: 200ms; }
 .delay-300 { transition-delay: 300ms; }
 .delay-400 { transition-delay: 400ms; }
 .delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
-.delay-700 { transition-delay: 700ms; }
-.delay-800 { transition-delay: 800ms; }
-.delay-900 { transition-delay: 900ms; }
-.delay-1000 { transition-delay: 1000ms; }
-
-/* ===== HERO LOGO TRANSITION STATES ===== */
-/* These are controlled by JavaScript but CSS handles the transition */
-.hero-logo-transitioning {
-  transition: 
-    top var(--snap-transition-duration) var(--snap-transition-easing),
-    transform var(--snap-transition-duration) var(--snap-transition-easing);
-}

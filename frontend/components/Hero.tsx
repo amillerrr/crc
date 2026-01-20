@@ -55,8 +55,9 @@ export default function Hero() {
 
       {/* Logo Container */}
       <div 
-        // FIX: z-[500] ensures this sits ON TOP of the Navigation bar (which is z-[300])
-        className="fixed left-1/2 z-[500] pointer-events-none hero-logo will-change-transform"
+        // FIX: Increased z-index to [920]
+        // This ensures it sits ABOVE the Navigation Bar (z-[910]) so the nav background doesn't hide it.
+        className="fixed left-1/2 z-[920] pointer-events-none hero-logo will-change-transform"
         style={{
           top: `calc(var(--hero-logo-start-top) - (var(--scroll-progress) * (var(--hero-logo-start-top) - var(--hero-logo-end-top))))`,
           transform: `translateX(-50%) translateY(-50%) scale(calc(var(--hero-logo-start-scale) - (var(--scroll-progress) * (var(--hero-logo-start-scale) - var(--hero-logo-end-scale)))))`,

@@ -5,103 +5,58 @@ import { useInView } from '@/hooks/useInView';
 const subCategories = [
   { 
     title: "Brand Activation", 
-    description: "We transform brand narratives into tangible, multi-sensory experiences. By merging strategy with soul, we create moments that forge lasting emotional connections and turn passive observers into passionate advocates."
+    description: "We transform brand narratives into tangible, multi-sensory experiences. By merging strategy with soul, we create moments that forge lasting emotional connections."
   },
   { 
     title: "Event Production", 
-    description: "From initial concept to flawless execution, we craft occasions that transcend the expected. Our technical precision and logistical mastery ensure that every detail contributes to a seamless, memorable narrative."
+    description: "From initial concept to flawless execution, we craft occasions that transcend the expected. Our technical precision ensures every detail contributes to a seamless narrative."
   }
 ];
 
 export default function Services() {
   const [activeService, setActiveService] = useState<number | null>(null);
-  
-  // Animation triggers when section snaps into center of viewport
-  const { ref, isInView } = useInView({ 
-    threshold: 0.3, 
-    rootMargin: '0px 0px -30% 0px',
-    delay: 100, // Faster trigger for snap behavior
-  });
+  const { ref, isInView } = useInView({ threshold: 0.5 });
 
   return (
     <section 
       id="services" 
-      className="snap-section py-24 md:py-36 bg-carmel-bg relative overflow-hidden min-h-screen flex flex-col justify-center" 
+      className="snap-section bg-carmel-bg relative overflow-hidden" 
       ref={ref}
     >
-      <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-30 blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, rgba(180, 160, 140, 0.05) 0%, transparent 70%)',
-          }}
-        />
-      </div>
-
-      <div className="px-6 md:px-12 lg:px-16 max-w-6xl mx-auto relative z-10 w-full">
+      <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full">
         
-        <div className="text-center mb-20 md:mb-28">
-          {/* Snap-enhanced reveal for dramatic entrance */}
-          <span 
-            className={`block text-carmel-text text-3xl sm:text-4xl text-carmel-muted mb-6 ${
-              isInView ? 'snap-reveal-visible' : 'snap-reveal-hidden'
-            }`}
-          >
-            OUR EXPERTISE
+        <div className="text-center mb-12 md:mb-20">
+          <span className={`block text-[10px] tracking-[0.2em] uppercase text-carmel-muted mb-4 ${isInView ? 'snap-reveal-visible' : 'snap-reveal-hidden'}`}>
+            Our Expertise
           </span>
           
-          <h2 
-            className={`font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight leading-none ${
-              isInView ? 'snap-reveal-visible delay-100' : 'snap-reveal-hidden'
-            }`}
-          >
+          <h2 className={`font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-carmel-text tracking-tight leading-none ${isInView ? 'snap-reveal-visible delay-100' : 'snap-reveal-hidden'}`}>
             Experiential Marketing
           </h2>
           
-          <div 
-            className={`mt-8 max-w-2xl mx-auto ${
-              isInView ? 'snap-reveal-visible delay-200' : 'snap-reveal-hidden'
-            }`}
-          >
+          <div className={`mt-8 max-w-2xl mx-auto ${isInView ? 'snap-reveal-visible delay-200' : 'snap-reveal-hidden'}`}>
             <p className="text-lg md:text-xl text-carmel-text/60 leading-relaxed">
-              We engineer strategic campaigns that ignite conversation and drive meaningful engagement, positioning your brand at the center of culture.
+              We engineer strategic campaigns that ignite conversation and drive meaningful engagement.
             </p>
           </div>
-
-          {/* Animated divider line */}
-          <div 
-            className={`mt-12 w-24 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 ${
-              isInView ? 'opacity-100 scale-x-100 delay-300' : 'opacity-0 scale-x-0'
-            }`} 
-          />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 relative">
-          {/* Vertical divider */}
-          <div 
-            className={`hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 origin-top transition-all duration-1000 ${
-              isInView ? 'opacity-100 scale-y-100 delay-400' : 'opacity-0 scale-y-0'
-            }`} 
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative">
+          {/* Vertical Divider (Desktop) */}
+          <div className={`hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 transition-all duration-1000 ${isInView ? 'opacity-100 scale-y-100 delay-300' : 'opacity-0 scale-y-0'}`} />
 
           {subCategories.map((service, index) => (
             <div 
               key={service.title}
-              className={`group flex flex-col items-center text-center md:items-start md:text-left ${
-                isInView 
-                  ? (index === 0 ? 'reveal-slide-left-visible' : 'reveal-slide-right-visible') 
-                  : (index === 0 ? 'reveal-slide-left-hidden' : 'reveal-slide-right-hidden')
-              }`}
-              style={{ transitionDelay: `${500 + (index * 150)}ms` }}
+              className={`flex flex-col items-center text-center md:items-start md:text-left ${isInView ? (index === 0 ? 'reveal-slide-left-visible' : 'reveal-slide-right-visible') : (index === 0 ? 'reveal-slide-left-hidden' : 'reveal-slide-right-hidden')}`}
+              style={{ transitionDelay: `${400 + (index * 150)}ms` }}
               onMouseEnter={() => setActiveService(index)}
               onMouseLeave={() => setActiveService(null)}
             >
-              <h3 className="font-serif text-3xl sm:text-4xl text-carmel-text mb-6 group-hover:text-carmel-muted transition-colors duration-300 relative inline-block w-fit">
+              <h3 className="font-serif text-3xl md:text-4xl text-carmel-text mb-4 relative inline-block w-fit">
                 {service.title}
-                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-carmel-text/60 transition-all duration-500 ease-luxury group-hover:w-full" />
               </h3>
-              
-              <p className="text-base text-carmel-text/70 leading-relaxed max-w-md">
+              <p className="text-sm md:text-base text-carmel-text/70 leading-relaxed max-w-sm">
                 {service.description}
               </p>
             </div>
