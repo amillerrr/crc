@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <Navigation />
-      <main id="main-content" className="min-h-screen flex flex-col bg-carmel-bg">
+      <main id="main-content" className="flex flex-col bg-carmel-bg">
         <Hero />
         <Services />
         <Portfolio />
