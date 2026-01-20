@@ -3,33 +3,90 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 
 export default function Hero() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isLogoLocked, setIsLogoLocked] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
+  // Handle scroll for smooth logo animation
   const handleScroll = useCallback(() => {
-    // Standard window scroll check is now reliable without snap-container
-    const scrollY = window.scrollY;
-    const lockPoint = window.innerHeight * 0.40;
+    // Get the scroll container (body with snap-container class)
+    const scrollContainer = document.querySelector('.snap-container');
+    const scrollY = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
+    
+    const lockPoint = window.innerHeight * 0.4;
     const rawProgress = Math.min(scrollY / lockPoint, 1);
+    
+    // Ease out cubic for smooth deceleration
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
     setScrollProgress(easeOutCubic(rawProgress));
+    
+    // Lock logo when scrolled past hero
+    setIsLogoLocked(scrollY > window.innerHeight * 0.5);
   }, []);
 
+  // Setup scroll listener on the snap container
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    const scrollContainer = document.querySelector('.snap-container');
+    const target = scrollContainer || window;
+    
+    target.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    return () => {
+      target.removeEventListener('scroll', handleScroll);
+    };
   }, [handleScroll]);
 
+  // Intersection Observer for detecting when Hero leaves viewport
+  // This provides a fallback/enhancement for snap behavior
+  useEffect(() => {
+    if (!heroRef.current) return;
+
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => {
+        // When hero is less than 50% visible, lock the logo
+        if (entry.intersectionRatio < 0.5) {
+          setIsLogoLocked(true);
+          setScrollProgress(1);
+        } else if (entry.intersectionRatio > 0.8) {
+          // When hero is mostly visible, unlock for animation
+          setIsLogoLocked(false);
+        }
+      },
+      {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        root: document.querySelector('.snap-container'),
+      }
+    );
+
+    observerRef.current.observe(heroRef.current);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
   const contentOpacity = Math.max(0, 1 - scrollProgress * 2.5);
+
+  // Calculate logo position based on scroll progress
+  const logoTop = isLogoLocked 
+    ? 'var(--hero-logo-end-top)'
+    : `calc(var(--hero-logo-start-top) - (${scrollProgress} * (var(--hero-logo-start-top) - var(--hero-logo-end-top))))`;
+  
+  const logoScale = isLogoLocked
+    ? 'var(--hero-logo-end-scale)'
+    : `calc(var(--hero-logo-start-scale) - (${scrollProgress} * (var(--hero-logo-start-scale) - var(--hero-logo-end-scale))))`;
 
   return (
     <section 
       ref={heroRef} 
-      // UPDATED: 'h-screen' ensures strict 100vh height so subsequent sections are off-screen.
-      className="relative h-screen w-full bg-carmel-bg flex flex-col overflow-hidden"
+      className="snap-section relative h-screen w-full bg-carmel-bg flex flex-col overflow-hidden"
       style={{
         // @ts-expect-error -- custom properties
         '--scroll-progress': scrollProgress,
+        minHeight: '100dvh', // Falls back to 100vh in browsers without dvh support
       }}
     >
       
@@ -53,13 +110,17 @@ export default function Hero() {
         />
       </div>
 
-      {/* Logo Container */}
+      {/* Logo Container - Fixed position with smooth transitions */}
       <div 
-        className="fixed left-1/2 z-[250] pointer-events-none hero-logo will-change-transform"
+        className={`fixed left-1/2 z-[250] pointer-events-none hero-logo will-change-transform ${isLogoLocked ? 'hero-logo-transitioning' : ''}`}
         style={{
-          top: `calc(var(--hero-logo-start-top) - (var(--scroll-progress) * (var(--hero-logo-start-top) - var(--hero-logo-end-top))))`,
-          transform: `translateX(-50%) translateY(-50%) scale(calc(var(--hero-logo-start-scale) - (var(--scroll-progress) * (var(--hero-logo-start-scale) - var(--hero-logo-end-scale)))))`,
+          top: logoTop,
+          transform: `translateX(-50%) translateY(-50%) scale(${logoScale})`,
           transformOrigin: 'center center',
+          // Add smooth transition when locked
+          transition: isLogoLocked 
+            ? 'top 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)'
+            : 'none',
         }}
       >
         <div className="hero-fade-in-logo">
@@ -101,6 +162,15 @@ export default function Hero() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div 
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        style={{ opacity: contentOpacity }}
+      >
+        <span className="text-[9px] tracking-[0.2em] uppercase text-carmel-text/25">Scroll</span>
+        <div className="w-px h-8 bg-gradient-to-b from-carmel-text/20 to-transparent animate-pulse" />
       </div>
     </section>
   );

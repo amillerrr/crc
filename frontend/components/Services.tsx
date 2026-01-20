@@ -16,17 +16,17 @@ const subCategories = [
 export default function Services() {
   const [activeService, setActiveService] = useState<number | null>(null);
   
-  // STRICT CONFIG:
-  // Animation will strictly wait until the section header is CENTER SCREEN.
+  // Animation triggers when section snaps into center of viewport
   const { ref, isInView } = useInView({ 
     threshold: 0.3, 
-    rootMargin: '0px 0px -50% 0px' 
+    rootMargin: '0px 0px -30% 0px',
+    delay: 100, // Faster trigger for snap behavior
   });
 
   return (
     <section 
       id="services" 
-      className="snap-section scroll-mt-0 py-24 md:py-36 bg-carmel-bg relative overflow-hidden min-h-screen flex flex-col justify-center" 
+      className="snap-section py-24 md:py-36 bg-carmel-bg relative overflow-hidden min-h-screen flex flex-col justify-center" 
       ref={ref}
     >
       <div className="absolute inset-0 pointer-events-none">
@@ -41,34 +41,58 @@ export default function Services() {
       <div className="px-6 md:px-12 lg:px-16 max-w-6xl mx-auto relative z-10 w-full">
         
         <div className="text-center mb-20 md:mb-28">
-          <span className={`block text-carmel-text text-3xl sm:text-4xl text-carmel-muted mb-6 ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}>
+          {/* Snap-enhanced reveal for dramatic entrance */}
+          <span 
+            className={`block text-carmel-text text-3xl sm:text-4xl text-carmel-muted mb-6 ${
+              isInView ? 'snap-reveal-visible' : 'snap-reveal-hidden'
+            }`}
+          >
             OUR EXPERTISE
           </span>
-          <h2 className={`font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight leading-none delay-100 ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}>
+          
+          <h2 
+            className={`font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight leading-none ${
+              isInView ? 'snap-reveal-visible delay-100' : 'snap-reveal-hidden'
+            }`}
+          >
             Experiential Marketing
           </h2>
           
-          <div className={`mt-8 max-w-2xl mx-auto delay-200 ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}>
+          <div 
+            className={`mt-8 max-w-2xl mx-auto ${
+              isInView ? 'snap-reveal-visible delay-200' : 'snap-reveal-hidden'
+            }`}
+          >
             <p className="text-lg md:text-xl text-carmel-text/60 leading-relaxed">
               We engineer strategic campaigns that ignite conversation and drive meaningful engagement, positioning your brand at the center of culture.
             </p>
           </div>
 
-          <div className={`mt-12 w-24 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 delay-300 ${
-            isInView ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
-          }`} />
+          {/* Animated divider line */}
+          <div 
+            className={`mt-12 w-24 h-px bg-carmel-text/20 mx-auto transition-all duration-1000 ${
+              isInView ? 'opacity-100 scale-x-100 delay-300' : 'opacity-0 scale-x-0'
+            }`} 
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 relative">
-          <div className={`hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 transition-all duration-1000 delay-500 ${
-             isInView ? 'opacity-100 scale-y-100 origin-top' : 'opacity-0 scale-y-0'
-          }`} />
+          {/* Vertical divider */}
+          <div 
+            className={`hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 origin-top transition-all duration-1000 ${
+              isInView ? 'opacity-100 scale-y-100 delay-400' : 'opacity-0 scale-y-0'
+            }`} 
+          />
 
           {subCategories.map((service, index) => (
             <div 
               key={service.title}
-              className={`group flex flex-col items-center text-center md:items-start md:text-left ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}
-              style={{ transitionDelay: `${400 + (index * 150)}ms` }}
+              className={`group flex flex-col items-center text-center md:items-start md:text-left ${
+                isInView 
+                  ? (index === 0 ? 'reveal-slide-left-visible' : 'reveal-slide-right-visible') 
+                  : (index === 0 ? 'reveal-slide-left-hidden' : 'reveal-slide-right-hidden')
+              }`}
+              style={{ transitionDelay: `${500 + (index * 150)}ms` }}
               onMouseEnter={() => setActiveService(index)}
               onMouseLeave={() => setActiveService(null)}
             >
@@ -83,7 +107,6 @@ export default function Services() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

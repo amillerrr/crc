@@ -3,74 +3,216 @@ import Image from 'next/image';
 import { useInView } from '@/hooks/useInView';
 
 const portfolioItems = [
-  { title: "Women of Worth", client: "L'Oréal Paris", category: "Gala Production", image: "/portfolio/loreal-gala.webp", year: "2024" },
-  { title: "Live Fit Experience", client: "Celsius", category: "Brand Activation", image: "/portfolio/celsius-concert.webp", year: "2024" },
-  { title: "The Forest Ritual", client: "Tatcha", category: "Immersive Experience", image: "/portfolio/tatcha-forest.webp", year: "2023" },
-  { title: "Prisma Glass Launch", client: "Giorgio Armani", category: "Product Launch", image: "/portfolio/armani-launch.webp", year: "2024" },
-  { title: "Whimsical World", client: "FabFitFun", category: "Set Fabrication", image: "/portfolio/whimsical-set.webp", year: "2023" },
-  { title: "Lumina Night", client: "Private Client", category: "Corporate Dinner", image: "/portfolio/lumina-dinner.webp", year: "2023" },
-  { title: "Cali With Love", client: "Influencer Event", category: "Event Design", image: "/portfolio/cali-table.webp", year: "2024" },
-  { title: "Top 10 Experience", client: "SportsCenter", category: "Interactive Booth", image: "/portfolio/sc-booth.webp", year: "2024" },
-  { title: "Knob Creek Event", client: "Knob Creek", category: "Brand Activation", image: "/portfolio/knob-creek.webp", year: "2024" },
+  {
+    id: 1,
+    client: "L'Oréal Paris",
+    title: "Women of Worth",
+    image: "/portfolio/loreal-gala.webp",
+    size: "large",
+  },
+  {
+    id: 2,
+    client: "SportsCenter",
+    title: "Top 10 Anniversary",
+    image: "/portfolio/sc-booth.webp",
+    size: "small",
+  },
+  {
+    id: 3,
+    client: "Giorgio Armani",
+    title: "Beauty Launch",
+    image: "/portfolio/armani-launch.webp",
+    size: "small",
+  },
+  {
+    id: 4,
+    client: "Fabelfruit",
+    title: "Immersive Garden",
+    image: "/portfolio/whimsical-set.webp",
+    size: "small",
+  },
+  {
+    id: 5,
+    client: "Private Client",
+    title: "Gala Evening",
+    image: "/portfolio/lumina-dinner.webp",
+    size: "small",
+  },
+  {
+    id: 6,
+    client: "Celsius",
+    title: "Live Fit Tour",
+    image: "/portfolio/celsius-concert.webp",
+    size: "tall",
+  },
+  {
+    id: 7,
+    client: "Tatcha",
+    title: "Forest Immersion",
+    image: "/portfolio/tatcha-forest.webp",
+    size: "wide",
+  },
 ];
 
 export default function Portfolio() {
-  // STRICT TRIGGER: Center Screen Only
   const { ref, isInView } = useInView({ 
-    threshold: 0.1, 
-    rootMargin: '0px 0px -50% 0px' 
+    threshold: 0.1,
+    rootMargin: '0px',
+    delay: 50,
   });
 
   return (
     <section 
-      id="portfolio" 
-      className="snap-section scroll-mt-0 py-20 bg-carmel-bg" 
+      id="work" 
+      className="snap-section min-h-screen bg-carmel-bg flex flex-col" 
       ref={ref}
     >
-      <div className="w-full max-w-[1920px] mx-auto">
-        <div className="flex flex-col items-center text-center mb-16 px-6">
-          <h2 className={`font-serif text-5xl sm:text-6xl md:text-8xl text-carmel-text tracking-tight relative inline-block ${isInView ? 'reveal-text-visible' : 'reveal-text-hidden'}`}>
-            Our Portfolio
-            <span 
-              className={`absolute bottom-2 left-0 h-[2px] bg-carmel-text/60 transition-all duration-[1.5s] ease-luxury delay-500 ${
-                isInView ? 'w-full' : 'w-0'
-              }`} 
-            />
-          </h2>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 md:gap-y-0">
-          {portfolioItems.map((item, index) => (
-            <div key={item.title} className="relative group cursor-pointer w-full">
-              <div 
-                className={`relative aspect-[3/4] w-full overflow-hidden ${isInView ? 'reveal-image-visible' : 'reveal-image-hidden'}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <Image
-                  src={item.image}
-                  alt={`${item.client} - ${item.title}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-[2s] ease-luxury group-hover:scale-105"
-                />
-                
-                <div className="hidden md:flex absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-in-out flex-col items-center justify-center text-center p-8 z-10 backdrop-blur-[2px]">
-                  <div className="w-px h-8 bg-white/30 mb-6 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-100 ease-out" />
-                  <span className="text-[10px] tracking-[0.25em] uppercase text-white/90 mb-3 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-150 ease-out">{item.client}</span>
-                  <h3 className="font-sans text-3xl md:text-4xl text-white mb-2 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-200 ease-out">{item.title}</h3>
-                  <span className="font-sans text-2xl text-white/80 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 delay-300 ease-out">{item.category}</span>
-                </div>
-              </div>
+      {/* Header - minimal top padding */}
+      <div className="pt-20 pb-6 md:pt-24 md:pb-8">
+        <h2 
+          className={`font-serif text-3xl md:text-4xl lg:text-5xl text-carmel-text text-center transition-all duration-700 ${
+            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
+        >
+          Our Work
+        </h2>
+      </div>
 
-              <div className={`md:hidden flex flex-col items-center text-center mt-6 px-4 transition-all duration-700 delay-300 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <span className="text-[9px] tracking-[0.2em] uppercase text-carmel-text/40 mb-2">{item.client}</span>
-                <h3 className="font-sans text-2xl text-carmel-text mb-1">{item.title}</h3>
-                <span className="font-sans text-xl text-carmel-muted">{item.category}</span>
-              </div>
+      {/* Bento Grid - Full bleed, no padding */}
+      <div className="flex-1">
+        
+        {/* Desktop Bento Layout - equal row heights */}
+        <div className="hidden md:grid grid-cols-4 grid-rows-3 gap-[3px] h-[calc(100vh-140px)]">
+          
+          {/* Large featured - spans 2x2 */}
+          <div 
+            className={`col-span-2 row-span-2 transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '100ms' }}
+          >
+            <PortfolioCard project={projects[0]} />
+          </div>
+          
+          {/* Top right quadrant - 2 small */}
+          <div 
+            className={`transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '200ms' }}
+          >
+            <PortfolioCard project={projects[1]} />
+          </div>
+          <div 
+            className={`transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '250ms' }}
+          >
+            <PortfolioCard project={projects[2]} />
+          </div>
+          
+          {/* Middle right - 2 small */}
+          <div 
+            className={`transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '300ms' }}
+          >
+            <PortfolioCard project={projects[3]} />
+          </div>
+          <div 
+            className={`transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '350ms' }}
+          >
+            <PortfolioCard project={projects[4]} />
+          </div>
+          
+          {/* Bottom row - 1 left, wide right (Tatcha) */}
+          <div 
+            className={`row-span-1 transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '400ms' }}
+          >
+            <PortfolioCard project={projects[5]} />
+          </div>
+          <div 
+            className={`col-span-3 transition-all duration-700 ${
+              isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '450ms' }}
+          >
+            <PortfolioCard project={projects[6]} />
+          </div>
+        </div>
+
+        {/* Mobile Layout - 2 column simple grid */}
+        <div className="md:hidden grid grid-cols-2 gap-[2px]">
+          {projects.map((project, index) => (
+            <div 
+              key={project.id}
+              className={`aspect-[4/5] transition-all duration-700 ${
+                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}
+              style={{ transitionDelay: `${100 + index * 50}ms` }}
+            >
+              <PortfolioCard project={project} />
             </div>
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function PortfolioCard({ project }: { project: typeof projects[0] }) {
+  return (
+    <div className="group relative w-full h-full overflow-hidden cursor-pointer">
+      {/* Image */}
+      <div className="absolute inset-0">
+        <Image
+          src={project.image}
+          alt={project.client}
+          fill
+          className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
+          sizes="(max-width: 768px) 50vw, 33vw"
+        />
+      </div>
+      
+      {/* Subtle vignette */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+      
+      {/* Client label - always visible */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+        <p className="text-white/90 text-xs md:text-sm tracking-wide font-light">
+          {project.client}
+        </p>
+      </div>
+      
+      {/* Hover overlay */}
+      <div className="absolute inset-0 bg-carmel-text/0 group-hover:bg-carmel-text/80 transition-all duration-500 flex items-center justify-center">
+        <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 text-center px-6 translate-y-4 group-hover:translate-y-0">
+          <p className="text-carmel-bg text-lg md:text-xl lg:text-2xl font-serif mb-2">
+            {project.client}
+          </p>
+          <p className="text-carmel-bg/70 text-xs md:text-sm tracking-wide">
+            {project.title}
+          </p>
+        </div>
+      </div>
+      
+      {/* Corner accents on hover */}
+      <div className="absolute top-4 left-4 w-6 h-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-150">
+        <div className="absolute top-0 left-0 w-full h-px bg-carmel-bg/40 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-200" />
+        <div className="absolute top-0 left-0 h-full w-px bg-carmel-bg/40 origin-top scale-y-0 group-hover:scale-y-100 transition-transform duration-500 delay-200" />
+      </div>
+      <div className="absolute bottom-4 right-4 w-6 h-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-150">
+        <div className="absolute bottom-0 right-0 w-full h-px bg-carmel-bg/40 origin-right scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-200" />
+        <div className="absolute bottom-0 right-0 h-full w-px bg-carmel-bg/40 origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-500 delay-200" />
+      </div>
+    </div>
   );
 }
