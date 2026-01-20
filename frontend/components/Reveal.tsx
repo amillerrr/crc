@@ -1,35 +1,51 @@
 "use client";
-import { useInView } from '@/hooks/useInView';
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 
 interface RevealProps {
-  children: React.ReactNode;
-  delay?: number; // ms
-  type?: 'text' | 'image' | 'fade'; // fade is generic opacity
-  className?: string;
-  threshold?: number;
+  children: ReactNode;
+  width?: "fit-content" | "100%";
+  delay?: number; // in seconds, e.g., 0.2
+  type?: "fade" | "slide" | "scale";
 }
 
 export default function Reveal({ 
   children, 
-  delay = 0, 
-  type = 'text', 
-  className = '',
-  threshold = 0.2 
+  width = "fit-content", 
+  delay = 0,
+  type = "fade" 
 }: RevealProps) {
-  const { ref, isInView } = useInView({ threshold, rootMargin: '0px 0px -20% 0px' });
-
-  let animClass = '';
-  if (type === 'text') animClass = isInView ? 'reveal-text-visible' : 'reveal-text-hidden';
-  if (type === 'image') animClass = isInView ? 'reveal-image-visible' : 'reveal-image-hidden';
-  if (type === 'fade') animClass = isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4';
+  
+  const variants = {
+    hidden: { 
+      opacity: 0, 
+      y: type === "slide" ? 75 : 20,
+      scale: type === "scale" ? 0.95 : 1 
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        damping: 25,     // Controls the "bounciness" (higher = less bounce)
+        stiffness: 80,   // Controls the speed/snap
+        duration: 0.8,
+        delay: delay,
+      }
+    },
+  };
 
   return (
-    <div 
-      ref={ref} 
-      className={`${className} ${animClass} transition-all duration-1000`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
+    <div style={{ width, overflow: "hidden" }}>
+      <motion.div
+        variants={variants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-10%" }}
+      >
+        {children}
+      </motion.div>
     </div>
   );
 }
