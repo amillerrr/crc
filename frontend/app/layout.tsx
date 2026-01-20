@@ -48,9 +48,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // FIX: Removed 'h-screen overflow-y-scroll'
-    // Kept 'snap-y snap-mandatory' which will now apply to the document correctly
-    <html lang="en" className="snap-y snap-mandatory scroll-smooth">
+    // FIX: Removed 'snap-y snap-mandatory' to eliminate conflict with Lenis
+    <html lang="en" className="scroll-smooth">
       <body 
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
