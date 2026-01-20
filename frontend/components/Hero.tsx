@@ -22,22 +22,27 @@ export default function Hero() {
       // --- LOGO ANIMATION VARIABLES ---
       // Matches your CSS variables: 40vh start -> 40px end
       const startTop = vh * 0.40;
+      
       // Adjust end position based on screen width (mobile vs desktop)
       const isDesktop = window.innerWidth >= 768;
       const endTop = isDesktop ? 40 : 42; 
       
+      // Calculate how far the logo needs to travel visually (will be negative)
+      const totalTravelDistance = endTop - startTop;
+      const currentYOffset = progress * totalTravelDistance;
+      
       // Scale: 1.0 -> 0.32 (desktop) or 0.60 (mobile)
       const startScale = 1;
       const endScale = isDesktop ? 0.32 : 0.60;
-
-      // Calculate current values
-      const currentTop = startTop - (progress * (startTop - endTop));
       const currentScale = startScale - (progress * (startScale - endScale));
 
       // Apply transforms directly to the DOM element
+      // OPTIMIZATION: We only modify 'transform', not 'top', to avoid Layout Thrashing.
+      // We use translate3d to force hardware acceleration (GPU).
       if (logoRef.current) {
-        logoRef.current.style.top = `${currentTop}px`;
-        logoRef.current.style.transform = `translateX(-50%) translateY(-50%) scale(${currentScale})`;
+        // The element is fixed at top: 40vh.
+        // We translate it (-50%, -50%) to center it, then add our Y offset.
+        logoRef.current.style.transform = `translate3d(-50%, calc(-50% + ${currentYOffset}px), 0) scale(${currentScale})`;
       }
 
       // --- TEXT OPACITY ANIMATION ---
@@ -59,7 +64,7 @@ export default function Hero() {
 
   return (
     <section 
-      // snap-start can remain as a hint, but strict enforcement is gone
+      // snap-start can remain as a hint
       className="snap-start relative h-screen w-full bg-carmel-bg flex flex-col overflow-hidden"
     >
       
@@ -89,18 +94,18 @@ export default function Hero() {
         className="fixed left-1/2 z-[920] pointer-events-none hero-logo will-change-transform"
         style={{
           // Initial State (Server Side Safe)
+          // We keep 'top' constant at 40vh to match the animation logic start point
           top: '40vh',
-          transform: 'translateX(-50%) translateY(-50%) scale(1)',
+          transform: 'translate3d(-50%, -50%, 0) scale(1)',
         }}
       >
         <div className="hero-fade-in-logo">
           <a href="/" className="block pointer-events-auto hover:opacity-70 transition-opacity duration-200">
-            {/* FIX: Replaced <img> with Next.js <Image> for LCP optimization */}
             <Image
               src="/CRC-Logo.svg"
               alt="Carmel Rose Collective"
-              width={700} // Matches your xl:w-[700px]
-              height={700} // Assuming square ratio based on viewBox 0 0 375 375
+              width={700}
+              height={700}
               priority
               className="w-[260px] sm:w-[320px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
             />
