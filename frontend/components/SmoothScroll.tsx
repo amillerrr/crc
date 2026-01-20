@@ -15,6 +15,8 @@ export default function SmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 2,
+      // FIX: Ensures native snap points are respected
+      infinite: false,
     });
 
     setLenis(lenis);
@@ -28,8 +30,6 @@ export default function SmoothScroll() {
 
     return () => {
       lenis.destroy();
-      // We explicitly don't nullify setLenis on unmount to prevent context thrashing,
-      // but in a stricter setup you might setLenis(null!) if needed.
     };
   }, [setLenis]);
 

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
 import { SmoothScroll, ScrollProgress } from "@/components";
-import { ScrollProvider } from "@/context/ScrollContext"; // New Import
+import { ScrollProvider } from "@/context/ScrollContext";
 import "./globals.css";
 
 const poiretOne = Poiret_One({ 
@@ -36,16 +36,24 @@ export const metadata: Metadata = {
     default: "Carmel Rose Collective",
     template: "%s | Carmel Rose Collective",
   },
-  description: "Experiential marketing and brand activations.",
+  description: "Experiential marketing and brand activations. We craft immersive events that bring your brand narrative to life.",
+  icons: {
+    icon: '/CR-Favicon.webp',
+    shortcut: '/CR-Favicon.webp',
+    apple: '/CR-Favicon.webp',
+  },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // UPDATED: Added 'snap-y snap-mandatory h-screen overflow-y-scroll'
-    <html lang="en" className="snap-y snap-mandatory h-screen overflow-y-scroll scroll-smooth">
-      <body className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}>
+    // FIX: Removed 'h-screen overflow-y-scroll'
+    // Kept 'snap-y snap-mandatory' which will now apply to the document correctly
+    <html lang="en" className="snap-y snap-mandatory scroll-smooth">
+      <body 
+        className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
+      >
         <ScrollProvider>
           <ScrollProgress />
           <SmoothScroll />

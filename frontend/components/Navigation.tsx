@@ -9,7 +9,7 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const threshold = 50;
+      const threshold = 450;
       const shouldShow = window.scrollY >= threshold;
       setShowBackground(prev => prev !== shouldShow ? shouldShow : prev);
     };

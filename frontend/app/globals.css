@@ -88,9 +88,9 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 /* ===== HERO VARIABLES ===== */
 :root {
   --hero-logo-start-top: 40vh;
-  --hero-logo-end-top: 32px; 
+  --hero-logo-end-top: 42px; 
   --hero-logo-start-scale: 1;
-  --hero-logo-end-scale: 0.42;
+  --hero-logo-end-scale: 0.60;
   
   /* Scroll snap transition timing */
   --snap-transition-duration: 0.8s;
@@ -99,8 +99,8 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 
 @media (min-width: 768px) {
   :root {
-    --hero-logo-end-top: 44px;
-    --hero-logo-end-scale: 0.36;
+    --hero-logo-end-top: 40px;
+    --hero-logo-end-scale: 0.32;
   }
 }
 
