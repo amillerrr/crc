@@ -8,6 +8,7 @@ import {
   animate,
   MotionValue
 } from 'framer-motion';
+import Reveal from './Reveal';
 
 const baseProjects = [
   { id: 1, client: "L'Oréal Paris", title: "Women of Worth", category: "Gala Production", image: "/portfolio/loreal-gala.webp" },
@@ -66,12 +67,16 @@ export default function Portfolio() {
     >
       {/* Header */}
       <div className="shrink-0 px-6 md:px-12 lg:px-16 mb-4 md:mb-8 text-center md:text-left z-10 relative pointer-events-none">
-        <p className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-carmel-muted mb-2">
-          Selected Works
-        </p>
-        <h2 className="font-serif text-[length:var(--text-fluid-h2)] text-carmel-text leading-none">
-          The Gallery
-        </h2>
+        <Reveal width="100%">
+          <p className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-carmel-muted mb-2">
+            Selected Works
+          </p>
+        </Reveal>
+        <Reveal width="100%" delay={0.1}>
+          <h2 className="font-serif text-[length:var(--text-fluid-h2)] text-carmel-text leading-none">
+            The Gallery
+          </h2>
+        </Reveal>
       </div>
 
       {/* Navigation Arrows */}
@@ -98,26 +103,28 @@ export default function Portfolio() {
       </div>
 
       {/* Draggable Track */}
-      <div className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
-        <motion.div 
-          className="flex items-center w-max pl-[50vw]"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{ left: -3000, right: 500 }} 
-          dragElastic={0.1}
-          dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-        >
-          {projects.map((project, i) => (
-            <CarouselItem 
-              key={`${project.id}-${i}`} 
-              project={project} 
-              index={i} 
-              parentX={x} 
-              layout={layout}
-            />
-          ))}
-        </motion.div>
-      </div>
+      <Reveal width="100%" delay={0.3} type="fade">
+        <div className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
+          <motion.div 
+            className="flex items-center w-max pl-[50vw]"
+            style={{ x }}
+            drag="x"
+            dragConstraints={{ left: -3000, right: 500 }} 
+            dragElastic={0.1}
+            dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+          >
+            {projects.map((project, i) => (
+              <CarouselItem 
+                key={`${project.id}-${i}`} 
+                project={project} 
+                index={i} 
+                parentX={x} 
+                layout={layout}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </Reveal>
 
       {/* Bottom Gradient Fade */}
       <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-carmel-bg to-transparent pointer-events-none z-10" />
