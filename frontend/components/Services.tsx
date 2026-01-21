@@ -18,7 +18,11 @@ export default function Services() {
   const [activeService, setActiveService] = useState<number | null>(null);
 
   return (
-    <section id="services" className="snap-section bg-carmel-bg relative overflow-hidden py-24">
+    <section 
+      id="services" 
+      // UPDATED: Increased vertical padding for better spacing (py-20 mobile, py-32 desktop)
+      className="snap-section bg-carmel-bg relative overflow-hidden py-20 md:py-32"
+    >
       <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full">
         
         <div className="text-center mb-12 md:mb-20">

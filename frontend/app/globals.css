@@ -53,9 +53,11 @@ body {
 }
 
 /* ===== LAYOUT UTILS ===== */
-/* Enforce strict 100dvh sections for slides (Mobile Address Bar Fix) */
+/* UPDATED: 
+   1. Removed min-height: 100dvh for mobile (defaults to auto).
+   2. This allows short sections (like Portfolio) to collapse naturally on phone screens, removing the giant whitespace gaps.
+*/
 .snap-section {
-  height: 100dvh;            
   width: 100%;
   scroll-snap-align: start; /* Critical for locking */
   scroll-snap-stop: always; /* Forces stopping at this section (no skipping) */
@@ -64,6 +66,20 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
+  /* Mobile: Natural height + Spacing */
+  min-height: auto;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+/* Desktop: Enforce full screen height & reset padding */
+@media (min-width: 768px) {
+  .snap-section {
+    min-height: 100dvh;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 /* Hide Scrollbar for Horizontal Portfolio */
@@ -84,4 +100,3 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
   66% { transform: translate(-20px, 20px) scale(0.98) rotate(-1deg); }
 }
-/* ... rest of your animations ... */

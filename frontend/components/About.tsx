@@ -5,11 +5,9 @@ export default function About() {
   return (
     <section 
       id="about" 
-      // UPDATED: 
-      // 1. Used '!h-auto' (Important) to forcefully override the 100dvh from globals.css on mobile.
-      // 2. Added 'min-h-0' to ensure it can shrink fully.
-      // 3. Desktop maintains 'md:h-[100dvh]' for the presentation snap feel.
-      className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center pt-12 pb-12 md:py-0 !h-auto min-h-0 md:h-[100dvh] overflow-hidden" 
+      // UPDATED: Simplified classes now that global CSS handles min-height.
+      // Removed '!h-auto' and 'min-h-0'. Used standard py-20 for mobile spacing.
+      className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center py-20 md:py-0 overflow-hidden" 
     >
       <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full">
         

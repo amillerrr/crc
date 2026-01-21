@@ -59,8 +59,9 @@ export default function Portfolio() {
     <section 
       id="portfolio" 
       // UPDATED: 
-      // 1. Reduced pt-32 to pt-24 on mobile to move the title up slightly.
-      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-24 md:pt-32 pb-4 md:pb-12 relative"
+      // 1. pt-32 (mobile) for top separation.
+      // 2. INCREASED pb-4 to pb-20 (mobile) so that when the height shrinks, there is still padding before the About section.
+      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-32 md:pt-48 pb-20 md:pb-12 relative"
       ref={containerRef}
     >
       {/* Header */}
@@ -97,10 +98,6 @@ export default function Portfolio() {
       </div>
 
       {/* Draggable Track */}
-      {/* UPDATED: 
-          1. Changed 'items-center' to 'items-start md:items-center'. This fixes the floating gap issue.
-          2. Added 'pt-8' (32px) to mobile to give a defined, elegant spacing from the text. 
-      */}
       <div className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
         <motion.div 
           className="flex items-center w-max pl-[50vw]"
