@@ -29,7 +29,8 @@ export default function Services() {
           </Reveal>
           
           <Reveal delay={0.1}>
-            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-carmel-text tracking-tight leading-none">
+            {/* FIX: Changed leading-none to leading-tight and added pb-2 to prevent text cutoff */}
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-carmel-text tracking-tight leading-tight pb-2">
               Experiential Marketing
             </h2>
           </Reveal>
@@ -65,7 +66,8 @@ export default function Services() {
                 damping: 20, 
                 delay: 0.4 + (index * 0.2) 
               }}
-              className={`flex flex-col items-center text-center md:items-start md:text-left`}
+              /* FIX: Removed 'md:items-start md:text-left' to keep centered alignment on all screens */
+              className="flex flex-col items-center text-center"
               onMouseEnter={() => setActiveService(index)}
               onMouseLeave={() => setActiveService(null)}
             >

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
-import { SmoothScroll, ScrollProgress } from "@/components";
+import { ScrollProgress } from "@/components"; // Removed SmoothScroll import
 import { ScrollProvider } from "@/context/ScrollContext";
 import "./globals.css";
 
@@ -48,14 +48,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // FIX: Removed 'snap-y snap-mandatory' to eliminate conflict with Lenis
     <html lang="en" className="scroll-smooth">
       <body 
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
         <ScrollProvider>
           <ScrollProgress />
-          <SmoothScroll />
+          {/* Removed SmoothScroll to allow strict CSS Snapping ("PowerPoint feel") */}
           {children}
         </ScrollProvider>
       </body>

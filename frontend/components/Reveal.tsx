@@ -28,7 +28,7 @@ export default function Reveal({
       scale: 1,
       transition: {
         type: "spring",
-        damping: 25,     // Controls the "bounciness" (higher = less bounce)
+        damping: 25,     // Controls the "bounciness"
         stiffness: 80,   // Controls the speed/snap
         duration: 0.8,
         delay: delay,
@@ -42,7 +42,9 @@ export default function Reveal({
         variants={variants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-10%" }}
+        // UPDATED: once: false ensures animations replay every time 
+        // the slide comes into view, creating the "transition" effect.
+        viewport={{ once: false, margin: "-10%" }}
       >
         {children}
       </motion.div>

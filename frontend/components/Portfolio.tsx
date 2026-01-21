@@ -5,11 +5,10 @@ import {
   motion, 
   useMotionValue, 
   useTransform, 
-  useAnimationFrame,
+  animate,
   MotionValue
 } from 'framer-motion';
 
-// --- DATA ---
 const baseProjects = [
   { id: 1, client: "L'Oréal Paris", title: "Women of Worth", category: "Gala Production", image: "/portfolio/loreal-gala.webp" },
   { id: 2, client: "SportsCenter", title: "Top 10 Anniversary", category: "Brand Activation", image: "/portfolio/sc-booth.webp" },
@@ -20,16 +19,10 @@ const baseProjects = [
   { id: 7, client: "Tatcha", title: "Forest Immersion", category: "Brand Environment", image: "/portfolio/tatcha-forest.webp" },
 ];
 
-const projects = [...baseProjects, ...baseProjects, ...baseProjects, ...baseProjects];
+const projects = [...baseProjects, ...baseProjects, ...baseProjects];
 
 export default function Portfolio() {
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  // SPEEDS
-  const BASE_SPEED = 0.5; 
-  const HOVER_SPEED = 0.1; 
-
-  const [isHovered, setIsHovered] = useState(false);
   const [layout, setLayout] = useState({ width: 0, center: 0 });
   const x = useMotionValue(0);
   
@@ -40,57 +33,78 @@ export default function Portfolio() {
           width: window.innerWidth,
           center: window.innerWidth / 2,
         });
+        if (x.get() === 0) {
+           x.set(window.innerWidth < 768 ? -200 : -500);
+        }
       }
     };
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
-  }, []);
+  }, [x]);
 
-  useAnimationFrame((time, delta) => {
-    // --- COMPACT DIMENSIONS ---
-    const isMobile = window.innerWidth < 768;
-    // Reduced desktop width to 250px to ensure it fits vertically on laptops
-    const cardWidth = isMobile ? 180 : 250; 
-    const gap = isMobile ? 16 : 32;
-    const itemSize = cardWidth + gap;
+  const handleScroll = (direction: 'left' | 'right') => {
+    const currentX = x.get();
+    const moveAmount = window.innerWidth < 768 ? 250 : 300; 
+    const newX = direction === 'left' ? currentX + moveAmount : currentX - moveAmount;
     
-    const singleSetWidth = itemSize * baseProjects.length;
-
-    const moveBy = isHovered ? HOVER_SPEED : BASE_SPEED;
-    let newX = x.get() - moveBy;
-
-    if (newX <= -singleSetWidth) {
-      newX = 0;
-    }
-
-    x.set(newX);
-  });
+    animate(x, newX, {
+      type: "spring",
+      stiffness: 250, // Slightly softer spring for elegance
+      damping: 40
+    });
+  };
 
   return (
     <section 
-      id="work" 
-      // Reduced to min-h-[70vh] so it doesn't force scroll on smaller screens
-      className="snap-start min-h-[70vh] bg-carmel-bg overflow-hidden flex flex-col justify-center relative py-12"
+      id="portfolio" 
+      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-32 pb-12 relative"
       ref={containerRef}
     >
-      {/* Header - Tighter Margins */}
-      <div className="shrink-0 px-6 md:px-12 lg:px-16 mb-6 md:mb-8 text-center md:text-left z-10 relative">
-        <p className="text-[10px] md:text-xs tracking-[0.3em] uppercase text-carmel-muted mb-2">
+      {/* Header */}
+      <div className="shrink-0 px-6 md:px-12 lg:px-16 mb-4 md:mb-8 text-center md:text-left z-10 relative pointer-events-none">
+        <p className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-carmel-muted mb-2">
           Selected Works
         </p>
-        <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-carmel-text leading-none">
+        <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-carmel-text leading-none">
           The Gallery
         </h2>
       </div>
 
-      {/* Carousel Track */}
-      <div className="flex-1 flex items-center w-full relative min-h-0">
+      {/* Navigation Arrows - Minimalist & Elegant */}
+      <div className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20 flex items-center justify-between px-2 md:px-8">
+        <button 
+          onClick={() => handleScroll('left')}
+          // Removed background/border for a cleaner "floating" look. Increased icon size.
+          className="pointer-events-auto w-16 h-16 flex items-center justify-center text-carmel-text/30 hover:text-carmel-text transition-colors duration-500 group"
+          aria-label="Scroll Left"
+        >
+          {/* Ultra-thin elegant chevron */}
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="group-hover:-translate-x-1 transition-transform duration-500 ease-out">
+            <path d="M15 19l-7-7 7-7" strokeLinecap="square" strokeLinejoin="miter"/>
+          </svg>
+        </button>
+
+        <button 
+          onClick={() => handleScroll('right')}
+          className="pointer-events-auto w-16 h-16 flex items-center justify-center text-carmel-text/30 hover:text-carmel-text transition-colors duration-500 group"
+          aria-label="Scroll Right"
+        >
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="group-hover:translate-x-1 transition-transform duration-500 ease-out">
+            <path d="M9 5l7 7-7 7" strokeLinecap="square" strokeLinejoin="miter"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Draggable Track */}
+      <div className="flex-1 flex items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
         <motion.div 
-          className="flex items-center w-max pl-6 md:pl-16" 
+          className="flex items-center w-max pl-[50vw]"
           style={{ x }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          drag="x"
+          dragConstraints={{ left: -3000, right: 500 }} 
+          dragElastic={0.1}
+          dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
         >
           {projects.map((project, i) => (
             <CarouselItem 
@@ -105,7 +119,7 @@ export default function Portfolio() {
       </div>
 
       {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-carmel-bg to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-carmel-bg to-transparent pointer-events-none z-10" />
     </section>
   );
 }
@@ -123,61 +137,47 @@ function CarouselItem({
 }) {
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
   
-  const cardWidth = isMobile ? 180 : 250;
-  const gap = isMobile ? 16 : 32;
+  const cardWidth = isMobile ? layout.width * 0.75 : 280; 
+  const gap = isMobile ? 20 : 40;
   const itemSize = cardWidth + gap;
   
-  const paddingOffset = isMobile ? 24 : 64;
-  const itemCenter = (index * itemSize) + (cardWidth / 2) + paddingOffset;
+  const initialOffset = layout.width * 0.5; 
+  const itemCenter = initialOffset + (index * itemSize) + (cardWidth / 2);
 
-  // --- REFINED PHYSICS (WIDER ZONES) --- //
-  
-  // 1. Scale Logic
-  const scale = useTransform(parentX, (x) => {
-    const positionOnScreen = itemCenter + x;
+  // --- PHYSICS ---
+  const scale = useTransform(parentX, (currentX) => {
+    const positionOnScreen = itemCenter + currentX;
     const distanceFromCenter = Math.abs(positionOnScreen - layout.center);
     
-    // Scale zone: 600px
-    const maxDist = 600;
+    const maxDist = isMobile ? layout.width * 0.6 : 800;
+    
     if (distanceFromCenter < maxDist) {
-      return 1.15 - (distanceFromCenter / maxDist) * (1.15 - 0.9);
+      const maxScale = isMobile ? 1.05 : 1.1;
+      const minScale = isMobile ? 0.9 : 0.9;
+      return maxScale - (distanceFromCenter / maxDist) * (maxScale - minScale);
     }
-    return 0.9;
+    return isMobile ? 0.9 : 0.9;
   });
 
-  // 2. Opacity Logic
-  const opacity = useTransform(parentX, (x) => {
-    const positionOnScreen = itemCenter + x;
+  // --- TRANSPARENCY FADE (New Logic) ---
+  const opacity = useTransform(parentX, (currentX) => {
+    const positionOnScreen = itemCenter + currentX;
     const distanceFromCenter = Math.abs(positionOnScreen - layout.center);
     
-    // Full opacity zone increased to 500px (was 450)
-    const fadeStart = 500; 
-    const fadeEnd = 1000;
+    // Tighter zones for opacity to ensure ends are transparent
+    const fadeStart = isMobile ? layout.width * 0.3 : 300; 
+    const fadeEnd = isMobile ? layout.width * 0.8 : 900;
     
+    // Center is fully visible (1)
     if (distanceFromCenter <= fadeStart) return 1;
-    if (distanceFromCenter >= fadeEnd) return 0.3;
+    // Edges are fully transparent (0) - previously was 0.2
+    if (distanceFromCenter >= fadeEnd) return 0;
     
-    const progress = (distanceFromCenter - fadeStart) / (fadeEnd - fadeStart);
-    return 1 - (progress * 0.7); 
+    return 1 - ((distanceFromCenter - fadeStart) / (fadeEnd - fadeStart));
   });
 
-  // 3. Grayscale Logic (EARLIER FADE IN / LATER FADE OUT)
-  // By increasing colorStart to 500, we make the central 1000px of the screen FULL COLOR.
-  const grayscale = useTransform(parentX, (x) => {
-    const positionOnScreen = itemCenter + x;
-    const distanceFromCenter = Math.abs(positionOnScreen - layout.center);
-
-    // Any item within 500px of center is COLOR.
-    // Fades to gray between 500px and 900px.
-    const colorStart = 500;
-    const colorEnd = 900;
-
-    if (distanceFromCenter <= colorStart) return 0; // Full Color
-    if (distanceFromCenter >= colorEnd) return 1;   // Full Gray
-
-    return (distanceFromCenter - colorStart) / (colorEnd - colorStart);
-  });
-
+  // Removed Grayscale Logic entirely
+  
   return (
     <motion.div
       style={{ 
@@ -186,29 +186,26 @@ function CarouselItem({
         marginRight: `${gap}px`,
         width: `${cardWidth}px`
       }}
-      className="relative shrink-0 aspect-[3/4] origin-center cursor-pointer"
+      className="relative shrink-0 aspect-[3/4] origin-center"
     >
-      <div className="relative w-full h-full overflow-hidden shadow-2xl bg-carmel-muted/10 group rounded-sm">
-        <motion.div 
-          style={{ filter: useTransform(grayscale, v => `grayscale(${v})`) }}
-          className="w-full h-full relative"
-        >
+      <div className="relative w-full h-full overflow-hidden shadow-xl bg-carmel-muted/10 group rounded-sm select-none pointer-events-none">
+        <div className="w-full h-full relative">
           <Image
             src={project.image}
             alt={project.client}
             fill
-            className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110"
-            sizes="(max-width: 768px) 180px, 250px"
-            priority={index < 5}
+            className="object-cover"
+            sizes={isMobile ? "80vw" : "280px"}
+            draggable={false}
           />
-        </motion.div>
+        </div>
         
         {/* Overlay Text */}
-        <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-          <p className="text-[9px] tracking-[0.2em] text-white/90 uppercase mb-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+        <div className="absolute inset-0 p-5 flex flex-col justify-end bg-gradient-to-t from-black/60 via-transparent to-transparent">
+          <p className="text-[9px] tracking-[0.2em] text-white/90 uppercase mb-1">
             {project.category}
           </p>
-          <h3 className="font-serif text-xl md:text-2xl text-white leading-none translate-y-2 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+          <h3 className="font-serif text-xl md:text-2xl text-white leading-none">
             {project.client}
           </h3>
         </div>
