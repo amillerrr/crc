@@ -13,6 +13,11 @@
   --font-sans: var(--font-cormorant), "Garamond", serif; 
   --font-italianno: var(--font-parisienne), cursive;
   
+  /* Fluid Typography */
+  --text-fluid-base: clamp(16px, 4vw, 20px);
+  --text-fluid-h1: clamp(3rem, 10vw, 6rem);
+  --text-fluid-h2: clamp(2.5rem, 6vw, 4.5rem);
+  
   /* Utilities */
   --tracking-luxury: 0.15em;
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
@@ -37,7 +42,7 @@ body {
   color: var(--color-carmel-text);
   background: var(--color-carmel-bg);
   font-family: var(--font-cormorant), "Garamond", serif !important;
-  font-size: 20px;
+  font-size: var(--text-fluid-base); /* Fluid sizing */
   width: 100%;
   position: relative;
   margin: 0;
@@ -48,9 +53,9 @@ body {
 }
 
 /* ===== LAYOUT UTILS ===== */
-/* Enforce strict 100vh sections for slides */
+/* Enforce strict 100dvh sections for slides (Mobile Address Bar Fix) */
 .snap-section {
-  height: 100vh;            
+  height: 100dvh;            
   width: 100%;
   scroll-snap-align: start; /* Critical for locking */
   scroll-snap-stop: always; /* Forces stopping at this section (no skipping) */
@@ -74,8 +79,6 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 }
 
 /* ===== ANIMATIONS ===== */
-/* Keep your existing animation classes here (float-slow, pulse-soft, etc.) */
-/* [Truncated for brevity - include the rest of your original globals.css animations here] */
 @keyframes float-slow {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }

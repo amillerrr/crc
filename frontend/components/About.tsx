@@ -5,25 +5,27 @@ export default function About() {
   return (
     <section 
       id="about" 
-      // FIX: Use strict h-screen and overflow-hidden so scroll snapping works perfectly
-      // Reduced vertical padding (py-10) to ensure content fits on laptops
-      className="snap-section h-screen bg-carmel-bg flex flex-col justify-center items-center py-10 overflow-hidden" 
+      // UPDATED: 
+      // 1. Used '!h-auto' (Important) to forcefully override the 100dvh from globals.css on mobile.
+      // 2. Added 'min-h-0' to ensure it can shrink fully.
+      // 3. Desktop maintains 'md:h-[100dvh]' for the presentation snap feel.
+      className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center pt-12 pb-12 md:py-0 !h-auto min-h-0 md:h-[100dvh] overflow-hidden" 
     >
-      <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-center h-full">
+      <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full">
         
         {/* Divider */}
         <Reveal width="100%">
           <div className="w-12 h-px bg-carmel-text/20 mx-auto mb-6 md:mb-10" />
         </Reveal>
         
-        {/* Main Quote - Responsive text sizing */}
+        {/* Main Quote */}
         <Reveal type="fade" delay={0.1} width="100%">
           <blockquote className="font-serif text-2xl sm:text-3xl md:text-5xl text-carmel-text leading-tight mb-6 md:mb-10">
             We create experiences that people feel long after they leave.
           </blockquote>
         </Reveal>
         
-        {/* Paragraphs - Compact spacing */}
+        {/* Paragraphs */}
         <Reveal type="fade" delay={0.3} width="100%">
           <div className="text-carmel-text/60 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed space-y-4 md:space-y-6">
             <p>
@@ -35,7 +37,7 @@ export default function About() {
           </div>
         </Reveal>
 
-        {/* Footer info - Reduced margin top */}
+        {/* Footer info */}
         <Reveal type="fade" delay={0.5} width="100%">
           <div className="mt-8 md:mt-12">
             <p className="font-serif text-lg md:text-xl text-carmel-text">Bree Chenelia</p>

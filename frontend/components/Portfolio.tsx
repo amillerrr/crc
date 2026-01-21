@@ -50,7 +50,7 @@ export default function Portfolio() {
     
     animate(x, newX, {
       type: "spring",
-      stiffness: 250, // Slightly softer spring for elegance
+      stiffness: 250, 
       damping: 40
     });
   };
@@ -58,7 +58,9 @@ export default function Portfolio() {
   return (
     <section 
       id="portfolio" 
-      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-32 pb-12 relative"
+      // UPDATED: 
+      // 1. Reduced pt-32 to pt-24 on mobile to move the title up slightly.
+      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-24 md:pt-32 pb-4 md:pb-12 relative"
       ref={containerRef}
     >
       {/* Header */}
@@ -66,20 +68,18 @@ export default function Portfolio() {
         <p className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-carmel-muted mb-2">
           Selected Works
         </p>
-        <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-carmel-text leading-none">
+        <h2 className="font-serif text-[length:var(--text-fluid-h2)] text-carmel-text leading-none">
           The Gallery
         </h2>
       </div>
 
-      {/* Navigation Arrows - Minimalist & Elegant */}
+      {/* Navigation Arrows */}
       <div className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20 flex items-center justify-between px-2 md:px-8">
         <button 
           onClick={() => handleScroll('left')}
-          // Removed background/border for a cleaner "floating" look. Increased icon size.
           className="pointer-events-auto w-16 h-16 flex items-center justify-center text-carmel-text/30 hover:text-carmel-text transition-colors duration-500 group"
           aria-label="Scroll Left"
         >
-          {/* Ultra-thin elegant chevron */}
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="group-hover:-translate-x-1 transition-transform duration-500 ease-out">
             <path d="M15 19l-7-7 7-7" strokeLinecap="square" strokeLinejoin="miter"/>
           </svg>
@@ -97,7 +97,11 @@ export default function Portfolio() {
       </div>
 
       {/* Draggable Track */}
-      <div className="flex-1 flex items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
+      {/* UPDATED: 
+          1. Changed 'items-center' to 'items-start md:items-center'. This fixes the floating gap issue.
+          2. Added 'pt-8' (32px) to mobile to give a defined, elegant spacing from the text. 
+      */}
+      <div className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
         <motion.div 
           className="flex items-center w-max pl-[50vw]"
           style={{ x }}
@@ -159,25 +163,20 @@ function CarouselItem({
     return isMobile ? 0.9 : 0.9;
   });
 
-  // --- TRANSPARENCY FADE (New Logic) ---
+  // --- TRANSPARENCY FADE ---
   const opacity = useTransform(parentX, (currentX) => {
     const positionOnScreen = itemCenter + currentX;
     const distanceFromCenter = Math.abs(positionOnScreen - layout.center);
     
-    // Tighter zones for opacity to ensure ends are transparent
-    const fadeStart = isMobile ? layout.width * 0.3 : 300; 
-    const fadeEnd = isMobile ? layout.width * 0.8 : 900;
+    const fadeStart = isMobile ? layout.width * 0.5 : 300; 
+    const fadeEnd = isMobile ? layout.width * 1.2 : 900;
     
-    // Center is fully visible (1)
     if (distanceFromCenter <= fadeStart) return 1;
-    // Edges are fully transparent (0) - previously was 0.2
     if (distanceFromCenter >= fadeEnd) return 0;
     
     return 1 - ((distanceFromCenter - fadeStart) / (fadeEnd - fadeStart));
   });
 
-  // Removed Grayscale Logic entirely
-  
   return (
     <motion.div
       style={{ 
@@ -197,6 +196,7 @@ function CarouselItem({
             className="object-cover"
             sizes={isMobile ? "80vw" : "280px"}
             draggable={false}
+            priority={index === 0}
           />
         </div>
         

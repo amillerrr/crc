@@ -14,34 +14,30 @@ export default function Hero() {
     const animate = () => {
       const scrollY = window.scrollY;
       const vh = window.innerHeight;
+      const width = window.innerWidth;
+      const isMobile = width < 768;
       
       // Calculate progress (0 to 1) based on first 70% of viewport
       const lockPoint = vh * 0.70;
       const progress = Math.min(scrollY / lockPoint, 1);
 
       // --- LOGO ANIMATION VARIABLES ---
-      // Matches your CSS variables: 40vh start -> 40px end
+      // Start at 40vh (visual center), move to 40px (header center)
       const startTop = vh * 0.40;
+      const endTop = 40; 
       
-      // Adjust end position based on screen width (mobile vs desktop)
-      const isDesktop = window.innerWidth >= 768;
-      const endTop = isDesktop ? 40 : 42; 
-      
-      // Calculate how far the logo needs to travel visually (will be negative)
       const totalTravelDistance = endTop - startTop;
       const currentYOffset = progress * totalTravelDistance;
       
-      // Scale: 1.0 -> 0.32 (desktop) or 0.60 (mobile)
+      // Scale Logic
+      // Desktop: 1.0 -> 0.32 (Original elegant size)
+      // Mobile:  1.0 -> 0.45 (Larger size for mobile visibility)
       const startScale = 1;
-      const endScale = isDesktop ? 0.32 : 0.60;
+      const endScale = isMobile ? 0.50 : 0.32;
       const currentScale = startScale - (progress * (startScale - endScale));
 
       // Apply transforms directly to the DOM element
-      // OPTIMIZATION: We only modify 'transform', not 'top', to avoid Layout Thrashing.
-      // We use translate3d to force hardware acceleration (GPU).
       if (logoRef.current) {
-        // The element is fixed at top: 40vh.
-        // We translate it (-50%, -50%) to center it, then add our Y offset.
         logoRef.current.style.transform = `translate3d(-50%, calc(-50% + ${currentYOffset}px), 0) scale(${currentScale})`;
       }
 
@@ -64,8 +60,8 @@ export default function Hero() {
 
   return (
     <section 
-      // snap-start can remain as a hint
-      className="snap-start relative h-screen w-full bg-carmel-bg flex flex-col overflow-hidden"
+      // snap-section ensures this participates in the strict scrolling physics
+      className="snap-section relative h-[100dvh] w-full bg-carmel-bg flex flex-col overflow-hidden"
     >
       
       {/* Atmosphere / Background Gradients */}
@@ -94,7 +90,6 @@ export default function Hero() {
         className="fixed left-1/2 z-[920] pointer-events-none hero-logo will-change-transform"
         style={{
           // Initial State (Server Side Safe)
-          // We keep 'top' constant at 40vh to match the animation logic start point
           top: '40vh',
           transform: 'translate3d(-50%, -50%, 0) scale(1)',
         }}

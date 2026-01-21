@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
-import { ScrollProgress } from "@/components"; // Removed SmoothScroll import
-import { ScrollProvider } from "@/context/ScrollContext";
+import { ScrollProgress } from "@/components"; 
 import "./globals.css";
 
 const poiretOne = Poiret_One({ 
@@ -52,11 +51,8 @@ export default function RootLayout({
       <body 
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
-        <ScrollProvider>
-          <ScrollProgress />
-          {/* Removed SmoothScroll to allow strict CSS Snapping ("PowerPoint feel") */}
-          {children}
-        </ScrollProvider>
+        <ScrollProgress />
+        {children}
       </body>
     </html>
   );

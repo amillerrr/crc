@@ -1,11 +1,9 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useScroll } from '@/context/ScrollContext';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
-  const { lenis } = useScroll(); 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,14 +16,17 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // MODERN SCROLL LOCKING
+  // Standard Scroll Locking (No Lenis)
   useEffect(() => {
     if (isOpen) {
-      lenis?.stop();
+      document.body.style.overflow = 'hidden';
     } else {
-      lenis?.start();
+      document.body.style.overflow = '';
     }
-  }, [isOpen, lenis]);
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const navLinks = [
     { href: '#services', label: 'Services' },
@@ -37,7 +38,6 @@ export default function Navigation() {
   return (
     <>
       <nav 
-        // INCREASED Z-INDEX to 910 to sit ABOVE the fullscreen menu (z-900)
         className={`fixed top-0 left-0 w-full py-4 z-[910] transition-colors duration-500 ease-out ${
           isOpen ? 'bg-transparent' : (showBackground ? 'bg-carmel-bg/95 backdrop-blur-sm shadow-sm' : 'bg-transparent')
         }`}
@@ -59,9 +59,6 @@ export default function Navigation() {
 
       {/* Full Screen Menu */}
       <div
-        // UPDATED: 
-        // 1. bg-carmel-bg (uses your theme color instead of hardcoded hex)
-        // 2. z-[900] (High enough to cover Hero Logo at z-500)
         className={`fixed inset-0 bg-carmel-bg z-[900] flex flex-col items-center justify-center transition-all duration-700 ease-luxury ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
         }`}
