@@ -39,13 +39,11 @@ export default function LenisProvider({ children }: LenisProviderProps) {
 
   useEffect(() => {
     const lenisInstance = new Lenis({
-      duration: 1.2,                                            // Elegant, unhurried feel
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo easing for luxury
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
+      duration: 1.85,                                            // Elegant, unhurried feel
       wheelMultiplier: 1,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
+      syncTouch: true,
+      syncTouchLerp: 0.075,
     });
 
     setLenis(lenisInstance);
