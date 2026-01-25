@@ -4,7 +4,8 @@ import {
   Services, 
   Portfolio, 
   About, 
-  Contact
+  Contact,
+  Footer
 } from '@/components';
 
 export default function Home() {
@@ -21,6 +22,7 @@ export default function Home() {
         <Portfolio />
         <About />
         <Contact />
+        <Footer />
       </main>
     </>
   );

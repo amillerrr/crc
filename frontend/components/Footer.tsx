@@ -5,7 +5,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="snap-start snap-always bg-carmel-text text-white py-16 sm:py-20">
+    <footer className="snap-section section-footer bg-carmel-text text-white">
       <div className="px-5 sm:px-6 md:px-12 lg:px-16 max-w-5xl mx-auto">
         <Reveal width="100%">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-white/10 pb-10 mb-10">

@@ -50,9 +50,9 @@ export default function Contact() {
   };
 
   return (
-    <section 
-      id="contact" 
-      className="snap-section bg-warm-white relative overflow-hidden flex flex-col justify-between" 
+    <section
+      id="contact"
+      className="snap-section section-contact bg-warm-white relative overflow-hidden flex flex-col justify-between"
     >
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none">

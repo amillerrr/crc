@@ -3,11 +3,9 @@ import Reveal from './Reveal';
 
 export default function About() {
   return (
-    <section 
-      id="about" 
-      // UPDATED: Simplified classes now that global CSS handles min-height.
-      // Removed '!h-auto' and 'min-h-0'. Used standard py-20 for mobile spacing.
-      className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center py-20 md:py-0 overflow-hidden" 
+    <section
+      id="about"
+      className="snap-section section-about w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center overflow-hidden"
     >
       <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full">
         

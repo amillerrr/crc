@@ -57,12 +57,9 @@ export default function Portfolio() {
   };
 
   return (
-    <section 
-      id="portfolio" 
-      // UPDATED: 
-      // 1. pt-32 (mobile) for top separation.
-      // 2. INCREASED pb-4 to pb-20 (mobile) so that when the height shrinks, there is still padding before the About section.
-      className="snap-section bg-carmel-bg overflow-hidden flex flex-col pt-32 md:pt-48 pb-20 md:pb-12 relative"
+    <section
+      id="portfolio"
+      className="snap-section section-portfolio bg-carmel-bg overflow-hidden flex flex-col relative"
       ref={containerRef}
     >
       {/* Header */}

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from './Reveal';
+import RevealGroup, { RevealItem } from './RevealGroup';
 
 const subCategories = [
   { 
@@ -18,10 +19,9 @@ export default function Services() {
   const [activeService, setActiveService] = useState<number | null>(null);
 
   return (
-    <section 
-      id="services" 
-      // UPDATED: Increased vertical padding for better spacing (py-20 mobile, py-32 desktop)
-      className="snap-section bg-carmel-bg relative overflow-hidden py-20 md:py-32"
+    <section
+      id="services"
+      className="snap-section section-services bg-carmel-bg relative overflow-hidden"
     >
       <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full">
         
@@ -50,44 +50,40 @@ export default function Services() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative">
           {/* Vertical Divider (Desktop) */}
-          <motion.div 
+          <motion.div
             initial={{ scaleY: 0, opacity: 0 }}
             whileInView={{ scaleY: 1, opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 1.2, ease: "circOut", delay: 0.3 }}
-            className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 origin-top" 
+            className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 origin-top"
           />
 
           {subCategories.map((service, index) => (
-            <motion.div 
+            <Reveal
               key={service.title}
-              initial={{ opacity: 0, x: index === 0 ? -50 : 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 50, 
-                damping: 20, 
-                delay: 0.4 + (index * 0.2) 
-              }}
-              className="flex flex-col items-center text-center"
-              onMouseEnter={() => setActiveService(index)}
-              onMouseLeave={() => setActiveService(null)}
+              type={index === 0 ? "slide-right" : "slide-left"}
+              delay={0.4 + (index * 0.2)}
+              width="100%"
             >
-              <h3 className="font-serif text-3xl md:text-4xl text-carmel-text mb-4 relative inline-block w-fit cursor-default">
-                {service.title}
-                {/* Hover Underline Animation */}
-                <motion.span 
-                  className="absolute bottom-0 left-0 h-px bg-carmel-text w-full"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: activeService === index ? 1 : 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                />
-              </h3>
-              <p className="text-sm md:text-base text-carmel-text/70 leading-relaxed max-w-sm">
-                {service.description}
-              </p>
-            </motion.div>
+              <div
+                className="flex flex-col items-center text-center"
+                onMouseEnter={() => setActiveService(index)}
+                onMouseLeave={() => setActiveService(null)}
+              >
+                <h3 className="font-serif text-3xl md:text-4xl text-carmel-text mb-4 relative inline-block w-fit cursor-default">
+                  {service.title}
+                  <motion.span
+                    className="absolute bottom-0 left-0 h-px bg-carmel-text w-full"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: activeService === index ? 1 : 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                  />
+                </h3>
+                <p className="text-sm md:text-base text-carmel-text/70 leading-relaxed max-w-sm">
+                  {service.description}
+                </p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </div>

@@ -60,8 +60,8 @@ export default function Hero() {
 
   return (
     <section 
-      // snap-section ensures this participates in the strict scrolling physics
-      className="snap-section relative h-[100dvh] w-full bg-carmel-bg flex flex-col overflow-hidden"
+      id="hero"
+      className="snap-section section-hero relative h-[100dvh] w-full bg-carmel-bg flex flex-col overflow-hidden"
     >
       
       {/* Atmosphere / Background Gradients */}

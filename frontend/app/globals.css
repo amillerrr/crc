@@ -21,6 +21,34 @@
   /* Utilities */
   --tracking-luxury: 0.15em;
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* ===== SECTION SPACING - MOBILE ===== */
+  --section-hero-pt-mobile: 0;
+  --section-hero-pb-mobile: 0;
+  --section-services-pt-mobile: 5rem;
+  --section-services-pb-mobile: 5rem;
+  --section-portfolio-pt-mobile: 8rem;
+  --section-portfolio-pb-mobile: 5rem;
+  --section-about-pt-mobile: 5rem;
+  --section-about-pb-mobile: 5rem;
+  --section-contact-pt-mobile: 4rem;
+  --section-contact-pb-mobile: 2rem;
+  --section-footer-pt-mobile: 4rem;
+  --section-footer-pb-mobile: 4rem;
+
+  /* ===== SECTION SPACING - DESKTOP ===== */
+  --section-hero-pt-desktop: 0;
+  --section-hero-pb-desktop: 0;
+  --section-services-pt-desktop: 8rem;
+  --section-services-pb-desktop: 8rem;
+  --section-portfolio-pt-desktop: 12rem;
+  --section-portfolio-pb-desktop: 3rem;
+  --section-about-pt-desktop: 0;
+  --section-about-pb-desktop: 0;
+  --section-contact-pt-desktop: 0;
+  --section-contact-pb-desktop: 0;
+  --section-footer-pt-desktop: 2rem;
+  --section-footer-pb-desktop: 2rem;
 }
 
 /* ===== BASE STYLES ===== */
@@ -53,32 +81,75 @@ body {
 }
 
 /* ===== LAYOUT UTILS ===== */
-/* UPDATED: 
-   1. Removed min-height: 100dvh for mobile (defaults to auto).
-   2. This allows short sections (like Portfolio) to collapse naturally on phone screens, removing the giant whitespace gaps.
-*/
+/* Base snap-section class - spacing is now handled per-section via .section-{name} classes */
 .snap-section {
   width: 100%;
-  scroll-snap-align: start; /* Critical for locking */
-  scroll-snap-stop: always; /* Forces stopping at this section (no skipping) */
-  overflow: hidden;         
+  scroll-snap-align: start;
+  scroll-snap-stop: always; 
+  overflow: hidden;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
-  /* Mobile: Natural height + Spacing */
   min-height: auto;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
 }
 
-/* Desktop: Enforce full screen height & reset padding */
 @media (min-width: 768px) {
   .snap-section {
     min-height: 100dvh;
-    padding-top: 0;
-    padding-bottom: 0;
+  }
+}
+
+/* ===== SECTION-SPECIFIC SPACING ===== */
+/* Each section has isolated mobile/desktop spacing via CSS variables */
+.section-hero {
+  padding-top: var(--section-hero-pt-mobile);
+  padding-bottom: var(--section-hero-pb-mobile);
+}
+.section-services {
+  padding-top: var(--section-services-pt-mobile);
+  padding-bottom: var(--section-services-pb-mobile);
+}
+.section-portfolio {
+  padding-top: var(--section-portfolio-pt-mobile);
+  padding-bottom: var(--section-portfolio-pb-mobile);
+}
+.section-about {
+  padding-top: var(--section-about-pt-mobile);
+  padding-bottom: var(--section-about-pb-mobile);
+}
+.section-contact {
+  padding-top: var(--section-contact-pt-mobile);
+  padding-bottom: var(--section-contact-pb-mobile);
+}
+.section-footer {
+  padding-top: var(--section-footer-pt-mobile);
+  padding-bottom: var(--section-footer-pb-mobile);
+}
+@media (min-width: 768px) {
+  .section-hero {
+    padding-top: var(--section-hero-pt-desktop);
+    padding-bottom: var(--section-hero-pb-desktop);
+  }
+  .section-services {
+    padding-top: var(--section-services-pt-desktop);
+    padding-bottom: var(--section-services-pb-desktop);
+  }
+  .section-portfolio {
+    padding-top: var(--section-portfolio-pt-desktop);
+    padding-bottom: var(--section-portfolio-pb-desktop);
+  }
+  .section-about {
+    padding-top: var(--section-about-pt-desktop);
+    padding-bottom: var(--section-about-pb-desktop);
+  }
+  .section-contact {
+    padding-top: var(--section-contact-pt-desktop);
+    padding-bottom: var(--section-contact-pb-desktop);
+  }
+  .section-footer {
+    padding-top: var(--section-footer-pt-desktop);
+    padding-bottom: var(--section-footer-pb-desktop);
   }
 }
 
