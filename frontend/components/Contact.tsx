@@ -9,8 +9,6 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  
-  const currentYear = new Date().getFullYear();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +50,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="snap-section section-contact bg-warm-white relative overflow-hidden flex flex-col justify-between"
+      className="snap-section section-contact bg-warm-white relative overflow-hidden flex flex-col justify-center"
     >
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none">
@@ -60,7 +58,7 @@ export default function Contact() {
       </div>
 
       {/* Main Content (Centered) */}
-      <div className="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-16 w-full max-w-lg mx-auto relative z-10">
+      <div className="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-16 w-full max-w-lg mx-auto relative z-10 py-12 md:py-0">
         <Reveal width="100%">
           <div className="text-center mb-10">
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">
@@ -115,19 +113,6 @@ export default function Contact() {
             </div>
             {message && <p className={`text-center text-xs ${status === 'success' ? 'text-carmel-text/50' : 'text-red-500/70'}`}>{message}</p>}
           </form>
-        </Reveal>
-      </div>
-
-      {/* Footer / Copyright Section (Integrated) */}
-      <div className="w-full px-6 md:px-12 pb-8 pt-4 border-t border-carmel-text/5 mt-auto">
-        <Reveal width="100%" delay={0.4}>
-          <div className="flex justify-between items-center text-[10px] tracking-[0.15em] uppercase text-carmel-text/30">
-            <p>© {currentYear} CRC</p>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-carmel-text transition-colors">Instagram</a>
-              <a href="#" className="hover:text-carmel-text transition-colors">LinkedIn</a>
-            </div>
-          </div>
         </Reveal>
       </div>
     </section>

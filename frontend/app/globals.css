@@ -33,8 +33,8 @@
   --section-about-pb-mobile: 5rem;
   --section-contact-pt-mobile: 4rem;
   --section-contact-pb-mobile: 2rem;
-  --section-footer-pt-mobile: 4rem;
-  --section-footer-pb-mobile: 4rem;
+  --section-footer-pt-mobile: 3rem;
+  --section-footer-pb-mobile: 2rem;
 
   /* ===== SECTION SPACING - DESKTOP ===== */
   --section-hero-pt-desktop: 0;
@@ -47,8 +47,18 @@
   --section-about-pb-desktop: 0;
   --section-contact-pt-desktop: 0;
   --section-contact-pb-desktop: 0;
-  --section-footer-pt-desktop: 2rem;
-  --section-footer-pb-desktop: 2rem;
+  --section-footer-pt-desktop: 5rem;
+  --section-footer-pb-desktop: 3rem;
+
+  /* ===== FOOTER INTERNAL SPACING ===== */
+  /* Mobile */
+  --footer-main-gap-mobile: 2.5rem;
+  --footer-bottom-pt-mobile: 1.5rem;
+  --footer-max-width: 1400px;
+  
+  /* Desktop */
+  --footer-main-gap-desktop: 0;
+  --footer-bottom-pt-desktop: 2rem;
 }
 
 /* ===== BASE STYLES ===== */
@@ -137,6 +147,7 @@ body {
   padding-top: var(--section-footer-pt-mobile);
   padding-bottom: var(--section-footer-pb-mobile);
 }
+
 @media (min-width: 768px) {
   .section-hero {
     padding-top: var(--section-hero-pt-desktop);
@@ -164,6 +175,37 @@ body {
   }
 }
 
+/* ===== FOOTER-SPECIFIC STYLES ===== */
+/* Override snap-section min-height for footer - it should only take the space it needs */
+.section-footer {
+  min-height: auto !important;
+  justify-content: flex-start;
+}
+
+.footer-container {
+  width: 100%;
+  max-width: var(--footer-max-width);
+  margin: 0 auto;
+}
+
+.footer-main {
+  gap: var(--footer-main-gap-mobile);
+}
+
+.footer-bottom {
+  padding-top: var(--footer-bottom-pt-mobile);
+}
+
+@media (min-width: 768px) {
+  .footer-main {
+    gap: var(--footer-main-gap-desktop);
+  }
+  
+  .footer-bottom {
+    padding-top: var(--footer-bottom-pt-desktop);
+  }
+}
+
 /* Hide Scrollbar for Horizontal Portfolio */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -182,4 +224,3 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
   66% { transform: translate(-20px, 20px) scale(0.98) rotate(-1deg); }
 }
-
