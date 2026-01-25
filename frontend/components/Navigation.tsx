@@ -1,32 +1,31 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useLenis, useLenisScroll } from './LenisProvider';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
+  const { lenis } = useLenis();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const threshold = 450;
-      const shouldShow = window.scrollY >= threshold;
-      setShowBackground(prev => prev !== shouldShow ? shouldShow : prev);
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+  // Handle scroll for background visibility using Lenis
+  const handleScroll = useCallback(({ scroll }: { scroll: number }) => {
+    const threshold = 450;
+    const shouldShow = scroll >= threshold;
+    setShowBackground(prev => prev !== shouldShow ? shouldShow : prev);
   }, []);
 
-  // Standard Scroll Locking (No Lenis)
+  useLenisScroll(handleScroll);
+
+  // Lenis-aware scroll locking for menu
   useEffect(() => {
+    if (!lenis) return;
+
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      lenis.stop();
     } else {
-      document.body.style.overflow = '';
+      lenis.start();
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  }, [isOpen, lenis]);
 
   const navLinks = [
     { href: '#services', label: 'Services' },
@@ -35,9 +34,24 @@ export default function Navigation() {
     { href: '#contact', label: 'Contact' },
   ];
 
+  // Handle anchor link clicks with Lenis smooth scroll
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+
+    // Small delay to allow menu to close before scrolling
+    setTimeout(() => {
+      lenis?.scrollTo(href, {
+        offset: 0,
+        duration: 1.5,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    }, 100);
+  };
+
   return (
     <>
-      <nav 
+      <nav
         className={`fixed top-0 left-0 w-full py-4 z-[910] transition-colors duration-500 ease-out ${
           isOpen ? 'bg-transparent' : (showBackground ? 'bg-carmel-bg/95 backdrop-blur-sm shadow-sm' : 'bg-transparent')
         }`}
@@ -68,7 +82,7 @@ export default function Navigation() {
             <a
               key={link.href}
               href={link.href}
-              onClick={() => setIsOpen(false)}
+              onClick={(e) => handleLinkClick(e, link.href)}
               className={`font-serif text-3xl sm:text-4xl md:text-6xl tracking-tight transition-all duration-700 hover:text-carmel-muted link-underline ${
                 isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
@@ -82,3 +96,4 @@ export default function Navigation() {
     </>
   );
 }
+

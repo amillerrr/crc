@@ -8,3 +8,5 @@ export { default as Footer } from './Footer';
 export { default as ScrollProgress } from './ScrollProgress';
 export { default as Reveal } from './Reveal';
 export { default as RevealGroup } from './RevealGroup';
+export { default as LenisProvider, useLenis, useLenisScroll } from './LenisProvider';
+

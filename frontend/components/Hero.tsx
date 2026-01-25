@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useLenisScroll } from './LenisProvider';
 
 export default function Hero() {
   // We use refs to manipulate the DOM directly for high-performance animations
@@ -8,55 +9,51 @@ export default function Hero() {
   const logoRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let requestID: number;
+  // Scroll callback for Lenis
+  const handleScroll = useCallback(({ scroll }: { scroll: number }) => {
+    const vh = window.innerHeight;
+    const isMobile = window.innerWidth < 768;
 
-    const animate = () => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      const width = window.innerWidth;
-      const isMobile = width < 768;
-      
-      // Calculate progress (0 to 1) based on first 70% of viewport
-      const lockPoint = vh * 0.70;
-      const progress = Math.min(scrollY / lockPoint, 1);
+    // Calculate progress (0 to 1) based on first 70% of viewport
+    const lockPoint = vh * 0.70;
+    const progress = Math.min(scroll / lockPoint, 1);
 
-      // --- LOGO ANIMATION VARIABLES ---
-      // Start at 40vh (visual center), move to 40px (header center)
-      const startTop = vh * 0.40;
-      const endTop = 40; 
-      
-      const totalTravelDistance = endTop - startTop;
-      const currentYOffset = progress * totalTravelDistance;
-      
-      // Scale Logic
-      // Desktop: 1.0 -> 0.32 (Original elegant size)
-      // Mobile:  1.0 -> 0.45 (Larger size for mobile visibility)
-      const startScale = 1;
-      const endScale = isMobile ? 0.50 : 0.32;
-      const currentScale = startScale - (progress * (startScale - endScale));
+    // --- LOGO ANIMATION VARIABLES ---
+    // Start at 40vh (visual center), move to 40px (header center)
+    const startTop = vh * 0.40;
+    const endTop = 40;
 
-      // Apply transforms directly to the DOM element
-      if (logoRef.current) {
-        logoRef.current.style.transform = `translate3d(-50%, calc(-50% + ${currentYOffset}px), 0) scale(${currentScale})`;
-      }
+    const totalTravelDistance = endTop - startTop;
+    const currentYOffset = progress * totalTravelDistance;
 
-      // --- TEXT OPACITY ANIMATION ---
-      if (textRef.current) {
-        const opacity = Math.max(0, 1 - progress * 2.5);
-        textRef.current.style.opacity = opacity.toString();
-        // Optimization: Hide element when invisible to prevent paint overlap
-        textRef.current.style.visibility = opacity <= 0 ? 'hidden' : 'visible';
-      }
+    // Scale Logic
+    // Desktop: 1.0 -> 0.32 (Original elegant size)
+    // Mobile:  1.0 -> 0.50 (Larger size for mobile visibility)
+    const startScale = 1;
+    const endScale = isMobile ? 0.50 : 0.32;
+    const currentScale = startScale - (progress * (startScale - endScale));
 
-      requestID = requestAnimationFrame(animate);
-    };
+    // Apply transforms directly to the DOM element
+    if (logoRef.current) {
+      logoRef.current.style.transform = `translate3d(-50%, calc(-50% + ${currentYOffset}px), 0) scale(${currentScale})`;
+    }
 
-    // Start the loop
-    requestID = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(requestID);
+    // --- TEXT OPACITY ANIMATION ---
+    if (textRef.current) {
+      const opacity = Math.max(0, 1 - progress * 2.5);
+      textRef.current.style.opacity = opacity.toString();
+      // Optimization: Hide element when invisible to prevent paint overlap
+      textRef.current.style.visibility = opacity <= 0 ? 'hidden' : 'visible';
+    }
   }, []);
+
+  // Subscribe to Lenis scroll events
+  useLenisScroll(handleScroll);
+
+  // Set initial state on mount
+  useEffect(() => {
+    handleScroll({ scroll: 0 });
+  }, [handleScroll]);
 
   return (
     <section 
@@ -140,3 +137,4 @@ export default function Hero() {
     </section>
   );
 }
+

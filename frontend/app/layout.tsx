@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
-import { ScrollProgress } from "@/components"; 
+import { ScrollProgress } from "@/components";
+import LenisProvider from "@/components/LenisProvider";
 import "./globals.css";
 
 const poiretOne = Poiret_One({ 
@@ -47,13 +48,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body 
+    <html lang="en">
+      <body
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
-        <ScrollProgress />
-        {children}
+        <LenisProvider>
+          <ScrollProgress />
+          {children}
+        </LenisProvider>
       </body>
     </html>
   );
 }
+

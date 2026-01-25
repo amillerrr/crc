@@ -56,14 +56,27 @@ html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   width: 100%;
-  
-  /* POWERPOINT EFFECT: Strict Snapping */
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth !important; /* Force smooth scroll for snap */
-  
+
   /* Stop rubber-banding/bouncing on Mac/iOS */
   overscroll-behavior-y: none;
   overflow-y: scroll;
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -81,11 +94,9 @@ body {
 }
 
 /* ===== LAYOUT UTILS ===== */
-/* Base snap-section class - spacing is now handled per-section via .section-{name} classes */
+/* Base section class - spacing is now handled per-section via .section-{name} classes */
 .snap-section {
   width: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always; 
   overflow: hidden;
   position: relative;
   display: flex;
@@ -171,3 +182,4 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
   66% { transform: translate(-20px, 20px) scale(0.98) rotate(-1deg); }
 }
+
