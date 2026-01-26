@@ -23,11 +23,9 @@
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
 
   /* ===== SECTION SPACING - MOBILE ===== */
-  --section-hero-pt-mobile: 0;
-  --section-hero-pb-mobile: 0;
-  --section-services-pt-mobile: 5rem;
+  --section-services-pt-mobile: 6rem;  /* Extra top padding for header clearance */
   --section-services-pb-mobile: 5rem;
-  --section-portfolio-pt-mobile: 8rem;
+  --section-portfolio-pt-mobile: 5rem;
   --section-portfolio-pb-mobile: 5rem;
   --section-about-pt-mobile: 5rem;
   --section-about-pb-mobile: 5rem;
@@ -37,11 +35,9 @@
   --section-footer-pb-mobile: 2rem;
 
   /* ===== SECTION SPACING - DESKTOP ===== */
-  --section-hero-pt-desktop: 0;
-  --section-hero-pb-desktop: 0;
-  --section-services-pt-desktop: 8rem;
+  --section-services-pt-desktop: 0;
   --section-services-pb-desktop: 8rem;
-  --section-portfolio-pt-desktop: 12rem;
+  --section-portfolio-pt-desktop: 8rem;
   --section-portfolio-pb-desktop: 3rem;
   --section-about-pt-desktop: 0;
   --section-about-pb-desktop: 0;
@@ -123,10 +119,6 @@ body {
 
 /* ===== SECTION-SPECIFIC SPACING ===== */
 /* Each section has isolated mobile/desktop spacing via CSS variables */
-.section-hero {
-  padding-top: var(--section-hero-pt-mobile);
-  padding-bottom: var(--section-hero-pb-mobile);
-}
 .section-services {
   padding-top: var(--section-services-pt-mobile);
   padding-bottom: var(--section-services-pb-mobile);
@@ -149,10 +141,6 @@ body {
 }
 
 @media (min-width: 768px) {
-  .section-hero {
-    padding-top: var(--section-hero-pt-desktop);
-    padding-bottom: var(--section-hero-pb-desktop);
-  }
   .section-services {
     padding-top: var(--section-services-pt-desktop);
     padding-bottom: var(--section-services-pb-desktop);
@@ -223,4 +211,43 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }
   66% { transform: translate(-20px, 20px) scale(0.98) rotate(-1deg); }
+}
+
+/* Intro animation specific styles */
+@keyframes intro-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes intro-scale-up {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Smooth reveal animation for content after intro */
+@keyframes content-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-content-reveal {
+  animation: content-reveal 0.8s var(--ease-luxury) forwards;
 }

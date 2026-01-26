@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from './Reveal';
-import RevealGroup, { RevealItem } from './RevealGroup';
 
 const subCategories = [
   { 
@@ -23,29 +22,35 @@ export default function Services() {
       id="services"
       className="snap-section section-services bg-carmel-bg relative overflow-hidden"
     >
-      <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full">
-        
-        <div className="text-center mb-12 md:mb-20">
-          <Reveal>
+      {/* Hero-like opening area */}
+      <div className="h-[30vh] md:h-[40vh] flex items-end justify-center pb-8 md:pb-12">
+        <Reveal>
+          <div className="text-center">
             <span className="block text-[10px] tracking-[0.2em] uppercase text-carmel-muted mb-4">
               Our Expertise
             </span>
-          </Reveal>
-          
-          <Reveal delay={0.1}>
-            {/* Fluid H1 Typography */}
-            <h2 className="font-serif text-[length:var(--text-fluid-h1)] text-carmel-text tracking-tight leading-tight pb-2">
+            <h2 className="font-serif text-[length:var(--text-fluid-h1)] text-carmel-text tracking-tight leading-tight">
               Experiential Marketing
             </h2>
-          </Reveal>
-          
-          <div className="mt-8 max-w-2xl mx-auto">
+          </div>
+        </Reveal>
+      </div>
+      
+      {/* Main Content */}
+      <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full pb-16 md:pb-24">
+        <div className="text-center mb-12 md:mb-20">
+          <div className="max-w-2xl mx-auto">
             <Reveal delay={0.2}>
               <p className="text-lg md:text-xl text-carmel-text/60 leading-relaxed">
                 We engineer strategic campaigns that ignite conversation and drive meaningful engagement.
               </p>
             </Reveal>
           </div>
+          
+          {/* Elegant divider line */}
+          <Reveal delay={0.3}>
+            <div className="mt-10 w-16 h-px bg-carmel-text/15 mx-auto" />
+          </Reveal>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative">
@@ -66,7 +71,7 @@ export default function Services() {
               width="100%"
             >
               <div
-                className="flex flex-col items-center text-center"
+                className="flex flex-col items-center text-center py-8"
                 onMouseEnter={() => setActiveService(index)}
                 onMouseLeave={() => setActiveService(null)}
               >
@@ -86,6 +91,20 @@ export default function Services() {
             </Reveal>
           ))}
         </div>
+
+        {/* CTA Link */}
+        <Reveal delay={0.8}>
+          <div className="text-center mt-12 md:mt-16">
+            <a 
+              href="#portfolio"
+              className="group inline-block text-[10px] tracking-[0.15em] uppercase text-carmel-text/40 hover:text-carmel-text/60 transition-colors duration-500"
+            >
+              <span className="pb-1.5 border-b border-carmel-text/15 group-hover:border-carmel-text/30 transition-colors duration-500">
+                View Our Work
+              </span>
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Lenis from 'lenis';
 
 interface LenisScrollData {
@@ -65,4 +65,3 @@ export default function LenisProvider({ children }: LenisProviderProps) {
     </LenisContext.Provider>
   );
 }
-

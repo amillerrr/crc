@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
-import { ScrollProgress } from "@/components";
 import LenisProvider from "@/components/LenisProvider";
 import "./globals.css";
 
@@ -53,11 +52,9 @@ export default function RootLayout({
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
         <LenisProvider>
-          <ScrollProgress />
           {children}
         </LenisProvider>
       </body>
     </html>
   );
 }
-
