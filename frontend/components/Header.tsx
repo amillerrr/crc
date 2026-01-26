@@ -10,18 +10,24 @@ interface HeaderProps {
 /* ============================================
    HEADER CONFIGURATION
    Adjust these values to match IntroLoader
+   
+   IMPORTANT: To match the intro animation, use this formula:
+   Header logoWidth ≈ IntroLoader logo size × logoEndScale
+   
+   Example for mobile:
+   IntroLoader: 280px × 0.35 scale = 98px → Header: ~100px
    ============================================ */
 const CONFIG = {
-  // ----- DESKTOP VALUES -----
+  // ----- DESKTOP VALUES (>= 768px) -----
   desktop: {
-    logoWidth: 175,              // Logo width in pixels
+    logoWidth: 170,              // Logo width in pixels
     paddingY: 'py-2 md:py-3',    // Vertical padding
   },
 
-  // ----- MOBILE VALUES -----
+  // ----- MOBILE VALUES (< 768px) -----
   mobile: {
-    logoWidth: 175,               // Logo width in pixels
-    paddingY: 'py-4',            // Vertical padding
+    logoWidth: 140,              // Logo width in pixels - adjust this!
+    paddingY: 'py-3',            // Vertical padding
   },
 
   // ----- BREAKPOINT -----
@@ -75,7 +81,7 @@ export default function Header({ isVisible }: HeaderProps) {
               width={180}
               height={180}
               priority
-              className="w-[80px] sm:w-[100px] md:w-[140px] lg:w-[170px] h-auto"
+              style={{ width: config.logoWidth, height: 'auto' }}
             />
           </a>
         </div>

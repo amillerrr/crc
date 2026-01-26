@@ -10,6 +10,12 @@ interface IntroLoaderProps {
 /* ============================================
    INTRO ANIMATION CONFIGURATION
    Adjust these values to tweak the animation
+   
+   MATCHING HEADER SIZE FORMULA:
+   logoEndScale = (Header logoWidth) ÷ (IntroLoader logo width at that breakpoint)
+   
+   Desktop: Header 170px ÷ IntroLoader 700px = 0.243 scale
+   Mobile:  Header 100px ÷ IntroLoader 280px = 0.357 scale
    ============================================ */
 const CONFIG = {
   // ----- TIMING (in milliseconds) -----
@@ -21,42 +27,36 @@ const CONFIG = {
     backgroundFadeDuration: 800, // How long background takes to fade
   },
 
-  // ----- DESKTOP VALUES -----
+  // ----- DESKTOP VALUES (>= 768px) -----
   desktop: {
     // Initial logo position (negative = higher on screen)
     logoStartOffset: '-28vh',
     
     // Final animation values when logo moves to header
-    logoEndY: '-30.2vh',           // Vertical position (from starting point)
-    logoEndScale: 0.244,          // Scale down to this size
+    logoEndY: '-20vh',           // Vertical position (from starting point)
+    logoEndScale: 0.243,         // 170px header ÷ 700px logo = 0.243
     
     // Tagline position
     taglineTop: '62vh',
     
     // Decorative line position  
     lineTop: '68vh',
-    
-    // Logo sizes (width)
-    logoWidth: 700,
   },
 
-  // ----- MOBILE VALUES -----
+  // ----- MOBILE VALUES (< 768px) -----
   mobile: {
     // Initial logo position (negative = higher on screen)
     logoStartOffset: '-20vh',
     
     // Final animation values when logo moves to header
-    logoEndY: '-38vh',           // Vertical position (from starting point)
-    logoEndScale: 0.244,          // Scale down to this size (larger on mobile)
+    logoEndY: '-36.5vh',           // Vertical position (from starting point)
+    logoEndScale: 0.5,         // 100px header ÷ 280px logo = 0.357
     
     // Tagline position
     taglineTop: '58vh',
     
     // Decorative line position
     lineTop: '64vh',
-    
-    // Logo sizes (width)
-    logoWidth: 280,
   },
 
   // ----- BREAKPOINT -----
