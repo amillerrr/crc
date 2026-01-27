@@ -41,12 +41,21 @@ export default function Header({ isVisible }: HeaderProps) {
     }
   });
 
+  // Generate styles from config (paddingY is now a value, not a class)
+  const headerStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.paddingY,
+    paddingBottom: viewportConfig.paddingY,
+  };
+
   return (
     <header 
       className="fixed top-0 left-0 w-full z-[920] bg-carmel-bg transition-opacity duration-300"
       style={{ opacity: isVisible ? 1 : 0 }}
     >
-      <div className={`flex justify-center items-center ${viewportConfig.paddingY}`}>
+      <div 
+        className="flex justify-center items-center"
+        style={headerStyle}
+      >
         <div ref={logoRef} className="transition-transform duration-100 ease-out">
           <a 
             href="/" 

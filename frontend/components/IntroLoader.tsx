@@ -22,10 +22,12 @@ interface IntroLoaderProps {
  * 
  * Configuration is centralized in @/config/sections.config.ts
  * 
- * LOGO SIZE CALCULATIONS:
- * The logo uses responsive classes that change size at breakpoints:
- * - Base (mobile):  280px × 0.714 = 200px (matches header)
- * - md (tablet+):   500px × 0.40  = 200px (matches header)
+ * LOGO SIZE CALCULATIONS (SIMPLIFIED):
+ * To ensure precise animation landing, we use only 2 breakpoints:
+ * - Mobile (<768px):  280px × 0.714 = 200px (matches header)
+ * - Desktop (≥768px): 500px × 0.40  = 200px (matches header)
+ * 
+ * This eliminates scale mismatches at intermediate breakpoints (sm, lg, xl).
  */
 
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
@@ -159,20 +161,20 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                 }
               >
                 {/* 
-                  Logo responsive sizes:
-                  - w-[280px]: mobile (< 640px) - scales to 200px with 0.714
-                  - sm:w-[360px]: small (640px+)
-                  - md:w-[500px]: tablet (768px+) - scales to 200px with 0.40
-                  - lg:w-[600px]: desktop (1024px+)
-                  - xl:w-[700px]: wide (1280px+)
+                  SIMPLIFIED Logo responsive sizes (2 breakpoints only):
+                  - Mobile (<768px):  280px - scales to 200px with 0.714
+                  - Desktop (≥768px): 500px - scales to 200px with 0.40
+                  
+                  This ensures the animation lands precisely on the 200px header logo.
+                  Previous 5-breakpoint system caused scale mismatches at sm, lg, xl.
                 */}
                 <Image
                   src="/CRC-Logo.svg"
                   alt="Carmel Rose Collective"
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                   priority
-                  className="w-[280px] sm:w-[360px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+                  className="w-[280px] md:w-[500px] h-auto"
                 />
               </motion.div>
 
@@ -196,10 +198,10 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                 <Image
                   src="/CRC-Logo-Header.svg"
                   alt="Carmel Rose Collective"
-                  width={700}
-                  height={700}
+                  width={500}
+                  height={500}
                   priority
-                  className="w-[280px] sm:w-[360px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+                  className="w-[280px] md:w-[500px] h-auto"
                 />
               </motion.div>
             </motion.div>

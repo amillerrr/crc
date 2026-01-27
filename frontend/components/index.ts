@@ -1,6 +1,11 @@
 // ============================================
 // COMPONENT EXPORTS
 // ============================================
+// 
+// Centralized exports for all components.
+// Import from '@/components' for cleaner imports.
+//
+// Example: import { Navigation, Header, Services } from '@/components';
 
 // Layout Components
 export { default as Navigation } from './Navigation';
@@ -19,7 +24,7 @@ export { default as Footer } from './Footer';
 // Animation & UI Components
 export { default as ScrollProgress } from './ScrollProgress';
 export { default as Reveal } from './Reveal';
-export { default as RevealGroup } from './RevealGroup';
+export { default as RevealGroup, RevealItem } from './RevealGroup';
 
 // Providers
 export { default as LenisProvider, useLenis, useLenisScroll } from './LenisProvider';

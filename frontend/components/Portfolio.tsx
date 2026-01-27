@@ -12,6 +12,17 @@ import Reveal from './Reveal';
 import { portfolioConfig, getResponsiveConfig } from '@/config/sections.config';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 
+/**
+ * ============================================
+ * PORTFOLIO SECTION
+ * ============================================
+ * 
+ * Horizontal draggable gallery showcasing selected works.
+ * Features perspective-based scaling for center focus effect.
+ * 
+ * Configuration is pulled from @/config/sections.config.ts
+ */
+
 const baseProjects = [
   { id: 1, client: "L'Oréal Paris", title: "Women of Worth", category: "Gala Production", image: "/portfolio/loreal-gala.webp" },
   { id: 2, client: "SportsCenter", title: "Top 10 Anniversary", category: "Brand Activation", image: "/portfolio/sc-booth.webp" },
@@ -22,6 +33,7 @@ const baseProjects = [
   { id: 7, client: "Tatcha", title: "Forest Immersion", category: "Brand Environment", image: "/portfolio/tatcha-forest.webp" },
 ];
 
+// Triple the projects for infinite scroll effect
 const projects = [...baseProjects, ...baseProjects, ...baseProjects];
 
 export default function Portfolio() {
@@ -29,7 +41,7 @@ export default function Portfolio() {
   const [layout, setLayout] = useState({ width: 0, center: 0 });
   const x = useMotionValue(0);
   
-  // Use config breakpoint instead of hardcoded value
+  // Use config breakpoint
   const { isMobile } = useBreakpoint(portfolioConfig.breakpoint);
   
   // Get current viewport-specific config
@@ -85,6 +97,7 @@ export default function Portfolio() {
       className="snap-section bg-carmel-bg overflow-hidden flex flex-col relative"
       style={sectionStyle}
       ref={containerRef}
+      aria-labelledby="portfolio-heading"
     >
       {/* Header */}
       <div 
@@ -97,20 +110,35 @@ export default function Portfolio() {
           </p>
         </Reveal>
         <Reveal width="100%" delay={0.1}>
-          <h2 className="font-serif text-[length:var(--text-fluid-h2)] text-carmel-text leading-none">
+          <h2 
+            id="portfolio-heading"
+            className="font-serif text-[length:var(--text-fluid-h2)] text-carmel-text leading-none"
+          >
             The Gallery
           </h2>
         </Reveal>
       </div>
 
       {/* Navigation Arrows */}
-      <div className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20 flex items-center justify-between px-2 md:px-8">
+      <div 
+        className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20 flex items-center justify-between px-2 md:px-8"
+        aria-hidden="true"
+      >
         <button 
           onClick={() => handleScroll('left')}
           className="pointer-events-auto w-16 h-16 flex items-center justify-center text-carmel-text/30 hover:text-carmel-text transition-colors duration-500 group"
-          aria-label="Scroll Left"
+          aria-label="Scroll gallery left"
         >
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="group-hover:-translate-x-1 transition-transform duration-500 ease-out">
+          <svg 
+            width="40" 
+            height="40" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="0.5" 
+            className="group-hover:-translate-x-1 transition-transform duration-500 ease-out"
+            aria-hidden="true"
+          >
             <path d="M15 19l-7-7 7-7" strokeLinecap="square" strokeLinejoin="miter"/>
           </svg>
         </button>
@@ -118,9 +146,18 @@ export default function Portfolio() {
         <button 
           onClick={() => handleScroll('right')}
           className="pointer-events-auto w-16 h-16 flex items-center justify-center text-carmel-text/30 hover:text-carmel-text transition-colors duration-500 group"
-          aria-label="Scroll Right"
+          aria-label="Scroll gallery right"
         >
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="group-hover:translate-x-1 transition-transform duration-500 ease-out">
+          <svg 
+            width="40" 
+            height="40" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="0.5" 
+            className="group-hover:translate-x-1 transition-transform duration-500 ease-out"
+            aria-hidden="true"
+          >
             <path d="M9 5l7 7-7 7" strokeLinecap="square" strokeLinejoin="miter"/>
           </svg>
         </button>
@@ -128,7 +165,11 @@ export default function Portfolio() {
 
       {/* Draggable Track */}
       <Reveal width="100%" delay={0.3} type="fade">
-        <div className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10">
+        <div 
+          className="flex-1 flex items-start pt-8 md:pt-0 md:items-center w-full relative min-h-0 cursor-grab active:cursor-grabbing z-10"
+          role="region"
+          aria-label="Portfolio gallery - drag to scroll"
+        >
           <motion.div 
             className="flex items-center w-max pl-[50vw]"
             style={{ x }}
@@ -152,7 +193,10 @@ export default function Portfolio() {
       </Reveal>
 
       {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-carmel-bg to-transparent pointer-events-none z-10" />
+      <div 
+        className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-carmel-bg to-transparent pointer-events-none z-10" 
+        aria-hidden="true"
+      />
     </section>
   );
 }
@@ -207,7 +251,7 @@ function CarouselItem({
   });
 
   return (
-    <motion.div
+    <motion.article
       style={{ 
         scale, 
         opacity,
@@ -220,7 +264,7 @@ function CarouselItem({
         <div className="w-full h-full relative">
           <Image
             src={project.image}
-            alt={project.client}
+            alt={`${project.client} - ${project.title}`}
             fill
             className="object-cover"
             sizes={isMobile ? "80vw" : "280px"}
@@ -239,6 +283,6 @@ function CarouselItem({
           </h3>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }

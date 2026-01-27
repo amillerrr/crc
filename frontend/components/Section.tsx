@@ -1,5 +1,6 @@
 "use client";
 import { ReactNode } from 'react';
+import { SectionName } from '@/config/sections.config';
 
 /**
  * ============================================
@@ -18,9 +19,10 @@ import { ReactNode } from 'react';
  * - Applies the correct CSS class (section-{name})
  * - Adds snap-section base class
  * - Handles the section ID for navigation
+ * 
+ * NOTE: SectionName type is derived from sectionConfigs keys in sections.config.ts
+ * This ensures type safety and prevents mismatches between config and components.
  */
-
-export type SectionName = 'services' | 'portfolio' | 'about' | 'contact' | 'footer';
 
 interface SectionProps {
   /** The section name - used to apply section-{name} CSS class */

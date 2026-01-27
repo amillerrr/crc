@@ -16,10 +16,12 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const subCategories = [
   { 
+    id: 'brand-activation',
     title: "Brand Activation", 
     description: "We transform brand narratives into tangible, multi-sensory experiences. By merging strategy with soul, we create moments that forge lasting emotional connections."
   },
   { 
+    id: 'event-production',
     title: "Event Production", 
     description: "From initial concept to flawless execution, we craft occasions that transcend the expected. Our technical precision ensures every detail contributes to a seamless narrative."
   }
@@ -50,6 +52,7 @@ export default function Services() {
       id="services"
       className="snap-section bg-carmel-bg relative overflow-hidden"
       style={sectionStyle}
+      aria-labelledby="services-heading"
     >
       {/* Hero-like opening area */}
       <div className="h-[30vh] md:h-[40vh] flex items-end justify-center pb-8 md:pb-12">
@@ -58,7 +61,10 @@ export default function Services() {
             <span className="block text-[10px] tracking-[0.2em] uppercase text-carmel-muted mb-4">
               Our Expertise
             </span>
-            <h2 className="font-serif text-[length:var(--text-fluid-h1)] text-carmel-text tracking-tight leading-tight">
+            <h2 
+              id="services-heading"
+              className="font-serif text-[length:var(--text-fluid-h1)] text-carmel-text tracking-tight leading-tight"
+            >
               Experiential Marketing
             </h2>
           </div>
@@ -80,11 +86,15 @@ export default function Services() {
           </div>
           
           <Reveal delay={0.3}>
-            <div className="mt-10 w-16 h-px bg-carmel-text/15 mx-auto" />
+            <div className="mt-10 w-16 h-px bg-carmel-text/15 mx-auto" aria-hidden="true" />
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative">
+        <div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 relative"
+          role="list"
+          aria-label="Our services"
+        >
           {/* Vertical Divider (Desktop) */}
           <motion.div
             initial={{ scaleY: 0, opacity: 0 }}
@@ -92,19 +102,21 @@ export default function Services() {
             viewport={{ once: false }}
             transition={{ duration: 1.2, ease: "circOut", delay: 0.3 }}
             className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-carmel-text/10 -translate-x-1/2 origin-top"
+            aria-hidden="true"
           />
 
           {subCategories.map((service, index) => (
             <Reveal
-              key={service.title}
+              key={service.id}
               type={index === 0 ? "slide-right" : "slide-left"}
               delay={0.4 + (index * 0.2)}
               width="100%"
             >
-              <div
+              <article
                 className="flex flex-col items-center text-center py-8"
                 onMouseEnter={() => setActiveService(index)}
                 onMouseLeave={() => setActiveService(null)}
+                role="listitem"
               >
                 <h3 className="font-serif text-3xl md:text-4xl text-carmel-text mb-4 relative inline-block w-fit cursor-default">
                   {service.title}
@@ -113,12 +125,13 @@ export default function Services() {
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: activeService === index ? 1 : 0 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
+                    aria-hidden="true"
                   />
                 </h3>
                 <p className="text-sm md:text-base text-carmel-text/70 leading-relaxed max-w-sm">
                   {service.description}
                 </p>
-              </div>
+              </article>
             </Reveal>
           ))}
         </div>

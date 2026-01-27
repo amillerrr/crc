@@ -81,6 +81,54 @@ export const HEADER_HEIGHTS = {
 } as const;
 
 // ============================================
+// SHARED LAYOUT CONFIGURATION
+// ============================================
+
+/**
+ * Shared layout values used across multiple components
+ * This ensures consistent spacing for navigation, headers, and sections
+ */
+export interface LayoutConfig {
+  mobile: {
+    paddingX: string;
+  };
+  desktop: {
+    paddingX: string;
+  };
+  breakpoint: number;
+}
+
+export const layoutConfig: LayoutConfig = {
+  mobile: {
+    paddingX: '1.5rem',    // 24px - consistent with section mobile padding
+  },
+  desktop: {
+    paddingX: '3rem',      // 48px - consistent with section desktop padding
+  },
+  breakpoint: DEFAULT_BREAKPOINT,
+};
+
+// ============================================
+// FORM VALIDATION LIMITS
+// ============================================
+
+/**
+ * Form validation limits - must match backend limits in main.go
+ * These are used for client-side validation and maxLength attributes
+ */
+export const FORM_LIMITS = {
+  name: {
+    maxLength: 200,
+  },
+  email: {
+    maxLength: 254,
+  },
+  message: {
+    maxLength: 5000,
+  },
+} as const;
+
+// ============================================
 // SECTION CONFIGURATIONS
 // ============================================
 
@@ -89,7 +137,7 @@ export const servicesConfig: SectionConfig = {
   breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: '5rem',        // Header clearance on mobile
+      paddingTop: '1rem',        // Header clearance on mobile
       paddingBottom: '5rem',
       paddingX: '1.5rem',        // 24px
     },
@@ -232,8 +280,47 @@ export const sectionConfigs = {
   footer: footerConfig,
 } as const;
 
+/** 
+ * Derive SectionName type from sectionConfigs keys
+ * This ensures type safety and prevents mismatches
+ */
+export type SectionName = keyof typeof sectionConfigs;
+
 // ============================================
-// HEADER & INTRO LOADER CONFIGURATIONS
+// NAVIGATION CONFIGURATION
+// ============================================
+
+export interface NavigationViewportConfig {
+  paddingY: string;
+}
+
+export interface NavigationConfig {
+  mobile: NavigationViewportConfig & {
+    paddingX: string;
+  };
+  desktop: NavigationViewportConfig & {
+    paddingX: string;
+  };
+  breakpoint: number;
+  /** Scroll threshold (in px) before showing background */
+  scrollThreshold: number;
+}
+
+export const navigationConfig: NavigationConfig = {
+  mobile: {
+    paddingY: '0.5rem',    // 8px
+    paddingX: '1.5rem',    // Match layout config
+  },
+  desktop: {
+    paddingY: '0.75rem',   // 12px
+    paddingX: '3rem',      // Match layout config
+  },
+  breakpoint: DEFAULT_BREAKPOINT,
+  scrollThreshold: 100,
+};
+
+// ============================================
+// HEADER CONFIGURATION
 // ============================================
 
 export interface LogoConfig {
@@ -267,13 +354,13 @@ export const headerConfig: HeaderConfig = {
     logo: {
       width: '200px',
     },
-    paddingY: 'py-3',
+    paddingY: '0.75rem',   // 12px (was py-3)
   },
   desktop: {
     logo: {
       width: '200px',
     },
-    paddingY: 'py-2',
+    paddingY: '0.5rem',    // 8px (was py-2)
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
@@ -296,6 +383,7 @@ export interface IntroViewportConfig {
   logoStartOffset: string;  // Initial logo position (negative = higher)
   logoEndY: string;         // Final Y position when moving to header
   logoEndScale: number;     // Final scale when logo reaches header
+  logoSize: string;         // Logo size at this breakpoint (for reference)
   taglineTop: string;       // Tagline position from top
   lineTop: string;          // Decorative line position from top
 }
@@ -310,19 +398,18 @@ export interface IntroLoaderConfig {
 /**
  * IntroLoader Configuration
  * 
- * LOGO SCALE CALCULATION:
- * The final logo size after scaling must match the header logo width.
+ * SIMPLIFIED BREAKPOINT SYSTEM:
+ * To ensure the logo animation lands precisely on the header logo,
+ * we use only 2 breakpoints (mobile/desktop) that match the config breakpoint.
  * 
- * IntroLoader logo sizes (from className):
- * - Mobile (base):  280px
- * - sm:            360px
- * - md (tablet):   500px
- * - lg:            600px
- * - xl:            700px
+ * Logo sizes (simplified from 5 to 2 breakpoints):
+ * - Mobile (<768px):  280px  → scales to 200px with 0.714
+ * - Desktop (≥768px): 500px  → scales to 200px with 0.40
  * 
- * Target: Header logo is 200px
+ * Target: Header logo is always 200px
  * 
- * Mobile scale:  200 / 280 = 0.714
+ * CALCULATIONS:
+ * Mobile scale:  200 / 280 = 0.7142857... ≈ 0.714
  * Desktop scale: 200 / 500 = 0.40
  */
 export const introLoaderConfig: IntroLoaderConfig = {
@@ -339,13 +426,15 @@ export const introLoaderConfig: IntroLoaderConfig = {
     logoStartOffset: '-15vh',     // Start slightly above center
     logoEndY: '-43vh',            // Move to header position
     logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
+    logoSize: '280px',            // Reference: matches CSS class
     taglineTop: '58vh',
     lineTop: '64vh',
   },
   desktop: {
     logoStartOffset: '-20vh',     // Start slightly above center
     logoEndY: '-44vh',            // Move to header position
-    logoEndScale: 0.40,           // 500px × 0.40 = 200px (FIXED from 0.285)
+    logoEndScale: 0.40,           // 500px × 0.40 = 200px
+    logoSize: '500px',            // Reference: matches CSS class
     taglineTop: '62vh',
     lineTop: '68vh',
   },
@@ -378,6 +467,11 @@ export function generateCSSVariables(): string {
   // Add header height variables
   lines.push(`--header-height-mobile: ${HEADER_HEIGHTS.mobile};`);
   lines.push(`--header-height-desktop: ${HEADER_HEIGHTS.desktop};`);
+  lines.push('');
+  
+  // Add layout variables
+  lines.push(`--layout-px-mobile: ${layoutConfig.mobile.paddingX};`);
+  lines.push(`--layout-px-desktop: ${layoutConfig.desktop.paddingX};`);
   lines.push('');
   
   Object.entries(sectionConfigs).forEach(([name, config]) => {

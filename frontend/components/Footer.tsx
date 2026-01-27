@@ -3,6 +3,15 @@ import Reveal from './Reveal';
 import { footerConfig, getResponsiveConfig } from '@/config/sections.config';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 
+/**
+ * ============================================
+ * FOOTER SECTION
+ * ============================================
+ * 
+ * Site footer with branding, navigation, and contact info.
+ * Configuration is pulled from @/config/sections.config.ts
+ */
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const { isMobile } = useBreakpoint(footerConfig.breakpoint);
@@ -23,11 +32,24 @@ export default function Footer() {
     paddingRight: viewportConfig.spacing.paddingX,
     maxWidth: viewportConfig.dimensions.maxWidth || '1400px',
   };
+
+  const navLinks = [
+    { href: '#services', label: 'Services' },
+    { href: '#portfolio', label: 'Portfolio' },
+    { href: '#about', label: 'About' },
+    { href: '#contact', label: 'Contact' },
+  ];
+
+  const socialLinks = [
+    { href: '#', label: 'Instagram', ariaLabel: 'Follow us on Instagram' },
+    { href: '#', label: 'LinkedIn', ariaLabel: 'Connect on LinkedIn' },
+  ];
   
   return (
     <footer 
       className="snap-section bg-carmel-text text-white"
       style={sectionStyle}
+      role="contentinfo"
     >
       <div 
         className="w-full mx-auto"
@@ -40,29 +62,32 @@ export default function Footer() {
             
             {/* Brand Column */}
             <div className="md:col-span-4 lg:col-span-3 mb-6 md:mb-0">
-              <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl mb-2 tracking-tight">
+              <p className="font-serif text-2xl md:text-3xl lg:text-4xl mb-2 tracking-tight">
                 Carmel Rose
-              </h3>
+              </p>
               <p className="text-[10px] md:text-xs tracking-[0.2em] uppercase text-white/40">
                 Collective
               </p>
             </div>
             
             {/* Navigation Column */}
-            <nav className="hidden md:flex md:col-span-4 lg:col-span-5 justify-center gap-8 lg:gap-12">
-              {['Services', 'Portfolio', 'About', 'Contact'].map((link) => (
+            <nav 
+              className="hidden md:flex md:col-span-4 lg:col-span-5 justify-center gap-8 lg:gap-12"
+              aria-label="Footer navigation"
+            >
+              {navLinks.map((link) => (
                 <a 
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
+                  key={link.href}
+                  href={link.href}
                   className="text-[10px] tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors duration-300"
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
             </nav>
             
             {/* Contact Column */}
-            <div className="md:col-span-4 lg:col-span-4 md:text-right">
+            <address className="md:col-span-4 lg:col-span-4 md:text-right not-italic">
               <p className="text-[10px] tracking-[0.2em] uppercase text-white/40 mb-2">
                 Los Angeles, California
               </p>
@@ -72,7 +97,7 @@ export default function Footer() {
               >
                 bree@carmelrose.com
               </a>
-            </div>
+            </address>
           </div>
         </Reveal>
         
@@ -86,22 +111,21 @@ export default function Footer() {
             </p>
             
             {/* Social Links */}
-            <div className="flex items-center gap-6 md:gap-8 order-1 md:order-2">
-              <a 
-                href="#" 
-                className="text-[10px] tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors duration-300"
-                aria-label="Instagram"
-              >
-                Instagram
-              </a>
-              <a 
-                href="#" 
-                className="text-[10px] tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors duration-300"
-                aria-label="LinkedIn"
-              >
-                LinkedIn
-              </a>
-            </div>
+            <nav 
+              className="flex items-center gap-6 md:gap-8 order-1 md:order-2"
+              aria-label="Social media links"
+            >
+              {socialLinks.map((link) => (
+                <a 
+                  key={link.label}
+                  href={link.href} 
+                  className="text-[10px] tracking-[0.15em] uppercase text-white/40 hover:text-white transition-colors duration-300"
+                  aria-label={link.ariaLabel}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
           </div>
         </Reveal>
       </div>

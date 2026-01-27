@@ -1,10 +1,19 @@
 "use client";
 import { useState, useRef } from 'react';
 import Reveal from './Reveal';
-import { contactConfig, getResponsiveConfig } from '@/config/sections.config';
+import { contactConfig, getResponsiveConfig, FORM_LIMITS } from '@/config/sections.config';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
+
+/**
+ * ============================================
+ * CONTACT SECTION
+ * ============================================
+ * 
+ * Contact form with client-side validation.
+ * Form limits are defined in sections.config.ts and match backend limits.
+ */
 
 export default function Contact() {
   const [status, setStatus] = useState<FormStatus>('idle');
@@ -25,11 +34,32 @@ export default function Contact() {
       message: formData.get('message') as string,
     };
 
+    // Client-side validation
     if (!data.name || !data.email || !data.message) {
       setStatus('error');
       setMessage('Please fill in all fields.');
       return;
     }
+
+    // Validate lengths (matches backend limits)
+    if (data.name.length > FORM_LIMITS.name.maxLength) {
+      setStatus('error');
+      setMessage(`Name must be ${FORM_LIMITS.name.maxLength} characters or less.`);
+      return;
+    }
+
+    if (data.email.length > FORM_LIMITS.email.maxLength) {
+      setStatus('error');
+      setMessage(`Email must be ${FORM_LIMITS.email.maxLength} characters or less.`);
+      return;
+    }
+
+    if (data.message.length > FORM_LIMITS.message.maxLength) {
+      setStatus('error');
+      setMessage(`Message must be ${FORM_LIMITS.message.maxLength} characters or less.`);
+      return;
+    }
+
     setStatus('loading');
 
     try {
@@ -66,6 +96,13 @@ export default function Contact() {
     paddingRight: viewportConfig.spacing.paddingX,
   };
 
+  // Helper to check if field has value (for floating label)
+  const getFieldValue = (fieldName: string): string => {
+    if (!formRef.current) return '';
+    const element = formRef.current.elements.namedItem(fieldName) as HTMLInputElement | HTMLTextAreaElement | null;
+    return element?.value || '';
+  };
+
   return (
     <section
       id="contact"
@@ -96,45 +133,115 @@ export default function Contact() {
             ref={formRef}
             onSubmit={handleSubmit} 
             className="space-y-6"
+            noValidate
           >
-            {['name', 'email', 'message'].map((field) => (
-              <div key={field} className="relative">
-                <label 
-                  htmlFor={field} 
-                  className={`absolute left-0 transition-all duration-300 pointer-events-none ${
-                    focusedField === field || (formRef.current?.elements.namedItem(field) as HTMLInputElement)?.value 
+            {/* Name Field */}
+            <div className="relative">
+              <label 
+                htmlFor="name" 
+                className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                  focusedField === 'name' || getFieldValue('name')
                     ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50' 
                     : 'top-2.5 text-base text-carmel-text/30'
-                  }`}
-                >
-                  {field.charAt(0).toUpperCase() + field.slice(1)}
-                </label>
-                {field === 'message' ? (
-                  <textarea 
-                    id={field} name={field} rows={2} 
-                    className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 resize-none"
-                    disabled={status === 'loading'} required 
-                    onFocus={() => setFocusedField(field)} 
-                    onBlur={(e) => !e.target.value && setFocusedField(null)}
-                  />
-                ) : (
-                  <input 
-                    id={field} name={field} type={field === 'email' ? 'email' : 'text'} 
-                    className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300"
-                    disabled={status === 'loading'} required 
-                    onFocus={() => setFocusedField(field)} 
-                    onBlur={(e) => !e.target.value && setFocusedField(null)}
-                  />
-                )}
-              </div>
-            ))}
+                }`}
+              >
+                Name
+              </label>
+              <input 
+                id="name" 
+                name="name" 
+                type="text"
+                maxLength={FORM_LIMITS.name.maxLength}
+                className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300"
+                disabled={status === 'loading'} 
+                required 
+                onFocus={() => setFocusedField('name')} 
+                onBlur={(e) => !e.target.value && setFocusedField(null)}
+                aria-describedby="name-limit"
+              />
+              <span id="name-limit" className="sr-only">
+                Maximum {FORM_LIMITS.name.maxLength} characters
+              </span>
+            </div>
 
+            {/* Email Field */}
+            <div className="relative">
+              <label 
+                htmlFor="email" 
+                className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                  focusedField === 'email' || getFieldValue('email')
+                    ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50' 
+                    : 'top-2.5 text-base text-carmel-text/30'
+                }`}
+              >
+                Email
+              </label>
+              <input 
+                id="email" 
+                name="email" 
+                type="email"
+                maxLength={FORM_LIMITS.email.maxLength}
+                className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300"
+                disabled={status === 'loading'} 
+                required 
+                onFocus={() => setFocusedField('email')} 
+                onBlur={(e) => !e.target.value && setFocusedField(null)}
+                aria-describedby="email-limit"
+              />
+              <span id="email-limit" className="sr-only">
+                Maximum {FORM_LIMITS.email.maxLength} characters
+              </span>
+            </div>
+
+            {/* Message Field */}
+            <div className="relative">
+              <label 
+                htmlFor="message" 
+                className={`absolute left-0 transition-all duration-300 pointer-events-none ${
+                  focusedField === 'message' || getFieldValue('message')
+                    ? '-top-5 text-[9px] tracking-[0.15em] uppercase text-carmel-text/50' 
+                    : 'top-2.5 text-base text-carmel-text/30'
+                }`}
+              >
+                Message
+              </label>
+              <textarea 
+                id="message" 
+                name="message" 
+                rows={2}
+                maxLength={FORM_LIMITS.message.maxLength}
+                className="w-full bg-transparent border-b border-carmel-text/12 py-2.5 text-base focus:outline-none focus:border-carmel-text/35 transition-colors duration-300 resize-none"
+                disabled={status === 'loading'} 
+                required 
+                onFocus={() => setFocusedField('message')} 
+                onBlur={(e) => !e.target.value && setFocusedField(null)}
+                aria-describedby="message-limit"
+              />
+              <span id="message-limit" className="sr-only">
+                Maximum {FORM_LIMITS.message.maxLength} characters
+              </span>
+            </div>
+
+            {/* Submit Button */}
             <div className="pt-4">
-              <button type="submit" disabled={status === 'loading'} className="w-full py-3 flex justify-center items-center text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400">
+              <button 
+                type="submit" 
+                disabled={status === 'loading'} 
+                className="w-full py-3 flex justify-center items-center text-[10px] tracking-[0.15em] uppercase border border-carmel-text/15 text-carmel-text/60 hover:bg-carmel-text hover:text-white hover:border-carmel-text transition-all duration-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {status === 'loading' ? 'Sending...' : 'Send Message'}
               </button>
             </div>
-            {message && <p className={`text-center text-xs ${status === 'success' ? 'text-carmel-text/50' : 'text-red-500/70'}`}>{message}</p>}
+
+            {/* Status Message */}
+            {message && (
+              <p 
+                className={`text-center text-xs ${status === 'success' ? 'text-carmel-text/50' : 'text-red-500/70'}`}
+                role={status === 'error' ? 'alert' : 'status'}
+              >
+                {message}
+              </p>
+            )}
           </form>
         </Reveal>
       </div>
