@@ -16,6 +16,9 @@
  * - minHeight: same as height
  * - padding: rem values as strings (e.g., '6rem')
  * - gap: rem values as strings
+ * 
+ * NOTE: Header height is factored into the Services section on desktop
+ * to ensure proper spacing after IntroLoader animation completes.
  */
 
 // ============================================
@@ -60,6 +63,12 @@ export const BREAKPOINTS = {
 
 export const DEFAULT_BREAKPOINT = BREAKPOINTS.tablet; // 768px
 
+// Header heights for calculating offsets
+export const HEADER_HEIGHTS = {
+  mobile: '4.5rem',   // ~72px
+  desktop: '5rem',    // ~80px
+} as const;
+
 // ============================================
 // SECTION CONFIGURATIONS
 // ============================================
@@ -79,13 +88,15 @@ export const servicesConfig: SectionConfig = {
   },
   desktop: {
     spacing: {
-      paddingTop: '0',
+      // Uses header height for proper clearance after IntroLoader
+      paddingTop: HEADER_HEIGHTS.desktop,
       paddingBottom: '8rem',
       paddingX: '3rem',
     },
     dimensions: {
       height: 'auto',
-      minHeight: '100dvh',
+      // Subtract header height for true viewport coverage
+      minHeight: `calc(100dvh - ${HEADER_HEIGHTS.desktop})`,
     },
   },
 };
@@ -309,6 +320,11 @@ export const introLoaderConfig: IntroLoaderConfig = {
  */
 export function generateCSSVariables(): string {
   const lines: string[] = [];
+  
+  // Add header height variables
+  lines.push(`--header-height-mobile: ${HEADER_HEIGHTS.mobile};`);
+  lines.push(`--header-height-desktop: ${HEADER_HEIGHTS.desktop};`);
+  lines.push('');
   
   Object.entries(sectionConfigs).forEach(([name, config]) => {
     // Mobile variables

@@ -33,6 +33,14 @@
   --breakpoint-wide: 1440px;
 
   /* ============================================
+     HEADER HEIGHT (for calculating offsets)
+     This accounts for the fixed header after
+     IntroLoader completes animation
+     ============================================ */
+  --header-height-mobile: 4.5rem;
+  --header-height-desktop: 5rem;
+
+  /* ============================================
      SERVICES SECTION
      ============================================ */
   /* Mobile */
@@ -42,12 +50,12 @@
   --section-services-height-mobile: auto;
   --section-services-min-height-mobile: auto;
   
-  /* Desktop */
-  --section-services-pt-desktop: 0;
+  /* Desktop - accounts for fixed header */
+  --section-services-pt-desktop: var(--header-height-desktop);
   --section-services-pb-desktop: 8rem;
   --section-services-px-desktop: 3rem;
   --section-services-height-desktop: auto;
-  --section-services-min-height-desktop: 100dvh;
+  --section-services-min-height-desktop: calc(100dvh - var(--header-height-desktop));
 
   /* ============================================
      PORTFOLIO SECTION
