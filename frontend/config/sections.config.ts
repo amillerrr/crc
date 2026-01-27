@@ -128,6 +128,23 @@ export const HEADER_HEIGHTS = {
 } as const;
 
 // ============================================
+// LOGO CONSTANTS (shared between components)
+// ============================================
+
+/**
+ * Logo aspect ratio from SVG viewBox
+ * Used by useLogoAnimation hook to calculate exact positions
+ * From CRC-Logo.svg: viewBox="0 0 268.57281 77.246119"
+ */
+export const LOGO_ASPECT_RATIO = 77.246119 / 268.57281; // ≈ 0.2876
+
+/**
+ * Final logo width in pixels (must match headerConfig logo width)
+ * Used by useLogoAnimation hook
+ */
+export const FINAL_LOGO_WIDTH = 200;
+
+// ============================================
 // SHARED LAYOUT CONFIGURATION
 // ============================================
 
@@ -459,7 +476,7 @@ export interface IntroTimingConfig {
   logoHoldDuration: number;
   /** Duration of logo moving to header position (ms) */
   logoExitDuration: number;
-  /** Delay before background starts fading (ms) */
+  /** Delay before background starts fading (ms) - THIS IS WHEN HEADER APPEARS */
   backgroundFadeDelay: number;
   /** Duration of background fade-out (ms) */
   backgroundFadeDuration: number;
@@ -501,19 +518,30 @@ export interface IntroLoaderConfig {
  *   This ensures pixel-perfect positioning across all viewport sizes.
  *   The hook calculates: headerLogoCenterY - viewportCenterY
  * 
- * TIMING:
- * Total intro duration ≈ logoEnterDuration + logoHoldDuration + logoExitDuration
- *                      ≈ 800 + 1200 + 1000 = 3000ms (3 seconds)
+ * TIMING & HEADER VISIBILITY:
+ * The Header appears when the IntroLoader background STARTS fading.
+ * This creates a "curtain rising" effect where the Header is revealed
+ * naturally as the IntroLoader background becomes transparent.
+ * 
+ * Timeline (absolute time from page load):
+ * - 0ms: logo-enter starts
+ * - 800ms: logo-hold starts (tagline appears)
+ * - 2000ms: logo-exit starts (logo moves to header, crossfade begins at 2200ms)
+ * - 2400ms: backgroundFadeDelay reached → onComplete → Header appears (instant)
+ * - 2400-3200ms: Background fades, revealing Header behind it
+ * - 3200ms: IntroLoader unmounts, Header fully visible
+ * 
+ * Total intro duration ≈ 3.2 seconds
  */
 export const introLoaderConfig: IntroLoaderConfig = {
   timing: {
     logoEnterDuration: 800,
     logoHoldDuration: 1200,
     logoExitDuration: 1000,
-    backgroundFadeDelay: 400,
-    backgroundFadeDuration: 800,
-    logoCrossfadeStart: 0.2,      // Start crossfade 20% into exit animation
-    logoCrossfadeDuration: 0.6,   // Crossfade takes 60% of exit duration
+    backgroundFadeDelay: 400,       // When Header appears (relative to exit start)
+    backgroundFadeDuration: 800,    // How long background takes to fade out
+    logoCrossfadeStart: 0.5,        // Start crossfade 50% into exit animation
+    logoCrossfadeDuration: 0.4,     // Crossfade takes 40% of exit duration
   },
   mobile: {
     logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
@@ -529,19 +557,6 @@ export const introLoaderConfig: IntroLoaderConfig = {
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
-
-/**
- * Logo aspect ratio from SVG viewBox
- * Used by useLogoAnimation hook to calculate exact positions
- * From CRC-Logo.svg: viewBox="0 0 268.57281 77.246119"
- */
-export const LOGO_ASPECT_RATIO = 77.246119 / 268.57281; // ≈ 0.2876
-
-/**
- * Final logo width in pixels (must match headerConfig logo width)
- * Used by useLogoAnimation hook
- */
-export const FINAL_LOGO_WIDTH = 200;
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -586,6 +601,11 @@ export function generateCSSVariables(): string {
   // Header heights
   lines.push(`--header-height-mobile: ${HEADER_HEIGHTS.mobile};`);
   lines.push(`--header-height-desktop: ${HEADER_HEIGHTS.desktop};`);
+  lines.push('');
+  
+  // Logo constants
+  lines.push(`--logo-aspect-ratio: ${LOGO_ASPECT_RATIO};`);
+  lines.push(`--final-logo-width: ${FINAL_LOGO_WIDTH}px;`);
   lines.push('');
   
   // Layout

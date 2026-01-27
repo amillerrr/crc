@@ -1,6 +1,12 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
-import { headerConfig, introLoaderConfig, remToPx } from '@/config/sections.config';
+import { 
+  headerConfig, 
+  introLoaderConfig, 
+  remToPx,
+  LOGO_ASPECT_RATIO,
+  FINAL_LOGO_WIDTH 
+} from '@/config/sections.config';
 
 /**
  * ============================================
@@ -23,6 +29,11 @@ import { headerConfig, introLoaderConfig, remToPx } from '@/config/sections.conf
  * Calculate the exact pixel offset needed to move from viewport center
  * to the header logo center position.
  * 
+ * CALCULATION:
+ * 1. Header logo center Y = headerPaddingTop + (logoHeight / 2)
+ * 2. Viewport center Y = viewportHeight / 2
+ * 3. endY = headerLogoCenterY - viewportCenterY (negative = move up)
+ * 
  * USAGE:
  * const { endY, endScale, isReady } = useLogoAnimation(isMobile);
  * 
@@ -39,19 +50,27 @@ interface LogoAnimationValues {
   isReady: boolean;
 }
 
-// Logo SVG aspect ratio (height / width) from CRC-Logo.svg viewBox
-// viewBox="0 0 268.57281 77.246119" → height/width ≈ 0.2876
-const LOGO_ASPECT_RATIO = 77.246119 / 268.57281;
-
-// Final logo width in pixels (must match headerConfig logo width)
-const FINAL_LOGO_WIDTH = 200;
+/**
+ * Calculate initial fallback endY based on common viewport heights
+ * These are used during SSR and initial render before client calculation
+ */
+function getInitialEndY(isMobile: boolean): number {
+  // Estimate for common viewport heights
+  // Mobile: ~700px viewport, header padding 12px, logo height ~57px
+  // Desktop: ~900px viewport, header padding 8px, logo height ~57px
+  const estimatedViewportCenter = isMobile ? 350 : 450;
+  const headerPadding = isMobile ? 12 : 8;
+  const logoHeight = FINAL_LOGO_WIDTH * LOGO_ASPECT_RATIO;
+  const headerLogoCenter = headerPadding + (logoHeight / 2);
+  return headerLogoCenter - estimatedViewportCenter;
+}
 
 export function useLogoAnimation(isMobile: boolean): LogoAnimationValues {
+  const introConfig = isMobile ? introLoaderConfig.mobile : introLoaderConfig.desktop;
+  
   const [values, setValues] = useState<LogoAnimationValues>({
-    endY: isMobile ? -250 : -300, // Fallback values for SSR
-    endScale: isMobile 
-      ? introLoaderConfig.mobile.logoEndScale 
-      : introLoaderConfig.desktop.logoEndScale,
+    endY: getInitialEndY(isMobile),
+    endScale: introConfig.logoEndScale,
     isReady: false,
   });
 
@@ -60,7 +79,7 @@ export function useLogoAnimation(isMobile: boolean): LogoAnimationValues {
 
     const viewportHeight = window.innerHeight;
     const hConfig = isMobile ? headerConfig.mobile : headerConfig.desktop;
-    const introConfig = isMobile ? introLoaderConfig.mobile : introLoaderConfig.desktop;
+    const iConfig = isMobile ? introLoaderConfig.mobile : introLoaderConfig.desktop;
     
     // Header padding in pixels (convert from rem)
     const headerPaddingPx = remToPx(hConfig.paddingY);
@@ -83,7 +102,7 @@ export function useLogoAnimation(isMobile: boolean): LogoAnimationValues {
     
     setValues({
       endY,
-      endScale: introConfig.logoEndScale,
+      endScale: iConfig.logoEndScale,
       isReady: true,
     });
   }, [isMobile]);
