@@ -1,8 +1,8 @@
 "use client";
 import { useState, useRef } from 'react';
 import Reveal from './Reveal';
-import { contactConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { contactConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -61,6 +61,11 @@ export default function Contact() {
     height: viewportConfig.dimensions.height,
   };
 
+  const contentStyle: React.CSSProperties = {
+    paddingLeft: viewportConfig.spacing.paddingX,
+    paddingRight: viewportConfig.spacing.paddingX,
+  };
+
   return (
     <section
       id="contact"
@@ -73,7 +78,10 @@ export default function Contact() {
       </div>
 
       {/* Main Content (Centered) */}
-      <div className="flex-1 flex flex-col justify-center px-6 md:px-12 lg:px-16 w-full max-w-lg mx-auto relative z-10 py-12 md:py-0">
+      <div 
+        className="flex-1 flex flex-col justify-center w-full max-w-lg mx-auto relative z-10 py-12 md:py-0"
+        style={contentStyle}
+      >
         <Reveal width="100%">
           <div className="text-center mb-10">
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">

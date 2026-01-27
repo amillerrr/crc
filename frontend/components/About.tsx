@@ -1,7 +1,7 @@
 "use client";
 import Reveal from './Reveal';
-import { aboutConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { aboutConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 export default function About() {
   const { isMobile } = useBreakpoint(aboutConfig.breakpoint);
@@ -17,13 +17,21 @@ export default function About() {
     height: viewportConfig.dimensions.height,
   };
 
+  const contentStyle: React.CSSProperties = {
+    paddingLeft: viewportConfig.spacing.paddingX,
+    paddingRight: viewportConfig.spacing.paddingX,
+  };
+
   return (
     <section
       id="about"
       className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center overflow-hidden"
       style={sectionStyle}
     >
-      <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full">
+      <div 
+        className="max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full"
+        style={contentStyle}
+      >
         
         {/* Divider */}
         <Reveal width="100%">

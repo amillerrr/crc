@@ -2,18 +2,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from './Reveal';
-import { servicesConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { servicesConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 /**
  * ============================================
  * SERVICES SECTION
  * ============================================
  * 
- * Showcases the company's core services: Brand Activation & Event Production.
- * 
+ * Showcases the company's core services.
  * Configuration is pulled from @/config/sections.config.ts
- * The useBreakpoint hook determines which config (mobile/desktop) to use.
  */
 
 const subCategories = [
@@ -42,6 +40,11 @@ export default function Services() {
     height: viewportConfig.dimensions.height,
   };
 
+  const contentStyle: React.CSSProperties = {
+    paddingLeft: viewportConfig.spacing.paddingX,
+    paddingRight: viewportConfig.spacing.paddingX,
+  };
+
   return (
     <section
       id="services"
@@ -63,7 +66,10 @@ export default function Services() {
       </div>
       
       {/* Main Content */}
-      <div className="px-6 md:px-12 lg:px-16 max-w-7xl mx-auto relative z-10 w-full pb-16 md:pb-24">
+      <div 
+        className="max-w-7xl mx-auto relative z-10 w-full pb-16 md:pb-24"
+        style={contentStyle}
+      >
         <div className="text-center mb-12 md:mb-20">
           <div className="max-w-2xl mx-auto">
             <Reveal delay={0.2}>
@@ -73,7 +79,6 @@ export default function Services() {
             </Reveal>
           </div>
           
-          {/* Elegant divider line */}
           <Reveal delay={0.3}>
             <div className="mt-10 w-16 h-px bg-carmel-text/15 mx-auto" />
           </Reveal>

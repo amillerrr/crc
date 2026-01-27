@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { 
   motion, 
@@ -9,8 +9,8 @@ import {
   MotionValue
 } from 'framer-motion';
 import Reveal from './Reveal';
-import { portfolioConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { portfolioConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 const baseProjects = [
   { id: 1, client: "L'Oréal Paris", title: "Women of Worth", category: "Gala Production", image: "/portfolio/loreal-gala.webp" },
@@ -28,31 +28,35 @@ export default function Portfolio() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState({ width: 0, center: 0 });
   const x = useMotionValue(0);
+  
+  // Use config breakpoint instead of hardcoded value
   const { isMobile } = useBreakpoint(portfolioConfig.breakpoint);
   
   // Get current viewport-specific config
   const viewportConfig = getResponsiveConfig(portfolioConfig, isMobile);
   
-  useEffect(() => {
-    const updateLayout = () => {
-      if (containerRef.current) {
-        setLayout({
-          width: window.innerWidth,
-          center: window.innerWidth / 2,
-        });
-        if (x.get() === 0) {
-           x.set(window.innerWidth < 768 ? -200 : -500);
-        }
+  const updateLayout = useCallback(() => {
+    if (containerRef.current) {
+      const width = window.innerWidth;
+      setLayout({
+        width,
+        center: width / 2,
+      });
+      if (x.get() === 0) {
+        x.set(isMobile ? -200 : -500);
       }
-    };
+    }
+  }, [x, isMobile]);
+
+  useEffect(() => {
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
-  }, [x]);
+  }, [updateLayout]);
 
   const handleScroll = (direction: 'left' | 'right') => {
     const currentX = x.get();
-    const moveAmount = window.innerWidth < 768 ? 250 : 300; 
+    const moveAmount = isMobile ? 250 : 300; 
     const newX = direction === 'left' ? currentX + moveAmount : currentX - moveAmount;
     
     animate(x, newX, {
@@ -70,6 +74,11 @@ export default function Portfolio() {
     height: viewportConfig.dimensions.height,
   };
 
+  const headerStyle: React.CSSProperties = {
+    paddingLeft: viewportConfig.spacing.paddingX,
+    paddingRight: viewportConfig.spacing.paddingX,
+  };
+
   return (
     <section
       id="portfolio"
@@ -78,7 +87,10 @@ export default function Portfolio() {
       ref={containerRef}
     >
       {/* Header */}
-      <div className="shrink-0 px-6 md:px-12 lg:px-16 mb-4 md:mb-8 text-center md:text-left z-10 relative pointer-events-none">
+      <div 
+        className="shrink-0 mb-4 md:mb-8 text-center md:text-left z-10 relative pointer-events-none"
+        style={headerStyle}
+      >
         <Reveal width="100%">
           <p className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-carmel-muted mb-2">
             Selected Works
@@ -132,6 +144,7 @@ export default function Portfolio() {
                 index={i} 
                 parentX={x} 
                 layout={layout}
+                isMobile={isMobile}
               />
             ))}
           </motion.div>
@@ -144,19 +157,21 @@ export default function Portfolio() {
   );
 }
 
+interface CarouselItemProps {
+  project: typeof baseProjects[0];
+  index: number;
+  parentX: MotionValue<number>;
+  layout: { width: number; center: number };
+  isMobile: boolean;
+}
+
 function CarouselItem({ 
   project, 
   index, 
   parentX, 
-  layout 
-}: { 
-  project: typeof baseProjects[0], 
-  index: number, 
-  parentX: MotionValue<number>, 
-  layout: { width: number, center: number }
-}) {
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-  
+  layout,
+  isMobile
+}: CarouselItemProps) {
   const cardWidth = isMobile ? layout.width * 0.75 : 280; 
   const gap = isMobile ? 20 : 40;
   const itemSize = cardWidth + gap;
@@ -164,7 +179,6 @@ function CarouselItem({
   const initialOffset = layout.width * 0.5; 
   const itemCenter = initialOffset + (index * itemSize) + (cardWidth / 2);
 
-  // --- PHYSICS ---
   const scale = useTransform(parentX, (currentX) => {
     const positionOnScreen = itemCenter + currentX;
     const distanceFromCenter = Math.abs(positionOnScreen - layout.center);
@@ -179,7 +193,6 @@ function CarouselItem({
     return isMobile ? 0.9 : 0.9;
   });
 
-  // --- TRANSPARENCY FADE ---
   const opacity = useTransform(parentX, (currentX) => {
     const positionOnScreen = itemCenter + currentX;
     const distanceFromCenter = Math.abs(positionOnScreen - layout.center);

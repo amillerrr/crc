@@ -125,22 +125,4 @@ export function useMediaQuery(query: string): boolean {
   return matches;
 }
 
-/**
- * ============================================
- * GET RESPONSIVE CONFIG
- * ============================================
- * 
- * Utility to get the appropriate config based on current breakpoint.
- * 
- * USAGE:
- * const config = getResponsiveConfig(introLoaderConfig, isMobile);
- */
-
-export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknown }>(
-  config: T,
-  isMobile: boolean
-): T['mobile'] | T['desktop'] {
-  return isMobile ? config.mobile : config.desktop;
-}
-
 export default useBreakpoint;

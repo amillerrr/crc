@@ -1,7 +1,7 @@
 "use client";
 import Reveal from './Reveal';
-import { footerConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { footerConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,16 +17,21 @@ export default function Footer() {
     minHeight: viewportConfig.dimensions.minHeight,
     height: viewportConfig.dimensions.height,
   };
+
+  const contentStyle: React.CSSProperties = {
+    paddingLeft: viewportConfig.spacing.paddingX,
+    paddingRight: viewportConfig.spacing.paddingX,
+    maxWidth: viewportConfig.dimensions.maxWidth || '1400px',
+  };
   
   return (
     <footer 
       className="snap-section bg-carmel-text text-white"
       style={sectionStyle}
     >
-      {/* Full-width container with max-width for content */}
       <div 
-        className="w-full mx-auto px-6 md:px-12 lg:px-16 xl:px-20"
-        style={{ maxWidth: viewportConfig.dimensions.maxWidth || '1400px' }}
+        className="w-full mx-auto"
+        style={contentStyle}
       >
         
         {/* Main Footer Content - Grid Layout */}
@@ -43,7 +48,7 @@ export default function Footer() {
               </p>
             </div>
             
-            {/* Navigation Column - Hidden on mobile, shown on tablet+ */}
+            {/* Navigation Column */}
             <nav className="hidden md:flex md:col-span-4 lg:col-span-5 justify-center gap-8 lg:gap-12">
               {['Services', 'Portfolio', 'About', 'Contact'].map((link) => (
                 <a 

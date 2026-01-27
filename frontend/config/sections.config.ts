@@ -32,7 +32,7 @@
 export interface SectionSpacing {
   paddingTop: string;
   paddingBottom: string;
-  paddingX?: string;
+  paddingX: string;
 }
 
 export interface SectionDimensions {
@@ -67,9 +67,16 @@ export const BREAKPOINTS = {
 
 export const DEFAULT_BREAKPOINT = BREAKPOINTS.tablet; // 768px
 
-// Header heights for calculating offsets
+/**
+ * Header heights for calculating offsets
+ * These values represent the total height of the header area including padding
+ * 
+ * IMPORTANT: These must match the actual rendered header height
+ * Mobile:  logo (scaled) + padding = ~72px total
+ * Desktop: logo + padding = ~80px total
+ */
 export const HEADER_HEIGHTS = {
-  mobile: '0.5rem',   // ~72px
+  mobile: '4.5rem',   // ~72px
   desktop: '5rem',    // ~80px
 } as const;
 
@@ -82,9 +89,9 @@ export const servicesConfig: SectionConfig = {
   breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: HEADER_HEIGHTS.mobile,      // Extra top for header clearance
+      paddingTop: '5rem',        // Header clearance on mobile
       paddingBottom: '5rem',
-      paddingX: '1.5rem',
+      paddingX: '1.5rem',        // 24px
     },
     dimensions: {
       height: 'auto',
@@ -93,14 +100,12 @@ export const servicesConfig: SectionConfig = {
   },
   desktop: {
     spacing: {
-      // Uses header height for proper clearance after IntroLoader
       paddingTop: HEADER_HEIGHTS.desktop,
       paddingBottom: '8rem',
-      paddingX: '3rem',
+      paddingX: '3rem',          // 48px
     },
     dimensions: {
       height: 'auto',
-      // Subtract header height for true viewport coverage
       minHeight: `calc(100dvh - ${HEADER_HEIGHTS.desktop})`,
     },
   },
@@ -198,7 +203,7 @@ export const footerConfig: SectionConfig = {
     },
     dimensions: {
       height: 'auto',
-      minHeight: 'auto',  // Footer should only take needed space
+      minHeight: 'auto',
     },
   },
   desktop: {
@@ -209,7 +214,7 @@ export const footerConfig: SectionConfig = {
     },
     dimensions: {
       height: 'auto',
-      minHeight: 'auto',  // Footer should only take needed space
+      minHeight: 'auto',
       maxWidth: '1400px',
     },
   },
@@ -247,6 +252,16 @@ export interface HeaderConfig {
   breakpoint: number;
 }
 
+/**
+ * Header Configuration
+ * 
+ * LOGO SIZE CALCULATION:
+ * The header logo width should match the IntroLoader's final logo size.
+ * Formula: IntroLoader logo size × logoEndScale = Header logo width
+ * 
+ * Mobile:  280px × 0.714 ≈ 200px
+ * Desktop: 500px × 0.40  = 200px
+ */
 export const headerConfig: HeaderConfig = {
   mobile: {
     logo: {
@@ -258,7 +273,7 @@ export const headerConfig: HeaderConfig = {
     logo: {
       width: '200px',
     },
-    paddingY: 'py-1 md:py-2',
+    paddingY: 'py-2',
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
@@ -292,6 +307,24 @@ export interface IntroLoaderConfig {
   breakpoint: number;
 }
 
+/**
+ * IntroLoader Configuration
+ * 
+ * LOGO SCALE CALCULATION:
+ * The final logo size after scaling must match the header logo width.
+ * 
+ * IntroLoader logo sizes (from className):
+ * - Mobile (base):  280px
+ * - sm:            360px
+ * - md (tablet):   500px
+ * - lg:            600px
+ * - xl:            700px
+ * 
+ * Target: Header logo is 200px
+ * 
+ * Mobile scale:  200 / 280 = 0.714
+ * Desktop scale: 200 / 500 = 0.40
+ */
 export const introLoaderConfig: IntroLoaderConfig = {
   timing: {
     logoEnterDuration: 800,
@@ -303,16 +336,16 @@ export const introLoaderConfig: IntroLoaderConfig = {
     logoCrossfadeDuration: 0.6,
   },
   mobile: {
-    logoStartOffset: '-20vh',
-    logoEndY: '-35.5vh',
-    logoEndScale: 0.71,
+    logoStartOffset: '-15vh',     // Start slightly above center
+    logoEndY: '-43vh',            // Move to header position
+    logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
     taglineTop: '58vh',
     lineTop: '64vh',
   },
   desktop: {
-    logoStartOffset: '-28vh',
-    logoEndY: '-30.2vh',
-    logoEndScale: 0.285,
+    logoStartOffset: '-20vh',     // Start slightly above center
+    logoEndY: '-44vh',            // Move to header position
+    logoEndScale: 0.40,           // 500px × 0.40 = 200px (FIXED from 0.285)
     taglineTop: '62vh',
     lineTop: '68vh',
   },
@@ -320,8 +353,20 @@ export const introLoaderConfig: IntroLoaderConfig = {
 };
 
 // ============================================
-// UTILITY: Generate CSS Variables (for debugging)
+// UTILITY FUNCTIONS
 // ============================================
+
+/**
+ * Get responsive config based on current viewport
+ * @param config - The section configuration object
+ * @param isMobile - Whether the current viewport is mobile
+ */
+export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknown }>(
+  config: T,
+  isMobile: boolean
+): T['mobile'] | T['desktop'] {
+  return isMobile ? config.mobile : config.desktop;
+}
 
 /**
  * Generates CSS variable declarations from section configs.
@@ -339,12 +384,14 @@ export function generateCSSVariables(): string {
     // Mobile variables
     lines.push(`--section-${name}-pt-mobile: ${config.mobile.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-mobile: ${config.mobile.spacing.paddingBottom};`);
+    lines.push(`--section-${name}-px-mobile: ${config.mobile.spacing.paddingX};`);
     lines.push(`--section-${name}-height-mobile: ${config.mobile.dimensions.height};`);
     lines.push(`--section-${name}-min-height-mobile: ${config.mobile.dimensions.minHeight};`);
     
     // Desktop variables
     lines.push(`--section-${name}-pt-desktop: ${config.desktop.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-desktop: ${config.desktop.spacing.paddingBottom};`);
+    lines.push(`--section-${name}-px-desktop: ${config.desktop.spacing.paddingX};`);
     lines.push(`--section-${name}-height-desktop: ${config.desktop.dimensions.height};`);
     lines.push(`--section-${name}-min-height-desktop: ${config.desktop.dimensions.minHeight};`);
     

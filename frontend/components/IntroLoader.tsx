@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { introLoaderConfig } from '@/config/sections.config';
-import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
+import { introLoaderConfig, getResponsiveConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 interface IntroLoaderProps {
   onComplete: () => void;
@@ -21,6 +21,11 @@ interface IntroLoaderProps {
  * 4. Background fades out revealing main content
  * 
  * Configuration is centralized in @/config/sections.config.ts
+ * 
+ * LOGO SIZE CALCULATIONS:
+ * The logo uses responsive classes that change size at breakpoints:
+ * - Base (mobile):  280px × 0.714 = 200px (matches header)
+ * - md (tablet+):   500px × 0.40  = 200px (matches header)
  */
 
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
@@ -153,6 +158,14 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                     : { duration: 0 }
                 }
               >
+                {/* 
+                  Logo responsive sizes:
+                  - w-[280px]: mobile (< 640px) - scales to 200px with 0.714
+                  - sm:w-[360px]: small (640px+)
+                  - md:w-[500px]: tablet (768px+) - scales to 200px with 0.40
+                  - lg:w-[600px]: desktop (1024px+)
+                  - xl:w-[700px]: wide (1280px+)
+                */}
                 <Image
                   src="/CRC-Logo.svg"
                   alt="Carmel Rose Collective"
@@ -163,7 +176,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                 />
               </motion.div>
 
-              {/* Bold logo (CRC-Logo-Header.svg) - fades in during exit, positioned absolutely on top */}
+              {/* Bold logo (CRC-Logo-Header.svg) - fades in during exit */}
               <motion.div
                 className="absolute inset-0"
                 initial={{ opacity: 0 }}

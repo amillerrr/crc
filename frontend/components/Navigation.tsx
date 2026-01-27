@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLenis, useLenisScroll } from './LenisProvider';
+import { DEFAULT_BREAKPOINT, getResponsiveConfig, servicesConfig } from '@/config/sections.config';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 interface NavigationProps {
   isVisible: boolean;
@@ -11,8 +13,12 @@ export default function Navigation({ isVisible }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
   const { lenis } = useLenis();
+  const { isMobile } = useBreakpoint(DEFAULT_BREAKPOINT);
+  
+  // Get paddingX from config for consistent spacing
+  const viewportConfig = getResponsiveConfig(servicesConfig, isMobile);
 
-  // Handle scroll for background visibility using Lenis
+  // Handle scroll for background visibility
   const handleScroll = useCallback(({ scroll }: { scroll: number }) => {
     const threshold = 100;
     const shouldShow = scroll >= threshold;
@@ -44,7 +50,6 @@ export default function Navigation({ isVisible }: NavigationProps) {
     e.preventDefault();
     setIsOpen(false);
 
-    // Small delay to allow menu to close before scrolling
     setTimeout(() => {
       lenis?.scrollTo(href, {
         offset: 0,
@@ -67,14 +72,19 @@ export default function Navigation({ isVisible }: NavigationProps) {
         }}
         transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
       >
-        <div className="px-6 md:px-12 lg:px-16 flex justify-end items-center">
+        <div 
+          className="flex justify-end items-center"
+          style={{ 
+            paddingLeft: viewportConfig.spacing.paddingX,
+            paddingRight: viewportConfig.spacing.paddingX
+          }}
+        >
           <button
             className="relative w-10 h-10 flex flex-col justify-center items-center gap-[5px] group"
             onClick={() => setIsOpen(!isOpen)}
             aria-expanded={isOpen}
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
-            {/* Hamburger Lines */}
             <span className={`block w-6 h-px bg-carmel-text transition-all duration-300 ease-out origin-center ${isOpen ? 'rotate-45 translate-y-[6px]' : 'group-hover:w-7'}`} />
             <span className={`block w-6 h-px bg-carmel-text transition-all duration-300 ease-out ${isOpen ? 'opacity-0 scale-x-0' : 'opacity-100'}`} />
             <span className={`block w-6 h-px bg-carmel-text transition-all duration-300 ease-out origin-center ${isOpen ? '-rotate-45 -translate-y-[6px]' : 'group-hover:w-4'}`} />

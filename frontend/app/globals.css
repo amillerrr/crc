@@ -38,8 +38,6 @@ html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   width: 100%;
-
-  /* Stop rubber-banding/bouncing on Mac/iOS */
   overscroll-behavior-y: none;
   overflow-y: scroll;
 }
@@ -69,8 +67,6 @@ body {
   width: 100%;
   position: relative;
   margin: 0;
-  
-  /* Safety checks */
   overscroll-behavior-y: none;
   overflow-x: hidden;
 }
@@ -115,7 +111,6 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   66% { transform: translate(-20px, 20px) scale(0.98) rotate(-1deg); }
 }
 
-/* Intro animation specific styles */
 @keyframes intro-fade-up {
   0% {
     opacity: 0;
@@ -138,7 +133,6 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   }
 }
 
-/* Smooth reveal animation for content after intro */
 @keyframes content-reveal {
   0% {
     opacity: 0;
