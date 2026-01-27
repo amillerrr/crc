@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { introLoaderConfig, getResponsiveConfig } from '@/config/sections.config';
@@ -37,10 +37,17 @@ interface IntroLoaderProps {
  * 800ms   → logo-hold (logo stays, tagline appears)
  * 2000ms  → logo-exit (logo moves to header, crossfades)
  * 3000ms  → complete (IntroLoader unmounts)
+ * 
+ * HEADER VISIBILITY TIMING:
+ * The Header is made visible partway through the logo-exit phase,
+ * specifically when the crossfade to the bold logo variant is ~70% complete.
+ * This ensures a seamless visual transition where the user never sees
+ * both logos simultaneously.
  */
 
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
   const [phase, setPhase] = useState<'logo-enter' | 'logo-hold' | 'logo-exit' | 'complete'>('logo-enter');
+  const hasCalledComplete = useRef(false);
   const { isMobile } = useBreakpoint(introLoaderConfig.breakpoint);
 
   // Get static config values
@@ -65,14 +72,32 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
     return () => timers.forEach(clearTimeout);
   }, [timing]);
 
-  // Call onComplete at the START of logo-exit phase
-  // This makes the Header visible BEHIND the IntroLoader while it's still animating
-  // Since IntroLoader (z-1000) is above Header (z-920), there's no visual gap
+  // Call onComplete when the crossfade is substantially complete
+  // This ensures the Header logo fades in seamlessly behind the intro logo
+  // The timing is calculated to show Header when:
+  // 1. The intro logo has moved most of the way to header position
+  // 2. The crossfade to bold variant is ~70% complete
+  // 3. The background is starting to fade, revealing the header underneath
   useEffect(() => {
-    if (phase === 'logo-exit') {
-      onComplete();
+    if (phase === 'logo-exit' && !hasCalledComplete.current) {
+      // Calculate when crossfade is 70% complete
+      const crossfadeStart = timing.logoCrossfadeStart;
+      const crossfadeDuration = timing.logoCrossfadeDuration;
+      const crossfade70Percent = crossfadeStart + (crossfadeDuration * 0.7);
+      
+      // Convert to milliseconds within the exit phase
+      const delayMs = timing.logoExitDuration * crossfade70Percent;
+      
+      const timer = setTimeout(() => {
+        if (!hasCalledComplete.current) {
+          hasCalledComplete.current = true;
+          onComplete();
+        }
+      }, delayMs);
+      
+      return () => clearTimeout(timer);
     }
-  }, [phase, onComplete]);
+  }, [phase, onComplete, timing.logoExitDuration, timing.logoCrossfadeStart, timing.logoCrossfadeDuration]);
 
   // Calculate crossfade timing (in seconds for framer-motion)
   const crossfadeDelay = (timing.logoExitDuration * timing.logoCrossfadeStart) / 1000;

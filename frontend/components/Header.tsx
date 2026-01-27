@@ -1,6 +1,7 @@
 "use client";
 import { useRef } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { useLenisScroll } from './LenisProvider';
 import { headerConfig, getResponsiveConfig } from '@/config/sections.config';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -24,6 +25,12 @@ interface HeaderProps {
  * 
  * Mobile:  280px × 0.714 ≈ 200px
  * Desktop: 500px × 0.40  = 200px
+ * 
+ * TRANSITION TIMING:
+ * The header uses framer-motion for a smooth fade-in that synchronizes
+ * with the IntroLoader's crossfade animation. The 500ms duration and
+ * custom easing ensure the header appears seamlessly as the intro logo
+ * fades out.
  */
 
 export default function Header({ isVisible }: HeaderProps) {
@@ -41,16 +48,21 @@ export default function Header({ isVisible }: HeaderProps) {
     }
   });
 
-  // Generate styles from config (paddingY is now a value, not a class)
+  // Generate styles from config
   const headerStyle: React.CSSProperties = {
     paddingTop: viewportConfig.paddingY,
     paddingBottom: viewportConfig.paddingY,
   };
 
   return (
-    <header 
-      className="fixed top-0 left-0 w-full z-[920] bg-carmel-bg transition-opacity duration-300"
-      style={{ opacity: isVisible ? 1 : 0 }}
+    <motion.header 
+      className="fixed top-0 left-0 w-full z-[920] bg-carmel-bg"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isVisible ? 1 : 0 }}
+      transition={{ 
+        duration: 0.5, 
+        ease: [0.25, 1, 0.5, 1]  // Match the intro's easing
+      }}
     >
       <div 
         className="flex justify-center items-center"
@@ -76,6 +88,6 @@ export default function Header({ isVisible }: HeaderProps) {
           </a>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
