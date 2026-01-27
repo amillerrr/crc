@@ -7,22 +7,69 @@
  * Each section has separate mobile and desktop settings
  * for independent control over each viewport.
  * 
- * USAGE:
- * - Import specific section config: import { servicesConfig } from '@/config/sections.config'
- * - Import all configs: import { sectionConfigs } from '@/config/sections.config'
+ * ============================================
+ * HOW TO CHANGE SECTION HEIGHT
+ * ============================================
  * 
- * IMPORTANT: Components should import the config and use it via the useBreakpoint hook:
+ * Each section has two height-related properties:
  * 
- *   const { isMobile } = useBreakpoint(servicesConfig.breakpoint);
- *   const viewportConfig = getResponsiveConfig(servicesConfig, isMobile);
+ * 1. `height` - The explicit height of the section
+ *    - 'auto' → Section grows/shrinks to fit content (RECOMMENDED for most cases)
+ *    - '100dvh' → Exactly viewport height (use for hero sections)
+ *    - '80vh' → 80% of viewport height
+ *    - '500px' → Fixed pixel value (not recommended for responsive design)
  * 
- * This ensures changes to this file are immediately reflected in components.
+ * 2. `minHeight` - The minimum height (section can grow beyond this)
+ *    - 'auto' → No minimum, shrinks to content
+ *    - '100dvh' → At least full viewport height
+ *    - '50vh' → At least 50% of viewport
+ *    - '600px' → At least 600 pixels
  * 
- * UNITS:
- * - height: 'auto' | '100vh' | '100dvh' | 'fit-content' | specific value like '80vh'
- * - minHeight: same as height
- * - padding: rem values as strings (e.g., '6rem')
- * - gap: rem values as strings
+ * COMMON PATTERNS:
+ * 
+ * A) "Full viewport section" (hero-style):
+ *    height: 'auto', minHeight: '100dvh'
+ * 
+ * B) "Content-driven section" (fits content):
+ *    height: 'auto', minHeight: 'auto'
+ * 
+ * C) "Fixed viewport section" (exactly viewport):
+ *    height: '100dvh', minHeight: '100dvh'
+ * 
+ * D) "Minimum height with growth" (at least X):
+ *    height: 'auto', minHeight: '600px'
+ * 
+ * ============================================
+ * IMPORTANT: FIXED HEADER CONSIDERATION
+ * ============================================
+ * 
+ * The Header component uses `position: fixed`, meaning it overlays page content.
+ * 
+ * - The FIRST section (Services) must have paddingTop = header height
+ *   to push content below the fixed header
+ * 
+ * - Subsequent sections don't need this padding because the user
+ *   scrolls past the first section
+ * 
+ * - If minHeight is '100dvh', the padding is INSIDE that height
+ *   (content area = 100dvh - paddingTop - paddingBottom)
+ * 
+ * ============================================
+ * USAGE IN COMPONENTS
+ * ============================================
+ * 
+ * import { servicesConfig, getResponsiveConfig } from '@/config/sections.config';
+ * import { useBreakpoint } from '@/hooks/useBreakpoint';
+ * 
+ * const { isMobile } = useBreakpoint(servicesConfig.breakpoint);
+ * const viewportConfig = getResponsiveConfig(servicesConfig, isMobile);
+ * 
+ * const sectionStyle = {
+ *   paddingTop: viewportConfig.spacing.paddingTop,
+ *   paddingBottom: viewportConfig.spacing.paddingBottom,
+ *   minHeight: viewportConfig.dimensions.minHeight,
+ *   height: viewportConfig.dimensions.height,
+ * };
  */
 
 // ============================================
@@ -84,10 +131,6 @@ export const HEADER_HEIGHTS = {
 // SHARED LAYOUT CONFIGURATION
 // ============================================
 
-/**
- * Shared layout values used across multiple components
- * This ensures consistent spacing for navigation, headers, and sections
- */
 export interface LayoutConfig {
   mobile: {
     paddingX: string;
@@ -100,10 +143,10 @@ export interface LayoutConfig {
 
 export const layoutConfig: LayoutConfig = {
   mobile: {
-    paddingX: '1.5rem',    // 24px - consistent with section mobile padding
+    paddingX: '1.5rem',    // 24px
   },
   desktop: {
-    paddingX: '3rem',      // 48px - consistent with section desktop padding
+    paddingX: '3rem',      // 48px
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
@@ -114,7 +157,6 @@ export const layoutConfig: LayoutConfig = {
 
 /**
  * Form validation limits - must match backend limits in main.go
- * These are used for client-side validation and maxLength attributes
  */
 export const FORM_LIMITS = {
   name: {
@@ -132,40 +174,66 @@ export const FORM_LIMITS = {
 // SECTION CONFIGURATIONS
 // ============================================
 
+/**
+ * SERVICES SECTION
+ * 
+ * This is the FIRST section after the header, so it needs special handling:
+ * - paddingTop must equal header height (content starts below fixed header)
+ * - minHeight of 100dvh means the section fills the viewport
+ * - The actual content area = 100dvh - paddingTop - paddingBottom
+ * 
+ * TO MAKE THIS SECTION SHORTER:
+ * - Change minHeight from '100dvh' to 'auto' or a smaller value like '80vh'
+ * - Reduce paddingBottom
+ * 
+ * TO MAKE THIS SECTION TALLER:
+ * - Keep minHeight at '100dvh' or increase to '120vh'
+ * - Increase paddingBottom
+ */
 export const servicesConfig: SectionConfig = {
   id: 'services',
   breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: '1rem',        // Header clearance on mobile
-      paddingBottom: '5rem',
-      paddingX: '1.5rem',        // 24px
+      paddingTop: HEADER_HEIGHTS.mobile,  // ~72px - pushes content below fixed header
+      paddingBottom: '3rem',              // 48px
+      paddingX: '1.5rem',                 // 24px
     },
     dimensions: {
       height: 'auto',
-      minHeight: 'auto',
+      minHeight: 'auto',  // Content-driven on mobile (scrollable)
     },
   },
   desktop: {
     spacing: {
-      paddingTop: HEADER_HEIGHTS.desktop,
-      paddingBottom: '8rem',
-      paddingX: '3rem',          // 48px
+      paddingTop: HEADER_HEIGHTS.desktop,  // 80px - pushes content below fixed header
+      paddingBottom: '3rem',               // 48px - reduced from 8rem to prevent cutoff
+      paddingX: '3rem',                    // 48px
     },
     dimensions: {
       height: 'auto',
-      minHeight: `calc(100dvh - ${HEADER_HEIGHTS.desktop})`,
+      minHeight: '100dvh',  // Full viewport height (padding is INSIDE this)
     },
   },
 };
 
+/**
+ * PORTFOLIO SECTION
+ * 
+ * Horizontal scrolling gallery - needs enough height for the carousel.
+ * 
+ * TO CHANGE HEIGHT:
+ * - minHeight: '100dvh' = full viewport
+ * - minHeight: '80vh' = 80% of viewport
+ * - minHeight: 'auto' = fits content only
+ */
 export const portfolioConfig: SectionConfig = {
   id: 'portfolio',
   breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: '5rem',
-      paddingBottom: '5rem',
+      paddingTop: '4rem',
+      paddingBottom: '4rem',
       paddingX: '1.5rem',
     },
     dimensions: {
@@ -175,7 +243,7 @@ export const portfolioConfig: SectionConfig = {
   },
   desktop: {
     spacing: {
-      paddingTop: '8rem',
+      paddingTop: '6rem',
       paddingBottom: '3rem',
       paddingX: '3rem',
     },
@@ -186,13 +254,22 @@ export const portfolioConfig: SectionConfig = {
   },
 };
 
+/**
+ * ABOUT SECTION
+ * 
+ * Quote and founder info - centered content.
+ * 
+ * TO CHANGE HEIGHT:
+ * - Currently set to 100dvh on desktop for dramatic full-screen effect
+ * - Change to 'auto' if you want it to just fit the content
+ */
 export const aboutConfig: SectionConfig = {
   id: 'about',
   breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: '5rem',
-      paddingBottom: '5rem',
+      paddingTop: '4rem',
+      paddingBottom: '4rem',
       paddingX: '1.5rem',
     },
     dimensions: {
@@ -202,8 +279,8 @@ export const aboutConfig: SectionConfig = {
   },
   desktop: {
     spacing: {
-      paddingTop: '0',
-      paddingBottom: '0',
+      paddingTop: '6rem',
+      paddingBottom: '6rem',
       paddingX: '3rem',
     },
     dimensions: {
@@ -213,6 +290,15 @@ export const aboutConfig: SectionConfig = {
   },
 };
 
+/**
+ * CONTACT SECTION
+ * 
+ * Contact form - centered in viewport.
+ * 
+ * TO CHANGE HEIGHT:
+ * - 100dvh gives a nice full-page form experience
+ * - 'auto' would make it more compact
+ */
 export const contactConfig: SectionConfig = {
   id: 'contact',
   breakpoint: DEFAULT_BREAKPOINT,
@@ -229,8 +315,8 @@ export const contactConfig: SectionConfig = {
   },
   desktop: {
     spacing: {
-      paddingTop: '0',
-      paddingBottom: '0',
+      paddingTop: '6rem',
+      paddingBottom: '6rem',
       paddingX: '3rem',
     },
     dimensions: {
@@ -240,6 +326,11 @@ export const contactConfig: SectionConfig = {
   },
 };
 
+/**
+ * FOOTER SECTION
+ * 
+ * Footer doesn't need minHeight - it should just fit content.
+ */
 export const footerConfig: SectionConfig = {
   id: 'footer',
   breakpoint: DEFAULT_BREAKPOINT,
@@ -280,10 +371,6 @@ export const sectionConfigs = {
   footer: footerConfig,
 } as const;
 
-/** 
- * Derive SectionName type from sectionConfigs keys
- * This ensures type safety and prevents mismatches
- */
 export type SectionName = keyof typeof sectionConfigs;
 
 // ============================================
@@ -302,18 +389,17 @@ export interface NavigationConfig {
     paddingX: string;
   };
   breakpoint: number;
-  /** Scroll threshold (in px) before showing background */
   scrollThreshold: number;
 }
 
 export const navigationConfig: NavigationConfig = {
   mobile: {
-    paddingY: '0.5rem',    // 8px
-    paddingX: '1.5rem',    // Match layout config
+    paddingY: '0.5rem',
+    paddingX: '1.5rem',
   },
   desktop: {
-    paddingY: '0.75rem',   // 12px
-    paddingX: '3rem',      // Match layout config
+    paddingY: '0.75rem',
+    paddingX: '3rem',
   },
   breakpoint: DEFAULT_BREAKPOINT,
   scrollThreshold: 100,
@@ -343,8 +429,7 @@ export interface HeaderConfig {
  * Header Configuration
  * 
  * LOGO SIZE CALCULATION:
- * The header logo width should match the IntroLoader's final logo size.
- * Formula: IntroLoader logo size × logoEndScale = Header logo width
+ * IntroLoader logo size × logoEndScale = Header logo width
  * 
  * Mobile:  280px × 0.714 ≈ 200px
  * Desktop: 500px × 0.40  = 200px
@@ -354,13 +439,13 @@ export const headerConfig: HeaderConfig = {
     logo: {
       width: '200px',
     },
-    paddingY: '0.75rem',   // 12px (was py-3)
+    paddingY: '0.75rem',
   },
   desktop: {
     logo: {
       width: '200px',
     },
-    paddingY: '0.5rem',    // 8px (was py-2)
+    paddingY: '0.5rem',
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
@@ -370,22 +455,22 @@ export const headerConfig: HeaderConfig = {
 // ============================================
 
 export interface IntroTimingConfig {
-  logoEnterDuration: number;      // ms - How long logo takes to fade in
-  logoHoldDuration: number;       // ms - How long logo stays centered
-  logoExitDuration: number;       // ms - How long logo takes to move to header
-  backgroundFadeDelay: number;    // ms - Delay before background starts fading
-  backgroundFadeDuration: number; // ms - How long background takes to fade
-  logoCrossfadeStart: number;     // 0-1 - Start crossfade at this % into exit phase
-  logoCrossfadeDuration: number;  // 0-1 - Crossfade duration as % of exit duration
+  logoEnterDuration: number;
+  logoHoldDuration: number;
+  logoExitDuration: number;
+  backgroundFadeDelay: number;
+  backgroundFadeDuration: number;
+  logoCrossfadeStart: number;
+  logoCrossfadeDuration: number;
 }
 
 export interface IntroViewportConfig {
-  logoStartOffset: string;  // Initial logo position (negative = higher)
-  logoEndY: string;         // Final Y position when moving to header
-  logoEndScale: number;     // Final scale when logo reaches header
-  logoSize: string;         // Logo size at this breakpoint (for reference)
-  taglineTop: string;       // Tagline position from top
-  lineTop: string;          // Decorative line position from top
+  logoStartOffset: string;
+  logoEndY: string;
+  logoEndScale: number;
+  logoSize: string;
+  taglineTop: string;
+  lineTop: string;
 }
 
 export interface IntroLoaderConfig {
@@ -398,19 +483,9 @@ export interface IntroLoaderConfig {
 /**
  * IntroLoader Configuration
  * 
- * SIMPLIFIED BREAKPOINT SYSTEM:
- * To ensure the logo animation lands precisely on the header logo,
- * we use only 2 breakpoints (mobile/desktop) that match the config breakpoint.
- * 
- * Logo sizes (simplified from 5 to 2 breakpoints):
- * - Mobile (<768px):  280px  → scales to 200px with 0.714
- * - Desktop (≥768px): 500px  → scales to 200px with 0.40
- * 
- * Target: Header logo is always 200px
- * 
- * CALCULATIONS:
- * Mobile scale:  200 / 280 = 0.7142857... ≈ 0.714
- * Desktop scale: 200 / 500 = 0.40
+ * Logo sizes (2 breakpoints):
+ * - Mobile (<768px):  280px → scales to 200px with 0.714
+ * - Desktop (≥768px): 500px → scales to 200px with 0.40
  */
 export const introLoaderConfig: IntroLoaderConfig = {
   timing: {
@@ -423,18 +498,18 @@ export const introLoaderConfig: IntroLoaderConfig = {
     logoCrossfadeDuration: 0.6,
   },
   mobile: {
-    logoStartOffset: '-15vh',     // Start slightly above center
-    logoEndY: '-43vh',            // Move to header position
-    logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
-    logoSize: '280px',            // Reference: matches CSS class
+    logoStartOffset: '-15vh',
+    logoEndY: '-38vh',
+    logoEndScale: 0.714,
+    logoSize: '280px',
     taglineTop: '58vh',
     lineTop: '64vh',
   },
   desktop: {
-    logoStartOffset: '-20vh',     // Start slightly above center
-    logoEndY: '-44vh',            // Move to header position
-    logoEndScale: 0.40,           // 500px × 0.40 = 200px
-    logoSize: '500px',            // Reference: matches CSS class
+    logoStartOffset: '-20vh',
+    logoEndY: '-34vh',
+    logoEndScale: 0.40,
+    logoSize: '500px',
     taglineTop: '62vh',
     lineTop: '68vh',
   },
@@ -447,8 +522,6 @@ export const introLoaderConfig: IntroLoaderConfig = {
 
 /**
  * Get responsive config based on current viewport
- * @param config - The section configuration object
- * @param isMobile - Whether the current viewport is mobile
  */
 export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknown }>(
   config: T,
@@ -459,37 +532,32 @@ export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknow
 
 /**
  * Generates CSS variable declarations from section configs.
- * Useful for debugging or if you want to log what values should be.
  */
 export function generateCSSVariables(): string {
   const lines: string[] = [];
   
-  // Add header height variables
   lines.push(`--header-height-mobile: ${HEADER_HEIGHTS.mobile};`);
   lines.push(`--header-height-desktop: ${HEADER_HEIGHTS.desktop};`);
   lines.push('');
   
-  // Add layout variables
   lines.push(`--layout-px-mobile: ${layoutConfig.mobile.paddingX};`);
   lines.push(`--layout-px-desktop: ${layoutConfig.desktop.paddingX};`);
   lines.push('');
   
   Object.entries(sectionConfigs).forEach(([name, config]) => {
-    // Mobile variables
     lines.push(`--section-${name}-pt-mobile: ${config.mobile.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-mobile: ${config.mobile.spacing.paddingBottom};`);
     lines.push(`--section-${name}-px-mobile: ${config.mobile.spacing.paddingX};`);
     lines.push(`--section-${name}-height-mobile: ${config.mobile.dimensions.height};`);
     lines.push(`--section-${name}-min-height-mobile: ${config.mobile.dimensions.minHeight};`);
     
-    // Desktop variables
     lines.push(`--section-${name}-pt-desktop: ${config.desktop.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-desktop: ${config.desktop.spacing.paddingBottom};`);
     lines.push(`--section-${name}-px-desktop: ${config.desktop.spacing.paddingX};`);
     lines.push(`--section-${name}-height-desktop: ${config.desktop.dimensions.height};`);
     lines.push(`--section-${name}-min-height-desktop: ${config.desktop.dimensions.minHeight};`);
     
-    lines.push(''); // Empty line between sections
+    lines.push('');
   });
   
   return lines.join('\n');
