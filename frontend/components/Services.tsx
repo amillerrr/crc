@@ -3,6 +3,29 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from './Reveal';
 
+/**
+ * ============================================
+ * SERVICES SECTION
+ * ============================================
+ * 
+ * Showcases the company's core services: Brand Activation & Event Production.
+ * 
+ * LAYOUT:
+ * - Hero-like opening area with title
+ * - Description paragraph
+ * - Two-column service cards with hover effects
+ * - CTA link to portfolio
+ * 
+ * RESPONSIVE BEHAVIOR:
+ * - Mobile: Single column, reduced padding
+ * - Desktop: Two columns with vertical divider, full viewport height
+ * 
+ * CSS Variables (defined in globals.css):
+ * - --section-services-pt-mobile / --section-services-pt-desktop
+ * - --section-services-pb-mobile / --section-services-pb-desktop
+ * - --section-services-min-height-mobile / --section-services-min-height-desktop
+ */
+
 const subCategories = [
   { 
     title: "Brand Activation", 

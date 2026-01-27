@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-/* ===== TAILWIND V4.1 CONFIGURATION ===== */
+/* ============================================
+   TAILWIND V4.1 CONFIGURATION
+   ============================================ */
 @theme {
   /* Colors */
   --color-carmel-bg: oklch(0.97 0.008 85);       /* Cream */
@@ -22,42 +24,115 @@
   --tracking-luxury: 0.15em;
   --ease-luxury: cubic-bezier(0.25, 1, 0.5, 1);
 
-  /* ===== SECTION SPACING - MOBILE ===== */
-  --section-services-pt-mobile: 6rem;  /* Extra top padding for header clearance */
-  --section-services-pb-mobile: 5rem;
-  --section-portfolio-pt-mobile: 5rem;
-  --section-portfolio-pb-mobile: 5rem;
-  --section-about-pt-mobile: 5rem;
-  --section-about-pb-mobile: 5rem;
-  --section-contact-pt-mobile: 4rem;
-  --section-contact-pb-mobile: 2rem;
-  --section-footer-pt-mobile: 3rem;
-  --section-footer-pb-mobile: 2rem;
+  /* ============================================
+     BREAKPOINTS
+     ============================================ */
+  --breakpoint-mobile: 0px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1440px;
 
-  /* ===== SECTION SPACING - DESKTOP ===== */
+  /* ============================================
+     SERVICES SECTION
+     ============================================ */
+  /* Mobile */
+  --section-services-pt-mobile: 6rem;
+  --section-services-pb-mobile: 5rem;
+  --section-services-px-mobile: 1.5rem;
+  --section-services-height-mobile: auto;
+  --section-services-min-height-mobile: auto;
+  
+  /* Desktop */
   --section-services-pt-desktop: 0;
   --section-services-pb-desktop: 8rem;
+  --section-services-px-desktop: 3rem;
+  --section-services-height-desktop: auto;
+  --section-services-min-height-desktop: 100dvh;
+
+  /* ============================================
+     PORTFOLIO SECTION
+     ============================================ */
+  /* Mobile */
+  --section-portfolio-pt-mobile: 5rem;
+  --section-portfolio-pb-mobile: 5rem;
+  --section-portfolio-px-mobile: 1.5rem;
+  --section-portfolio-height-mobile: auto;
+  --section-portfolio-min-height-mobile: auto;
+  
+  /* Desktop */
   --section-portfolio-pt-desktop: 8rem;
   --section-portfolio-pb-desktop: 3rem;
+  --section-portfolio-px-desktop: 3rem;
+  --section-portfolio-height-desktop: auto;
+  --section-portfolio-min-height-desktop: 100dvh;
+
+  /* ============================================
+     ABOUT SECTION
+     ============================================ */
+  /* Mobile */
+  --section-about-pt-mobile: 5rem;
+  --section-about-pb-mobile: 5rem;
+  --section-about-px-mobile: 1.5rem;
+  --section-about-height-mobile: auto;
+  --section-about-min-height-mobile: auto;
+  
+  /* Desktop */
   --section-about-pt-desktop: 0;
   --section-about-pb-desktop: 0;
+  --section-about-px-desktop: 3rem;
+  --section-about-height-desktop: auto;
+  --section-about-min-height-desktop: 100dvh;
+
+  /* ============================================
+     CONTACT SECTION
+     ============================================ */
+  /* Mobile */
+  --section-contact-pt-mobile: 4rem;
+  --section-contact-pb-mobile: 2rem;
+  --section-contact-px-mobile: 1.5rem;
+  --section-contact-height-mobile: auto;
+  --section-contact-min-height-mobile: auto;
+  
+  /* Desktop */
   --section-contact-pt-desktop: 0;
   --section-contact-pb-desktop: 0;
+  --section-contact-px-desktop: 3rem;
+  --section-contact-height-desktop: auto;
+  --section-contact-min-height-desktop: 100dvh;
+
+  /* ============================================
+     FOOTER SECTION
+     ============================================ */
+  /* Mobile */
+  --section-footer-pt-mobile: 3rem;
+  --section-footer-pb-mobile: 2rem;
+  --section-footer-px-mobile: 1.5rem;
+  --section-footer-height-mobile: auto;
+  --section-footer-min-height-mobile: auto;
+  
+  /* Desktop */
   --section-footer-pt-desktop: 5rem;
   --section-footer-pb-desktop: 3rem;
+  --section-footer-px-desktop: 3rem;
+  --section-footer-height-desktop: auto;
+  --section-footer-min-height-desktop: auto;
 
-  /* ===== FOOTER INTERNAL SPACING ===== */
+  /* ============================================
+     FOOTER INTERNAL SPACING
+     ============================================ */
   /* Mobile */
   --footer-main-gap-mobile: 2.5rem;
   --footer-bottom-pt-mobile: 1.5rem;
-  --footer-max-width: 1400px;
   
   /* Desktop */
   --footer-main-gap-desktop: 0;
   --footer-bottom-pt-desktop: 2rem;
+  --footer-max-width: 1400px;
 }
 
-/* ===== BASE STYLES ===== */
+/* ============================================
+   BASE STYLES
+   ============================================ */
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -89,7 +164,7 @@ body {
   color: var(--color-carmel-text);
   background: var(--color-carmel-bg);
   font-family: var(--font-cormorant), "Garamond", serif !important;
-  font-size: var(--text-fluid-base); /* Fluid sizing */
+  font-size: var(--text-fluid-base);
   width: 100%;
   position: relative;
   margin: 0;
@@ -99,8 +174,11 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== LAYOUT UTILS ===== */
-/* Base section class - spacing is now handled per-section via .section-{name} classes */
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+
+/* Base section class with mobile-first approach */
 .snap-section {
   width: 100%;
   overflow: hidden;
@@ -108,68 +186,102 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: auto;
 }
 
-@media (min-width: 768px) {
-  .snap-section {
-    min-height: 100dvh;
-  }
-}
+/* ============================================
+   SECTION-SPECIFIC STYLES
+   Each section has its own mobile/desktop rules
+   ============================================ */
 
-/* ===== SECTION-SPECIFIC SPACING ===== */
-/* Each section has isolated mobile/desktop spacing via CSS variables */
+/* ----- SERVICES SECTION ----- */
 .section-services {
   padding-top: var(--section-services-pt-mobile);
   padding-bottom: var(--section-services-pb-mobile);
-}
-.section-portfolio {
-  padding-top: var(--section-portfolio-pt-mobile);
-  padding-bottom: var(--section-portfolio-pb-mobile);
-}
-.section-about {
-  padding-top: var(--section-about-pt-mobile);
-  padding-bottom: var(--section-about-pb-mobile);
-}
-.section-contact {
-  padding-top: var(--section-contact-pt-mobile);
-  padding-bottom: var(--section-contact-pb-mobile);
-}
-.section-footer {
-  padding-top: var(--section-footer-pt-mobile);
-  padding-bottom: var(--section-footer-pb-mobile);
+  height: var(--section-services-height-mobile);
+  min-height: var(--section-services-min-height-mobile);
 }
 
 @media (min-width: 768px) {
   .section-services {
     padding-top: var(--section-services-pt-desktop);
     padding-bottom: var(--section-services-pb-desktop);
+    height: var(--section-services-height-desktop);
+    min-height: var(--section-services-min-height-desktop);
   }
+}
+
+/* ----- PORTFOLIO SECTION ----- */
+.section-portfolio {
+  padding-top: var(--section-portfolio-pt-mobile);
+  padding-bottom: var(--section-portfolio-pb-mobile);
+  height: var(--section-portfolio-height-mobile);
+  min-height: var(--section-portfolio-min-height-mobile);
+}
+
+@media (min-width: 768px) {
   .section-portfolio {
     padding-top: var(--section-portfolio-pt-desktop);
     padding-bottom: var(--section-portfolio-pb-desktop);
+    height: var(--section-portfolio-height-desktop);
+    min-height: var(--section-portfolio-min-height-desktop);
   }
+}
+
+/* ----- ABOUT SECTION ----- */
+.section-about {
+  padding-top: var(--section-about-pt-mobile);
+  padding-bottom: var(--section-about-pb-mobile);
+  height: var(--section-about-height-mobile);
+  min-height: var(--section-about-min-height-mobile);
+}
+
+@media (min-width: 768px) {
   .section-about {
     padding-top: var(--section-about-pt-desktop);
     padding-bottom: var(--section-about-pb-desktop);
+    height: var(--section-about-height-desktop);
+    min-height: var(--section-about-min-height-desktop);
   }
+}
+
+/* ----- CONTACT SECTION ----- */
+.section-contact {
+  padding-top: var(--section-contact-pt-mobile);
+  padding-bottom: var(--section-contact-pb-mobile);
+  height: var(--section-contact-height-mobile);
+  min-height: var(--section-contact-min-height-mobile);
+}
+
+@media (min-width: 768px) {
   .section-contact {
     padding-top: var(--section-contact-pt-desktop);
     padding-bottom: var(--section-contact-pb-desktop);
+    height: var(--section-contact-height-desktop);
+    min-height: var(--section-contact-min-height-desktop);
   }
+}
+
+/* ----- FOOTER SECTION ----- */
+.section-footer {
+  padding-top: var(--section-footer-pt-mobile);
+  padding-bottom: var(--section-footer-pb-mobile);
+  height: var(--section-footer-height-mobile);
+  min-height: var(--section-footer-min-height-mobile);
+  justify-content: flex-start; /* Footer aligns to top, not center */
+}
+
+@media (min-width: 768px) {
   .section-footer {
     padding-top: var(--section-footer-pt-desktop);
     padding-bottom: var(--section-footer-pb-desktop);
+    height: var(--section-footer-height-desktop);
+    min-height: var(--section-footer-min-height-desktop);
   }
 }
 
-/* ===== FOOTER-SPECIFIC STYLES ===== */
-/* Override snap-section min-height for footer - it should only take the space it needs */
-.section-footer {
-  min-height: auto !important;
-  justify-content: flex-start;
-}
-
+/* ============================================
+   FOOTER-SPECIFIC STYLES
+   ============================================ */
 .footer-container {
   width: 100%;
   max-width: var(--footer-max-width);
@@ -194,6 +306,10 @@ body {
   }
 }
 
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
 /* Hide Scrollbar for Horizontal Portfolio */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -202,11 +318,14 @@ body {
 h1, h2, h3, h4, h5, h6, .font-serif {
   font-family: var(--font-poiret-one), serif !important;
 }
+
 .font-italianno {
   font-family: var(--font-parisienne), cursive !important;
 }
 
-/* ===== ANIMATIONS ===== */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes float-slow {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
   33% { transform: translate(30px, -30px) scale(1.02) rotate(1deg); }

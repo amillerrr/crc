@@ -2,90 +2,34 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { introLoaderConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 interface IntroLoaderProps {
   onComplete: () => void;
 }
 
-/* ============================================
-   INTRO ANIMATION CONFIGURATION
-   Adjust these values to tweak the animation
-   
-   MATCHING HEADER SIZE FORMULA:
-   logoEndScale = (Header logoWidth) ÷ (IntroLoader logo width at that breakpoint)
-   
-   Desktop: Header 170px ÷ IntroLoader 700px = 0.243 scale
-   Mobile:  Header 100px ÷ IntroLoader 280px = 0.357 scale
-   ============================================ */
-const CONFIG = {
-  // ----- TIMING (in milliseconds) -----
-  timing: {
-    logoEnterDuration: 800,      // How long logo takes to fade in
-    logoHoldDuration: 1200,      // How long logo stays centered
-    logoExitDuration: 1000,      // How long logo takes to move to header
-    backgroundFadeDelay: 400,    // Delay before background starts fading
-    backgroundFadeDuration: 800, // How long background takes to fade
-    logoCrossfadeStart: 0.2,     // Start crossfade at 20% into exit phase (0-1)
-    logoCrossfadeDuration: 0.6,  // Crossfade takes 60% of exit duration (0-1)
-  },
+/**
+ * ============================================
+ * INTRO LOADER COMPONENT
+ * ============================================
+ * 
+ * Handles the initial page load animation:
+ * 1. Logo fades in at center
+ * 2. Logo holds with tagline visible
+ * 3. Logo animates to header position, crossfading to header variant
+ * 4. Background fades out revealing main content
+ * 
+ * Configuration is centralized in @/config/sections.config.ts
+ */
 
-  // ----- DESKTOP VALUES (>= 768px) -----
-  desktop: {
-    // Initial logo position (negative = higher on screen)
-    logoStartOffset: '-28vh',
-    
-    // Final animation values when logo moves to header
-    logoEndY: '-30.2vh',           // Vertical position (from starting point)
-    logoEndScale: 0.285,         // 170px header ÷ 700px logo = 0.243
-    
-    // Tagline position
-    taglineTop: '62vh',
-    
-    // Decorative line position  
-    lineTop: '68vh',
-  },
-
-  // ----- MOBILE VALUES (< 768px) -----
-  mobile: {
-    // Initial logo position (negative = higher on screen)
-    logoStartOffset: '-20vh',
-    
-    // Final animation values when logo moves to header
-    logoEndY: '-35.5vh',           // Vertical position (from starting point)
-    logoEndScale: 0.71,         // 100px header ÷ 280px logo = 0.357
-    
-    // Tagline position
-    taglineTop: '58vh',
-    
-    // Decorative line position
-    lineTop: '64vh',
-  },
-
-  // ----- BREAKPOINT -----
-  mobileBreakpoint: 768,         // Width in px below which mobile config is used
-};
-
-/* ============================================
-   COMPONENT
-   ============================================ */
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
   const [phase, setPhase] = useState<'logo-enter' | 'logo-hold' | 'logo-exit' | 'complete'>('logo-enter');
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useBreakpoint(introLoaderConfig.breakpoint);
 
-  // Detect mobile/desktop on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < CONFIG.mobileBreakpoint);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Get current config based on screen size
-  const config = isMobile ? CONFIG.mobile : CONFIG.desktop;
-  const { timing } = CONFIG;
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(introLoaderConfig, isMobile);
+  const { timing } = introLoaderConfig;
 
   // Animation timeline
   useEffect(() => {
@@ -163,7 +107,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
           <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none">
             <motion.div
               className="relative"
-              style={{ marginTop: config.logoStartOffset }}
+              style={{ marginTop: viewportConfig.logoStartOffset }}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={
                 phase === 'logo-enter' ? { 
@@ -176,8 +120,8 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                   y: 0,
                 } : { 
                   opacity: 1, 
-                  scale: config.logoEndScale,
-                  y: config.logoEndY,
+                  scale: viewportConfig.logoEndScale,
+                  y: viewportConfig.logoEndY,
                 }
               }
               transition={
@@ -251,7 +195,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
           {/* Tagline */}
           <motion.p
             className="fixed z-[1000] text-[10px] sm:text-[11px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-carmel-text/35 text-center px-6 pointer-events-none left-0 right-0"
-            style={{ top: config.taglineTop }}
+            style={{ top: viewportConfig.taglineTop }}
             initial={{ opacity: 0, y: 20 }}
             animate={
               phase === 'logo-enter' ? { opacity: 0, y: 20 } :
@@ -266,7 +210,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
           {/* Decorative line */}
           <motion.div
             className="fixed z-[1000] w-12 h-px bg-carmel-text/15 pointer-events-none left-1/2 -translate-x-1/2"
-            style={{ top: config.lineTop }}
+            style={{ top: viewportConfig.lineTop }}
             initial={{ scaleX: 0, opacity: 0 }}
             animate={
               phase === 'logo-enter' ? { scaleX: 0, opacity: 0 } :
