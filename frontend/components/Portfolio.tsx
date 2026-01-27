@@ -9,6 +9,8 @@ import {
   MotionValue
 } from 'framer-motion';
 import Reveal from './Reveal';
+import { portfolioConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 const baseProjects = [
   { id: 1, client: "L'Oréal Paris", title: "Women of Worth", category: "Gala Production", image: "/portfolio/loreal-gala.webp" },
@@ -26,6 +28,10 @@ export default function Portfolio() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState({ width: 0, center: 0 });
   const x = useMotionValue(0);
+  const { isMobile } = useBreakpoint(portfolioConfig.breakpoint);
+  
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(portfolioConfig, isMobile);
   
   useEffect(() => {
     const updateLayout = () => {
@@ -56,10 +62,19 @@ export default function Portfolio() {
     });
   };
 
+  // Generate inline styles from config
+  const sectionStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.spacing.paddingTop,
+    paddingBottom: viewportConfig.spacing.paddingBottom,
+    minHeight: viewportConfig.dimensions.minHeight,
+    height: viewportConfig.dimensions.height,
+  };
+
   return (
     <section
       id="portfolio"
-      className="snap-section section-portfolio bg-carmel-bg overflow-hidden flex flex-col relative"
+      className="snap-section bg-carmel-bg overflow-hidden flex flex-col relative"
+      style={sectionStyle}
       ref={containerRef}
     >
       {/* Header */}

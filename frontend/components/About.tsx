@@ -1,11 +1,27 @@
 "use client";
 import Reveal from './Reveal';
+import { aboutConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 export default function About() {
+  const { isMobile } = useBreakpoint(aboutConfig.breakpoint);
+  
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(aboutConfig, isMobile);
+
+  // Generate inline styles from config
+  const sectionStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.spacing.paddingTop,
+    paddingBottom: viewportConfig.spacing.paddingBottom,
+    minHeight: viewportConfig.dimensions.minHeight,
+    height: viewportConfig.dimensions.height,
+  };
+
   return (
     <section
       id="about"
-      className="snap-section section-about w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center overflow-hidden"
+      className="snap-section w-full bg-carmel-bg flex flex-col justify-start md:justify-center items-center overflow-hidden"
+      style={sectionStyle}
     >
       <div className="px-6 sm:px-8 md:px-12 max-w-4xl mx-auto w-full text-center flex flex-col justify-start md:justify-center h-full">
         

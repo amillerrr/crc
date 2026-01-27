@@ -1,17 +1,37 @@
 "use client";
 import Reveal from './Reveal';
+import { footerConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { isMobile } = useBreakpoint(footerConfig.breakpoint);
+  
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(footerConfig, isMobile);
+
+  // Generate inline styles from config
+  const sectionStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.spacing.paddingTop,
+    paddingBottom: viewportConfig.spacing.paddingBottom,
+    minHeight: viewportConfig.dimensions.minHeight,
+    height: viewportConfig.dimensions.height,
+  };
   
   return (
-    <footer className="snap-section section-footer bg-carmel-text text-white">
+    <footer 
+      className="snap-section bg-carmel-text text-white"
+      style={sectionStyle}
+    >
       {/* Full-width container with max-width for content */}
-      <div className="footer-container px-6 md:px-12 lg:px-16 xl:px-20">
+      <div 
+        className="w-full mx-auto px-6 md:px-12 lg:px-16 xl:px-20"
+        style={{ maxWidth: viewportConfig.dimensions.maxWidth || '1400px' }}
+      >
         
         {/* Main Footer Content - Grid Layout */}
         <Reveal width="100%">
-          <div className="footer-main grid grid-cols-1 md:grid-cols-12 items-start md:items-end border-b border-white/10 pb-6 md:pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-start md:items-end border-b border-white/10 pb-6 md:pb-8 gap-6 md:gap-0">
             
             {/* Brand Column */}
             <div className="md:col-span-4 lg:col-span-3 mb-6 md:mb-0">
@@ -53,7 +73,7 @@ export default function Footer() {
         
         {/* Bottom Row - Copyright & Social */}
         <Reveal width="100%" delay={0.15}>
-          <div className="footer-bottom flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 pt-6 md:pt-8">
             
             {/* Copyright */}
             <p className="text-[9px] md:text-[10px] tracking-[0.15em] uppercase text-white/30 order-2 md:order-1">

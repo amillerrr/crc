@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poiret_One, Cormorant_Garamond, Parisienne } from "next/font/google";
 import LenisProvider from "@/components/LenisProvider";
+import CSSVariablesProvider from "@/components/CSSVariablesProvider";
 import "./globals.css";
 
 const poiretOne = Poiret_One({ 
@@ -51,9 +52,11 @@ export default function RootLayout({
       <body
         className={`${poiretOne.variable} ${cormorant.variable} ${parisienne.variable} bg-carmel-bg text-carmel-text antialiased`}
       >
-        <LenisProvider>
-          {children}
-        </LenisProvider>
+        <CSSVariablesProvider>
+          <LenisProvider>
+            {children}
+          </LenisProvider>
+        </CSSVariablesProvider>
       </body>
     </html>
   );

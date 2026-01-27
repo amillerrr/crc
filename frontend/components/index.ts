@@ -6,6 +6,7 @@
 export { default as Navigation } from './Navigation';
 export { default as Header } from './Header';
 export { default as Section, SectionContent } from './Section';
+export { default as CSSVariablesProvider } from './CSSVariablesProvider';
 
 // Page Sections
 export { default as IntroLoader } from './IntroLoader';

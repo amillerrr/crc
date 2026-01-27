@@ -11,14 +11,18 @@
  * - Import specific section config: import { servicesConfig } from '@/config/sections.config'
  * - Import all configs: import { sectionConfigs } from '@/config/sections.config'
  * 
+ * IMPORTANT: Components should import the config and use it via the useBreakpoint hook:
+ * 
+ *   const { isMobile } = useBreakpoint(servicesConfig.breakpoint);
+ *   const viewportConfig = getResponsiveConfig(servicesConfig, isMobile);
+ * 
+ * This ensures changes to this file are immediately reflected in components.
+ * 
  * UNITS:
  * - height: 'auto' | '100vh' | '100dvh' | 'fit-content' | specific value like '80vh'
  * - minHeight: same as height
  * - padding: rem values as strings (e.g., '6rem')
  * - gap: rem values as strings
- * 
- * NOTE: Header height is factored into the Services section on desktop
- * to ensure proper spacing after IntroLoader animation completes.
  */
 
 // ============================================
@@ -46,8 +50,8 @@ export interface SectionConfig {
   id: string;
   mobile: SectionViewportConfig;
   desktop: SectionViewportConfig;
-  // Breakpoint at which to switch from mobile to desktop
-  breakpoint?: number;
+  /** Breakpoint at which to switch from mobile to desktop (in pixels) */
+  breakpoint: number;
 }
 
 // ============================================
@@ -65,7 +69,7 @@ export const DEFAULT_BREAKPOINT = BREAKPOINTS.tablet; // 768px
 
 // Header heights for calculating offsets
 export const HEADER_HEIGHTS = {
-  mobile: '4.5rem',   // ~72px
+  mobile: '0.5rem',   // ~72px
   desktop: '5rem',    // ~80px
 } as const;
 
@@ -75,9 +79,10 @@ export const HEADER_HEIGHTS = {
 
 export const servicesConfig: SectionConfig = {
   id: 'services',
+  breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
-      paddingTop: '6rem',      // Extra top for header clearance
+      paddingTop: HEADER_HEIGHTS.mobile,      // Extra top for header clearance
       paddingBottom: '5rem',
       paddingX: '1.5rem',
     },
@@ -103,6 +108,7 @@ export const servicesConfig: SectionConfig = {
 
 export const portfolioConfig: SectionConfig = {
   id: 'portfolio',
+  breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
       paddingTop: '5rem',
@@ -129,6 +135,7 @@ export const portfolioConfig: SectionConfig = {
 
 export const aboutConfig: SectionConfig = {
   id: 'about',
+  breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
       paddingTop: '5rem',
@@ -155,6 +162,7 @@ export const aboutConfig: SectionConfig = {
 
 export const contactConfig: SectionConfig = {
   id: 'contact',
+  breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
       paddingTop: '4rem',
@@ -181,6 +189,7 @@ export const contactConfig: SectionConfig = {
 
 export const footerConfig: SectionConfig = {
   id: 'footer',
+  breakpoint: DEFAULT_BREAKPOINT,
   mobile: {
     spacing: {
       paddingTop: '3rem',
@@ -223,8 +232,8 @@ export const sectionConfigs = {
 // ============================================
 
 export interface LogoConfig {
-  width: number;
-  height?: number;
+  width: string;
+  height?: string;
 }
 
 export interface HeaderViewportConfig {
@@ -241,13 +250,13 @@ export interface HeaderConfig {
 export const headerConfig: HeaderConfig = {
   mobile: {
     logo: {
-      width: 200,
+      width: '200px',
     },
     paddingY: 'py-3',
   },
   desktop: {
     logo: {
-      width: 200,
+      width: '200px',
     },
     paddingY: 'py-1 md:py-2',
   },
@@ -311,12 +320,12 @@ export const introLoaderConfig: IntroLoaderConfig = {
 };
 
 // ============================================
-// UTILITY: Generate CSS Variables
+// UTILITY: Generate CSS Variables (for debugging)
 // ============================================
 
 /**
  * Generates CSS variable declarations from section configs.
- * Useful for dynamically creating CSS custom properties.
+ * Useful for debugging or if you want to log what values should be.
  */
 export function generateCSSVariables(): string {
   const lines: string[] = [];

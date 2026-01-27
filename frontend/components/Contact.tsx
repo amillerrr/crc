@@ -1,6 +1,8 @@
 "use client";
 import { useState, useRef } from 'react';
 import Reveal from './Reveal';
+import { contactConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -9,6 +11,10 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const { isMobile } = useBreakpoint(contactConfig.breakpoint);
+  
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(contactConfig, isMobile);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +53,19 @@ export default function Contact() {
     }
   };
 
+  // Generate inline styles from config
+  const sectionStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.spacing.paddingTop,
+    paddingBottom: viewportConfig.spacing.paddingBottom,
+    minHeight: viewportConfig.dimensions.minHeight,
+    height: viewportConfig.dimensions.height,
+  };
+
   return (
     <section
       id="contact"
-      className="snap-section section-contact bg-warm-white relative overflow-hidden flex flex-col justify-center"
+      className="snap-section bg-warm-white relative overflow-hidden flex flex-col justify-center"
+      style={sectionStyle}
     >
       {/* Background Decor */}
       <div className="absolute inset-0 pointer-events-none">

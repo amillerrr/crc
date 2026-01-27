@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Reveal from './Reveal';
+import { servicesConfig } from '@/config/sections.config';
+import { useBreakpoint, getResponsiveConfig } from '@/hooks/useBreakpoint';
 
 /**
  * ============================================
@@ -10,20 +12,8 @@ import Reveal from './Reveal';
  * 
  * Showcases the company's core services: Brand Activation & Event Production.
  * 
- * LAYOUT:
- * - Hero-like opening area with title
- * - Description paragraph
- * - Two-column service cards with hover effects
- * - CTA link to portfolio
- * 
- * RESPONSIVE BEHAVIOR:
- * - Mobile: Single column, reduced padding
- * - Desktop: Two columns with vertical divider, full viewport height
- * 
- * CSS Variables (defined in globals.css):
- * - --section-services-pt-mobile / --section-services-pt-desktop
- * - --section-services-pb-mobile / --section-services-pb-desktop
- * - --section-services-min-height-mobile / --section-services-min-height-desktop
+ * Configuration is pulled from @/config/sections.config.ts
+ * The useBreakpoint hook determines which config (mobile/desktop) to use.
  */
 
 const subCategories = [
@@ -39,11 +29,24 @@ const subCategories = [
 
 export default function Services() {
   const [activeService, setActiveService] = useState<number | null>(null);
+  const { isMobile } = useBreakpoint(servicesConfig.breakpoint);
+  
+  // Get current viewport-specific config
+  const viewportConfig = getResponsiveConfig(servicesConfig, isMobile);
+
+  // Generate inline styles from config
+  const sectionStyle: React.CSSProperties = {
+    paddingTop: viewportConfig.spacing.paddingTop,
+    paddingBottom: viewportConfig.spacing.paddingBottom,
+    minHeight: viewportConfig.dimensions.minHeight,
+    height: viewportConfig.dimensions.height,
+  };
 
   return (
     <section
       id="services"
-      className="snap-section section-services bg-carmel-bg relative overflow-hidden"
+      className="snap-section bg-carmel-bg relative overflow-hidden"
+      style={sectionStyle}
     >
       {/* Hero-like opening area */}
       <div className="h-[30vh] md:h-[40vh] flex items-end justify-center pb-8 md:pb-12">
