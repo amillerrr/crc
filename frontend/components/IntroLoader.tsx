@@ -25,6 +25,8 @@ const CONFIG = {
     logoExitDuration: 1000,      // How long logo takes to move to header
     backgroundFadeDelay: 400,    // Delay before background starts fading
     backgroundFadeDuration: 800, // How long background takes to fade
+    logoCrossfadeStart: 0.2,     // Start crossfade at 20% into exit phase (0-1)
+    logoCrossfadeDuration: 0.6,  // Crossfade takes 60% of exit duration (0-1)
   },
 
   // ----- DESKTOP VALUES (>= 768px) -----
@@ -33,8 +35,8 @@ const CONFIG = {
     logoStartOffset: '-28vh',
     
     // Final animation values when logo moves to header
-    logoEndY: '-20vh',           // Vertical position (from starting point)
-    logoEndScale: 0.243,         // 170px header ÷ 700px logo = 0.243
+    logoEndY: '-30.2vh',           // Vertical position (from starting point)
+    logoEndScale: 0.285,         // 170px header ÷ 700px logo = 0.243
     
     // Tagline position
     taglineTop: '62vh',
@@ -49,8 +51,8 @@ const CONFIG = {
     logoStartOffset: '-20vh',
     
     // Final animation values when logo moves to header
-    logoEndY: '-36.5vh',           // Vertical position (from starting point)
-    logoEndScale: 0.5,         // 100px header ÷ 280px logo = 0.357
+    logoEndY: '-35.5vh',           // Vertical position (from starting point)
+    logoEndScale: 0.71,         // 100px header ÷ 280px logo = 0.357
     
     // Tagline position
     taglineTop: '58vh',
@@ -106,6 +108,10 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
     }
   }, [phase, onComplete]);
 
+  // Calculate crossfade timing (in seconds for framer-motion)
+  const crossfadeDelay = (timing.logoExitDuration * timing.logoCrossfadeStart) / 1000;
+  const crossfadeDuration = (timing.logoExitDuration * timing.logoCrossfadeDuration) / 1000;
+
   return (
     <AnimatePresence>
       {phase !== 'complete' && (
@@ -153,7 +159,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
             />
           </motion.div>
 
-          {/* Logo Container - NO FADE, just moves to position then gets removed */}
+          {/* Logo Container - contains both logos for crossfade */}
           <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none">
             <motion.div
               className="relative"
@@ -186,14 +192,59 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                     }
               }
             >
-              <Image
-                src="/CRC-Logo.svg"
-                alt="Carmel Rose Collective"
-                width={700}
-                height={700}
-                priority
-                className="w-[280px] sm:w-[360px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
-              />
+              {/* Thin logo (CRC-Logo.svg) - fades out during exit */}
+              <motion.div
+                className="relative"
+                initial={{ opacity: 1 }}
+                animate={{ 
+                  opacity: phase === 'logo-exit' ? 0 : 1 
+                }}
+                transition={
+                  phase === 'logo-exit' 
+                    ? { 
+                        duration: crossfadeDuration, 
+                        delay: crossfadeDelay,
+                        ease: [0.25, 1, 0.5, 1] 
+                      }
+                    : { duration: 0 }
+                }
+              >
+                <Image
+                  src="/CRC-Logo.svg"
+                  alt="Carmel Rose Collective"
+                  width={700}
+                  height={700}
+                  priority
+                  className="w-[280px] sm:w-[360px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+                />
+              </motion.div>
+
+              {/* Bold logo (CRC-Logo-Header.svg) - fades in during exit, positioned absolutely on top */}
+              <motion.div
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: phase === 'logo-exit' ? 1 : 0 
+                }}
+                transition={
+                  phase === 'logo-exit' 
+                    ? { 
+                        duration: crossfadeDuration, 
+                        delay: crossfadeDelay,
+                        ease: [0.25, 1, 0.5, 1] 
+                      }
+                    : { duration: 0 }
+                }
+              >
+                <Image
+                  src="/CRC-Logo-Header.svg"
+                  alt="Carmel Rose Collective"
+                  width={700}
+                  height={700}
+                  priority
+                  className="w-[280px] sm:w-[360px] md:w-[500px] lg:w-[600px] xl:w-[700px] h-auto"
+                />
+              </motion.div>
             </motion.div>
           </div>
 

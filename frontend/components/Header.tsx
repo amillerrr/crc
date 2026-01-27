@@ -20,13 +20,13 @@ interface HeaderProps {
 const CONFIG = {
   // ----- DESKTOP VALUES (>= 768px) -----
   desktop: {
-    logoWidth: 170,              // Logo width in pixels
-    paddingY: 'py-2 md:py-3',    // Vertical padding
+    logoWidth: 200,              // Logo width in pixels
+    paddingY: 'py-1 md:py-2',    // Vertical padding
   },
 
   // ----- MOBILE VALUES (< 768px) -----
   mobile: {
-    logoWidth: 140,              // Logo width in pixels - adjust this!
+    logoWidth: 200,              // Logo width in pixels - adjust this!
     paddingY: 'py-3',            // Vertical padding
   },
 
@@ -76,7 +76,7 @@ export default function Header({ isVisible }: HeaderProps) {
             aria-label="Carmel Rose Collective - Home"
           >
             <Image
-              src="/CRC-Logo.svg"
+              src="/CRC-Logo-Header.svg"
               alt="Carmel Rose Collective"
               width={180}
               height={180}
