@@ -379,15 +379,12 @@ export type SectionName = keyof typeof sectionConfigs;
 
 export interface NavigationViewportConfig {
   paddingY: string;
+  paddingX: string;
 }
 
 export interface NavigationConfig {
-  mobile: NavigationViewportConfig & {
-    paddingX: string;
-  };
-  desktop: NavigationViewportConfig & {
-    paddingX: string;
-  };
+  mobile: NavigationViewportConfig;
+  desktop: NavigationViewportConfig;
   breakpoint: number;
   scrollThreshold: number;
 }
@@ -428,8 +425,9 @@ export interface HeaderConfig {
 /**
  * Header Configuration
  * 
- * LOGO SIZE CALCULATION:
- * IntroLoader logo size × logoEndScale = Header logo width
+ * LOGO SIZE:
+ * Both mobile and desktop use 200px final logo width.
+ * The IntroLoader scales from larger sizes down to this.
  * 
  * Mobile:  280px × 0.714 ≈ 200px
  * Desktop: 500px × 0.40  = 200px
@@ -439,13 +437,13 @@ export const headerConfig: HeaderConfig = {
     logo: {
       width: '200px',
     },
-    paddingY: '0.75rem',
+    paddingY: '0.75rem',  // 12px
   },
   desktop: {
     logo: {
       width: '200px',
     },
-    paddingY: '0.5rem',
+    paddingY: '0.5rem',   // 8px
   },
   breakpoint: DEFAULT_BREAKPOINT,
 };
@@ -455,21 +453,30 @@ export const headerConfig: HeaderConfig = {
 // ============================================
 
 export interface IntroTimingConfig {
+  /** Duration of logo fade-in animation (ms) */
   logoEnterDuration: number;
+  /** Duration logo stays centered before moving (ms) */
   logoHoldDuration: number;
+  /** Duration of logo moving to header position (ms) */
   logoExitDuration: number;
+  /** Delay before background starts fading (ms) */
   backgroundFadeDelay: number;
+  /** Duration of background fade-out (ms) */
   backgroundFadeDuration: number;
+  /** When crossfade starts during exit (0-1, fraction of logoExitDuration) */
   logoCrossfadeStart: number;
+  /** Duration of crossfade (0-1, fraction of logoExitDuration) */
   logoCrossfadeDuration: number;
 }
 
 export interface IntroViewportConfig {
-  logoStartOffset: string;
-  logoEndY: string;
+  /** Scale factor to reach final logo size (calculated: initialSize × scale = 200px) */
   logoEndScale: number;
+  /** Initial logo size before scaling */
   logoSize: string;
+  /** Position of tagline from top */
   taglineTop: string;
+  /** Position of decorative line from top */
   lineTop: string;
 }
 
@@ -483,9 +490,20 @@ export interface IntroLoaderConfig {
 /**
  * IntroLoader Configuration
  * 
- * Logo sizes (2 breakpoints):
- * - Mobile (<768px):  280px → scales to 200px with 0.714
- * - Desktop (≥768px): 500px → scales to 200px with 0.40
+ * LOGO ANIMATION:
+ * The logo starts centered in the viewport and animates to the header position.
+ * 
+ * - logoEndScale: Scale factor applied to reach 200px final width
+ *   - Mobile:  280px × 0.714 ≈ 200px
+ *   - Desktop: 500px × 0.40  = 200px
+ * 
+ * - logoEndY: CALCULATED DYNAMICALLY by useLogoAnimation hook
+ *   This ensures pixel-perfect positioning across all viewport sizes.
+ *   The hook calculates: headerLogoCenterY - viewportCenterY
+ * 
+ * TIMING:
+ * Total intro duration ≈ logoEnterDuration + logoHoldDuration + logoExitDuration
+ *                      ≈ 800 + 1200 + 1000 = 3000ms (3 seconds)
  */
 export const introLoaderConfig: IntroLoaderConfig = {
   timing: {
@@ -494,21 +512,17 @@ export const introLoaderConfig: IntroLoaderConfig = {
     logoExitDuration: 1000,
     backgroundFadeDelay: 400,
     backgroundFadeDuration: 800,
-    logoCrossfadeStart: 0.2,
-    logoCrossfadeDuration: 0.6,
+    logoCrossfadeStart: 0.2,      // Start crossfade 20% into exit animation
+    logoCrossfadeDuration: 0.6,   // Crossfade takes 60% of exit duration
   },
   mobile: {
-    logoStartOffset: '-15vh',
-    logoEndY: '-38vh',
-    logoEndScale: 0.714,
+    logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
     logoSize: '280px',
     taglineTop: '58vh',
     lineTop: '64vh',
   },
   desktop: {
-    logoStartOffset: '-20vh',
-    logoEndY: '-34vh',
-    logoEndScale: 0.40,
+    logoEndScale: 0.40,           // 500px × 0.40 = 200px
     logoSize: '500px',
     taglineTop: '62vh',
     lineTop: '68vh',
@@ -516,12 +530,29 @@ export const introLoaderConfig: IntroLoaderConfig = {
   breakpoint: DEFAULT_BREAKPOINT,
 };
 
+/**
+ * Logo aspect ratio from SVG viewBox
+ * Used by useLogoAnimation hook to calculate exact positions
+ * From CRC-Logo.svg: viewBox="0 0 268.57281 77.246119"
+ */
+export const LOGO_ASPECT_RATIO = 77.246119 / 268.57281; // ≈ 0.2876
+
+/**
+ * Final logo width in pixels (must match headerConfig logo width)
+ * Used by useLogoAnimation hook
+ */
+export const FINAL_LOGO_WIDTH = 200;
+
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
 /**
  * Get responsive config based on current viewport
+ * 
+ * @example
+ * const { isMobile } = useBreakpoint(servicesConfig.breakpoint);
+ * const config = getResponsiveConfig(servicesConfig, isMobile);
  */
 export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknown }>(
   config: T,
@@ -531,31 +562,79 @@ export function getResponsiveConfig<T extends { mobile: unknown; desktop: unknow
 }
 
 /**
+ * Parse rem value to pixels (assumes 16px base font size)
+ * 
+ * @example
+ * remToPx('0.75rem') // returns 12
+ * remToPx('1.5rem')  // returns 24
+ */
+export function remToPx(rem: string): number {
+  const value = parseFloat(rem);
+  return value * 16;
+}
+
+/**
  * Generates CSS variable declarations from section configs.
+ * Useful for debugging or generating static CSS.
+ * 
+ * @example
+ * console.log(generateCSSVariables());
  */
 export function generateCSSVariables(): string {
   const lines: string[] = [];
   
+  // Header heights
   lines.push(`--header-height-mobile: ${HEADER_HEIGHTS.mobile};`);
   lines.push(`--header-height-desktop: ${HEADER_HEIGHTS.desktop};`);
   lines.push('');
   
+  // Layout
   lines.push(`--layout-px-mobile: ${layoutConfig.mobile.paddingX};`);
   lines.push(`--layout-px-desktop: ${layoutConfig.desktop.paddingX};`);
   lines.push('');
   
+  // Navigation
+  lines.push(`--nav-py-mobile: ${navigationConfig.mobile.paddingY};`);
+  lines.push(`--nav-py-desktop: ${navigationConfig.desktop.paddingY};`);
+  lines.push(`--nav-px-mobile: ${navigationConfig.mobile.paddingX};`);
+  lines.push(`--nav-px-desktop: ${navigationConfig.desktop.paddingX};`);
+  lines.push(`--nav-scroll-threshold: ${navigationConfig.scrollThreshold}px;`);
+  lines.push('');
+  
+  // Header
+  lines.push(`--header-logo-width-mobile: ${headerConfig.mobile.logo.width};`);
+  lines.push(`--header-logo-width-desktop: ${headerConfig.desktop.logo.width};`);
+  lines.push(`--header-py-mobile: ${headerConfig.mobile.paddingY};`);
+  lines.push(`--header-py-desktop: ${headerConfig.desktop.paddingY};`);
+  lines.push('');
+  
+  // IntroLoader
+  lines.push(`--intro-logo-size-mobile: ${introLoaderConfig.mobile.logoSize};`);
+  lines.push(`--intro-logo-size-desktop: ${introLoaderConfig.desktop.logoSize};`);
+  lines.push(`--intro-logo-scale-mobile: ${introLoaderConfig.mobile.logoEndScale};`);
+  lines.push(`--intro-logo-scale-desktop: ${introLoaderConfig.desktop.logoEndScale};`);
+  lines.push('');
+  
+  // Sections
   Object.entries(sectionConfigs).forEach(([name, config]) => {
+    // Mobile variables
     lines.push(`--section-${name}-pt-mobile: ${config.mobile.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-mobile: ${config.mobile.spacing.paddingBottom};`);
     lines.push(`--section-${name}-px-mobile: ${config.mobile.spacing.paddingX};`);
     lines.push(`--section-${name}-height-mobile: ${config.mobile.dimensions.height};`);
     lines.push(`--section-${name}-min-height-mobile: ${config.mobile.dimensions.minHeight};`);
     
+    // Desktop variables
     lines.push(`--section-${name}-pt-desktop: ${config.desktop.spacing.paddingTop};`);
     lines.push(`--section-${name}-pb-desktop: ${config.desktop.spacing.paddingBottom};`);
     lines.push(`--section-${name}-px-desktop: ${config.desktop.spacing.paddingX};`);
     lines.push(`--section-${name}-height-desktop: ${config.desktop.dimensions.height};`);
     lines.push(`--section-${name}-min-height-desktop: ${config.desktop.dimensions.minHeight};`);
+    
+    // Optional maxWidth
+    if (config.desktop.dimensions.maxWidth) {
+      lines.push(`--section-${name}-max-width: ${config.desktop.dimensions.maxWidth};`);
+    }
     
     lines.push('');
   });

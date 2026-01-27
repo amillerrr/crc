@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { introLoaderConfig, getResponsiveConfig } from '@/config/sections.config';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useLogoAnimation } from '@/hooks/useLogoAnimation';
 
 interface IntroLoaderProps {
   onComplete: () => void;
@@ -20,23 +21,34 @@ interface IntroLoaderProps {
  * 3. Logo animates to header position, crossfading to header variant
  * 4. Background fades out revealing main content
  * 
- * Configuration is centralized in @/config/sections.config.ts
+ * LOGO POSITIONING:
+ * Uses useLogoAnimation hook to calculate pixel-perfect end position
+ * that matches the Header logo position across all viewport sizes.
+ * This replaces the old vh-based positioning which was inconsistent.
  * 
- * LOGO SIZE CALCULATIONS (SIMPLIFIED):
- * To ensure precise animation landing, we use only 2 breakpoints:
- * - Mobile (<768px):  280px × 0.714 = 200px (matches header)
- * - Desktop (≥768px): 500px × 0.40  = 200px (matches header)
+ * Z-INDEX LAYERS:
+ * - IntroLoader background: z-999
+ * - IntroLoader logo/content: z-1000
+ * - Header: z-920
+ * - Navigation: z-910
  * 
- * This eliminates scale mismatches at intermediate breakpoints (sm, lg, xl).
+ * ANIMATION TIMELINE:
+ * 0ms      → logo-enter (logo fades in, scales up)
+ * 800ms   → logo-hold (logo stays, tagline appears)
+ * 2000ms  → logo-exit (logo moves to header, crossfades)
+ * 3000ms  → complete (IntroLoader unmounts)
  */
 
 export default function IntroLoader({ onComplete }: IntroLoaderProps) {
   const [phase, setPhase] = useState<'logo-enter' | 'logo-hold' | 'logo-exit' | 'complete'>('logo-enter');
   const { isMobile } = useBreakpoint(introLoaderConfig.breakpoint);
 
-  // Get current viewport-specific config
+  // Get static config values
   const viewportConfig = getResponsiveConfig(introLoaderConfig, isMobile);
   const { timing } = introLoaderConfig;
+
+  // Get dynamically calculated animation values
+  const { endY, endScale, isReady } = useLogoAnimation(isMobile);
 
   // Animation timeline
   useEffect(() => {
@@ -53,8 +65,11 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
     return () => timers.forEach(clearTimeout);
   }, [timing]);
 
+  // Call onComplete at the START of logo-exit phase
+  // This makes the Header visible BEHIND the IntroLoader while it's still animating
+  // Since IntroLoader (z-1000) is above Header (z-920), there's no visual gap
   useEffect(() => {
-    if (phase === 'complete') {
+    if (phase === 'logo-exit') {
       onComplete();
     }
   }, [phase, onComplete]);
@@ -62,6 +77,10 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
   // Calculate crossfade timing (in seconds for framer-motion)
   const crossfadeDelay = (timing.logoExitDuration * timing.logoCrossfadeStart) / 1000;
   const crossfadeDuration = (timing.logoExitDuration * timing.logoCrossfadeDuration) / 1000;
+
+  // Use calculated values when ready, fallback values for SSR/initial render
+  const animationEndY = isReady ? endY : (isMobile ? -250 : -300);
+  const animationEndScale = isReady ? endScale : viewportConfig.logoEndScale;
 
   return (
     <AnimatePresence>
@@ -114,8 +133,7 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
           <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none">
             <motion.div
               className="relative"
-              style={{ marginTop: viewportConfig.logoStartOffset }}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.8, y: 0 }}
               animate={
                 phase === 'logo-enter' ? { 
                   opacity: 1, 
@@ -127,8 +145,8 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                   y: 0,
                 } : { 
                   opacity: 1, 
-                  scale: viewportConfig.logoEndScale,
-                  y: viewportConfig.logoEndY,
+                  scale: animationEndScale,
+                  y: animationEndY,
                 }
               }
               transition={
@@ -161,12 +179,9 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
                 }
               >
                 {/* 
-                  SIMPLIFIED Logo responsive sizes (2 breakpoints only):
+                  Logo responsive sizes (2 breakpoints):
                   - Mobile (<768px):  280px - scales to 200px with 0.714
                   - Desktop (≥768px): 500px - scales to 200px with 0.40
-                  
-                  This ensures the animation lands precisely on the 200px header logo.
-                  Previous 5-breakpoint system caused scale mismatches at sm, lg, xl.
                 */}
                 <Image
                   src="/CRC-Logo.svg"
