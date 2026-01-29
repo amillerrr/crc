@@ -16,15 +16,20 @@ interface IntroLoaderProps {
  * ============================================
  * 
  * Handles the initial page load animation:
- * 1. Logo fades in at center
+ * 1. Logo fades in at center (with optional Y offset via logoStartY)
  * 2. Logo holds with tagline visible
  * 3. Logo animates to header position, crossfading to header variant
  * 4. Background fades out revealing main content
  * 
  * LOGO POSITIONING:
- * Uses useLogoAnimation hook to calculate pixel-perfect end position
- * that matches the Header logo position across all viewport sizes.
- * This replaces the old vh-based positioning which was inconsistent.
+ * - logoStartY: Controls initial vertical position offset from center
+ *   - '0px' = perfectly centered
+ *   - '-5vh' = 5% of viewport height above center
+ *   - Applied via marginTop on the logo container
+ * 
+ * - logoEndY: CALCULATED DYNAMICALLY by useLogoAnimation hook
+ *   This ensures pixel-perfect positioning across all viewport sizes.
+ *   The hook calculates: headerLogoCenterY - viewportCenterY
  * 
  * Z-INDEX LAYERS:
  * - IntroLoader background: z-999
@@ -155,7 +160,11 @@ export default function IntroLoader({ onComplete }: IntroLoaderProps) {
           </motion.div>
 
           {/* Logo Container - contains both logos for crossfade */}
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none">
+          {/* marginTop applies the logoStartY offset to shift the logo vertically from center */}
+          <div 
+            className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none"
+            style={{ marginTop: viewportConfig.logoStartY }}
+          >
             <motion.div
               className="relative"
               initial={{ opacity: 0, scale: 0.8, y: 0 }}

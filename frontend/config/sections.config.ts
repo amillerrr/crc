@@ -491,6 +491,8 @@ export interface IntroViewportConfig {
   logoEndScale: number;
   /** Initial logo size before scaling */
   logoSize: string;
+  /** Initial Y offset from center (negative = higher, positive = lower) */
+  logoStartY: string;
   /** Position of tagline from top */
   taglineTop: string;
   /** Position of decorative line from top */
@@ -513,6 +515,11 @@ export interface IntroLoaderConfig {
  * - logoEndScale: Scale factor applied to reach 200px final width
  *   - Mobile:  280px × 0.714 ≈ 200px
  *   - Desktop: 500px × 0.40  = 200px
+ * 
+ * - logoStartY: Initial vertical offset from center
+ *   - '0px' = perfectly centered
+ *   - '-5vh' = 5% of viewport height above center
+ *   - Use negative values to move the logo UP
  * 
  * - logoEndY: CALCULATED DYNAMICALLY by useLogoAnimation hook
  *   This ensures pixel-perfect positioning across all viewport sizes.
@@ -546,12 +553,14 @@ export const introLoaderConfig: IntroLoaderConfig = {
   mobile: {
     logoEndScale: 0.714,          // 280px × 0.714 ≈ 200px
     logoSize: '280px',
+    logoStartY: '0px',            // Centered on mobile
     taglineTop: '58vh',
     lineTop: '64vh',
   },
   desktop: {
     logoEndScale: 0.40,           // 500px × 0.40 = 200px
     logoSize: '500px',
+    logoStartY: '-5vh',           // Move up 5vh on desktop for better spacing with tagline
     taglineTop: '62vh',
     lineTop: '68vh',
   },
@@ -633,6 +642,8 @@ export function generateCSSVariables(): string {
   lines.push(`--intro-logo-size-desktop: ${introLoaderConfig.desktop.logoSize};`);
   lines.push(`--intro-logo-scale-mobile: ${introLoaderConfig.mobile.logoEndScale};`);
   lines.push(`--intro-logo-scale-desktop: ${introLoaderConfig.desktop.logoEndScale};`);
+  lines.push(`--intro-logo-start-y-mobile: ${introLoaderConfig.mobile.logoStartY};`);
+  lines.push(`--intro-logo-start-y-desktop: ${introLoaderConfig.desktop.logoStartY};`);
   lines.push('');
   
   // Sections
